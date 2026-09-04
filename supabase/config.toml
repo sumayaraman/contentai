@@ -1,0 +1,14 @@
+project_id = "contentai-local"
+
+[api]
+enabled = true
+
+[db]
+port = 54322
+
+[studio]
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324

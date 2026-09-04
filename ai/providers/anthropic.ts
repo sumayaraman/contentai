@@ -1,0 +1,14 @@
+import type { AIProvider, AIProviderResult, GenerateContentInput, CampaignGenerationInput, AICampaignProviderResult } from "../types";
+import { validateGeneratedContent } from "../schema"; import { validateGeneratedCampaign } from "../campaign-schema";
+import { validateContentScore } from "@/lib/intelligence/schema";
+export class AnthropicProvider implements AIProvider {
+  readonly name = "anthropic"; private readonly apiKey: string; private readonly model: string;
+  constructor(apiKey: string, model = process.env.ANTHROPIC_MODEL || "claude-3-5-haiku-latest") { this.apiKey = apiKey; this.model = model; }
+  private async request(system: string, input: unknown) { const response = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "Content-Type": "application/json", "x-api-key": this.apiKey, "anthropic-version": "2023-06-01" }, body: JSON.stringify({ model: this.model, max_tokens: 5000, system, messages: [{ role: "user", content: JSON.stringify(input) }] }) }); if (!response.ok) throw new Error(`Anthropic request failed (${response.status}).`); const data = await response.json() as { content?: Array<{ type?: string; text?: string }> }; const raw = data.content?.find((item) => item.type === "text")?.text; if (!raw) throw new Error("Anthropic returned an empty response."); try { return JSON.parse(raw) as unknown; } catch { throw new Error("Anthropic returned invalid JSON."); } }
+  async generateContent(input: GenerateContentInput): Promise<AIProviderResult> { const parsed = await this.request("Return only valid JSON with exactly these keys: hook, caption, cta, hashtags, imagePrompt. hashtags must be an array of 5 to 15 hashtag strings. No markdown.", input); return { provider: this.name, model: this.model, content: validateGeneratedContent(parsed) }; }
+  async generateCampaign(input: CampaignGenerationInput): Promise<AICampaignProviderResult> { const parsed = await this.request("You are a senior social campaign strategist. Return only JSON with exactly: title and days. days must contain exactly the requested duration. Each day must have contentIdea, hook, caption, cta, hashtags (array), imagePrompt, suggestedDate. Use supplied dates. No markdown.", input); return { provider: this.name, model: this.model, campaign: validateGeneratedCampaign(parsed, input.duration) }; }
+  async scoreContent(input: import("../types").ScoreContentInput): Promise<import("../types").ContentScoreResult> {
+    const parsed = await this.request("You are a social content strategist. Return only valid JSON with exactly: score, breakdown, recommendations. score and each breakdown field must be integers 0-100. breakdown keys: hookStrength, readability, ctaStrength, platformSuitability, audienceRelevance, hashtagQuality. recommendations must be an array of concise strings.", input);
+    return { provider: this.name, model: this.model, score: validateContentScore(parsed) };
+  }
+}

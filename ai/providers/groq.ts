@@ -1,0 +1,14 @@
+import type { AIProvider, AIProviderResult, GenerateContentInput, CampaignGenerationInput, AICampaignProviderResult } from "../types";
+import { validateGeneratedContent } from "../schema"; import { validateGeneratedCampaign } from "../campaign-schema";
+import { validateContentScore } from "@/lib/intelligence/schema";
+export class GroqProvider implements AIProvider {
+  readonly name = "groq"; private readonly apiKey: string; private readonly model: string;
+  constructor(apiKey: string, model = process.env.GROQ_MODEL || "llama-3.3-70b-versatile") { this.apiKey = apiKey; this.model = model; }
+  private async request(system: string, input: unknown) { const response = await fetch("https://api.groq.com/openai/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.apiKey}` }, body: JSON.stringify({ model: this.model, temperature: 0.8, response_format: { type: "json_object" }, messages: [{ role: "system", content: system }, { role: "user", content: JSON.stringify(input) }] }) }); if (!response.ok) throw new Error(`Groq request failed (${response.status}).`); const data = await response.json() as { choices?: Array<{ message?: { content?: string } }> }; const raw = data.choices?.[0]?.message?.content; if (!raw) throw new Error("Groq returned an empty response."); try { return JSON.parse(raw) as unknown; } catch { throw new Error("Groq returned invalid JSON."); } }
+  async generateContent(input: GenerateContentInput): Promise<AIProviderResult> { const parsed = await this.request("Return only valid JSON with exactly these keys: hook, caption, cta, hashtags, imagePrompt. hashtags must be an array of 5 to 15 hashtag strings. No markdown.", input); return { provider: this.name, model: this.model, content: validateGeneratedContent(parsed) }; }
+  async generateCampaign(input: CampaignGenerationInput): Promise<AICampaignProviderResult> { const parsed = await this.request("Return only JSON with exactly: title and days. days must contain exactly the requested duration. Each day must have contentIdea, hook, caption, cta, hashtags (array), imagePrompt, suggestedDate. Use supplied dates. No markdown.", input); return { provider: this.name, model: this.model, campaign: validateGeneratedCampaign(parsed, input.duration) }; }
+  async scoreContent(input: import("../types").ScoreContentInput): Promise<import("../types").ContentScoreResult> {
+    const parsed = await this.request("You are a social content strategist. Return only valid JSON with exactly: score, breakdown, recommendations. score and each breakdown field must be integers 0-100. breakdown keys: hookStrength, readability, ctaStrength, platformSuitability, audienceRelevance, hashtagQuality. recommendations must be an array of concise strings.", input);
+    return { provider: this.name, model: this.model, score: validateContentScore(parsed) };
+  }
+}
