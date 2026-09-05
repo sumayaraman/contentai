@@ -1,4 +1,4 @@
-import { Sparkles, TrendingUp, TrendingDown, Plus, ArrowRight, Clock, CheckCircle2, Zap } from "lucide-react";
+import { Sparkles, TrendingUp, TrendingDown, Plus, ArrowRight, Clock, CheckCircle2, Zap, Bot, Check, X, Send } from "lucide-react";
 import Link from "next/link";
 
 function getGreeting() {
@@ -29,23 +29,6 @@ function MetricCard({
   );
 }
 
-function Sparkline({ values }: { values: number[] }) {
-  const max = Math.max(...values);
-  return (
-    <div style={{ display: "flex", alignItems: "flex-end", gap: 2.5, height: 28 }}>
-      {values.map((v, i) => (
-        <div key={i} style={{
-          flex: 1,
-          height: `${Math.max(15, (v / max) * 100)}%`,
-          background: "var(--accent)",
-          opacity: 0.2 + (i / values.length) * 0.8,
-          borderRadius: 2,
-        }} />
-      ))}
-    </div>
-  );
-}
-
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
     published: "badge badge-success",
@@ -62,6 +45,57 @@ function StatusBadge({ status }: { status: string }) {
       <span className={`status-dot ${dotClass[status] ?? "draft"}`} style={{ marginRight: 4 }} />
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
+  );
+}
+
+/** Multi-series performance chart (Reach / Engagement / Clicks) — pure SVG, no chart lib needed */
+function PerformanceChart() {
+  const days = ["May 19", "May 20", "May 21", "May 22", "May 23", "May 24", "May 25"];
+  const series = [
+    { name: "Reach",      color: "var(--accent)", values: [40, 55, 48, 70, 65, 90, 100] },
+    { name: "Engagement", color: "var(--purple)",  values: [20, 30, 35, 40, 38, 55, 62] },
+    { name: "Clicks",     color: "var(--blue)",    values: [10, 14, 12, 22, 18, 30, 34] },
+  ];
+  const w = 560, h = 160, pad = 8;
+  const max = Math.max(...series.flatMap((s) => s.values));
+  const toPoints = (values: number[]) =>
+    values
+      .map((v, i) => {
+        const x = pad + (i / (values.length - 1)) * (w - pad * 2);
+        const y = h - pad - (v / max) * (h - pad * 2);
+        return `${x},${y}`;
+      })
+      .join(" ");
+
+  return (
+    <div>
+      <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} style={{ display: "block" }}>
+        {series.map((s) => (
+          <polyline
+            key={s.name}
+            points={toPoints(s.values)}
+            fill="none"
+            stroke={s.color}
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        ))}
+      </svg>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+        {days.map((d) => (
+          <span key={d} style={{ fontSize: 10, color: "var(--text-muted)" }}>{d.split(" ")[1]}</span>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 14, marginTop: 12 }}>
+        {series.map((s) => (
+          <div key={s.name} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: s.color, display: "inline-block" }} />
+            <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>{s.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -86,6 +120,17 @@ export default async function DashboardPage() {
     { label: "Review",      count: 7,  color: "var(--blue)" },
     { label: "Approved",    count: 24, color: "var(--accent)" },
     { label: "Scheduled",   count: 24, color: "var(--green)" },
+  ];
+
+  const aiSuggestions = [
+    "Carousel: 5 productivity hacks for marketers",
+    "Reel: Day in the life of a creative team",
+    "Post: Industry insight with a strong hook",
+  ];
+
+  const approvalQueue = [
+    { title: "New Project Spotlight", platform: "Facebook", time: "May 23, 10:30 AM" },
+    { title: "5 Content Tips That Actually Work", platform: "LinkedIn", time: "May 23, 03:00 PM" },
   ];
 
   return (
@@ -133,7 +178,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Main grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16 }}>
 
         {/* Recent posts */}
         <div className="card">
@@ -178,36 +223,88 @@ export default async function DashboardPage() {
         {/* Right column */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-          {/* AI Insight */}
-          <div className="ai-card" style={{ padding: "16px 18px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
-              <div className="ai-dot" />
-              <span className="ai-tag">AI Insight</span>
+          {/* Content Performance */}
+          <div className="card" style={{ padding: "16px 18px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <span className="card-title">Content Performance</span>
+              <span style={{ fontSize: 11, color: "var(--text-muted)" }}>This Week</span>
             </div>
-            <p style={{ fontSize: 13, fontWeight: 500, color: "var(--text-primary)", lineHeight: 1.55, marginBottom: 8 }}>
-              LinkedIn posts with educational hooks are performing 38% better this week.
-            </p>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.65 }}>
-              Try leading with a bold question or surprising stat in your next post.
-            </p>
-            <Link href="/analytics" className="btn btn-primary btn-sm" style={{ marginTop: 14, width: "100%", justifyContent: "center" }}>
-              View analytics
-            </Link>
+            <PerformanceChart />
           </div>
 
-          {/* Sparkline */}
+          {/* AI Assistant */}
+          <div className="ai-card" style={{ padding: "16px 18px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
+              <Bot size={13} style={{ color: "var(--accent)" }} />
+              <span className="ai-tag">AI Assistant</span>
+            </div>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 10 }}>
+              Here are some content ideas for this week designed for higher engagement:
+            </p>
+            <ul style={{ margin: 0, paddingLeft: 16, display: "flex", flexDirection: "column", gap: 6 }}>
+              {aiSuggestions.map((s) => (
+                <li key={s} style={{ fontSize: 12, color: "var(--text-primary)", lineHeight: 1.5 }}>{s}</li>
+              ))}
+            </ul>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14 }}>
+              <input
+                placeholder="Ask AI anything..."
+                readOnly
+                style={{
+                  flex: 1, background: "var(--bg-elevated)", border: "1px solid var(--border)",
+                  borderRadius: "var(--r-md)", padding: "8px 10px", fontSize: 12,
+                  color: "var(--text-primary)", outline: "none",
+                }}
+              />
+              <button className="btn btn-primary btn-sm" style={{ padding: "8px 10px" }} aria-label="Send">
+                <Send size={13} />
+              </button>
+            </div>
+          </div>
+
+          {/* Approval Queue */}
           <div className="card">
             <div className="card-h">
-              <span className="card-title">Engagement (7d)</span>
-              <span style={{ fontSize: 11.5, color: "var(--green)", fontWeight: 500 }}>↑ 12%</span>
+              <span className="card-title">Approval Queue</span>
+              <Link href="/posts?status=review" className="btn btn-ghost btn-sm" style={{ fontSize: 11.5 }}>
+                View all
+              </Link>
             </div>
-            <div className="card-body">
-              <Sparkline values={[28, 42, 32, 58, 50, 72, 88]} />
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
-                {["M","T","W","T","F","S","S"].map((d, i) => (
-                  <span key={i} style={{ fontSize: 10, color: "var(--text-muted)" }}>{d}</span>
-                ))}
-              </div>
+            <div style={{ padding: "6px 10px" }}>
+              {approvalQueue.map((item) => (
+                <div key={item.title} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "10px 6px", borderBottom: "1px solid var(--border-subtle)",
+                }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{
+                      fontSize: 12.5, fontWeight: 500, color: "var(--text-primary)",
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>
+                      {item.title}
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
+                      {item.platform} · {item.time}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexShrink: 0, marginLeft: 10 }}>
+                    <span style={{
+                      width: 22, height: 22, borderRadius: "50%", display: "flex",
+                      alignItems: "center", justifyContent: "center",
+                      background: "var(--green-soft)", color: "var(--green)",
+                    }}>
+                      <Check size={12} />
+                    </span>
+                    <span style={{
+                      width: 22, height: 22, borderRadius: "50%", display: "flex",
+                      alignItems: "center", justifyContent: "center",
+                      background: "var(--red-soft)", color: "var(--red)",
+                    }}>
+                      <X size={12} />
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
