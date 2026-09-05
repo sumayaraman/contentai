@@ -1,49 +1,105 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, CalendarDays, FolderKanban, Image, LayoutDashboard, Megaphone, PenSquare, RadioTower, Settings, Sparkles } from "lucide-react";
+import {
+  BarChart3, CalendarDays, FolderKanban, Image,
+  LayoutDashboard, Megaphone, PenSquare, RadioTower,
+  Settings, Sparkles, ChevronDown, HelpCircle
+} from "lucide-react";
 
-const items = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/ai-studio", label: "AI Studio", icon: Sparkles },
-  { href: "/posts", label: "Posts", icon: PenSquare },
-  { href: "/posts/categories", label: "Categories", icon: FolderKanban },
-  { href: "/calendar", label: "Calendar", icon: CalendarDays },
-  { href: "/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/publishing", label: "Publishing", icon: RadioTower },
+const navMain = [
+  { href: "/dashboard",     label: "Overview",      icon: LayoutDashboard },
+  { href: "/ai-studio",     label: "AI Studio",     icon: Sparkles },
+  { href: "/posts",         label: "Posts",         icon: PenSquare },
+  { href: "/calendar",      label: "Calendar",      icon: CalendarDays },
+  { href: "/campaigns",     label: "Campaigns",     icon: Megaphone },
+  { href: "/analytics",     label: "Analytics",     icon: BarChart3 },
+  { href: "/publishing",    label: "Publishing",    icon: RadioTower },
   { href: "/media-library", label: "Media Library", icon: Image },
-  { href: "/settings", label: "Settings", icon: Settings },
+];
+
+const navWorkspace = [
+  { href: "/posts/categories", label: "Categories", icon: FolderKanban },
+  { href: "/settings",         label: "Settings",   icon: Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
-      <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
-          <Sparkles size={18} />
+    <aside className="app-sidebar">
+      {/* Ambient orbs */}
+      <div className="orb orb-violet" style={{
+        width: 220, height: 220, top: -60, left: -60, position: "absolute"
+      }} />
+      <div className="orb orb-purple" style={{
+        width: 140, height: 140, bottom: 100, right: -40, position: "absolute"
+      }} />
+
+      {/* Logo */}
+      <div className="sb-logo">
+        <div className="sb-logo-icon">
+          <Sparkles size={14} />
         </div>
         <div>
-          <div className="text-sm font-bold text-slate-950">ContentAI</div>
-          <div className="text-[11px] text-slate-500">Content workspace</div>
+          <div className="sb-logo-name">ContentAI</div>
+          <div className="sb-logo-sub">Content workspace</div>
         </div>
       </div>
-      <nav className="flex-1 space-y-1 p-4">
-        {items.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
+
+      {/* Nav */}
+      <nav className="sb-nav">
+        <div className="sb-section">Main</div>
+        {navMain.map(({ href, label, icon: Icon }, i) => {
+          const active = isActive(href);
           return (
-            <Link key={href} href={href} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${active ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"}`}>
-              <Icon size={18} strokeWidth={active ? 2.2 : 1.8} />
+            <Link
+              key={href}
+              href={href}
+              className={`sb-link${active ? " active" : ""}`}
+            >
+              <Icon size={14} strokeWidth={active ? 2.2 : 1.8} style={{ flexShrink: 0 }} />
               {label}
             </Link>
           );
         })}
+
+        <div className="sb-divider" />
+        <div className="sb-section">Workspace</div>
+        {navWorkspace.map(({ href, label, icon: Icon }) => {
+          const active = isActive(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`sb-link${active ? " active" : ""}`}
+            >
+              <Icon size={14} strokeWidth={active ? 2.2 : 1.8} style={{ flexShrink: 0 }} />
+              {label}
+            </Link>
+          );
+        })}
+
+        <div className="sb-divider" />
+        <Link href="/help" className="sb-link">
+          <HelpCircle size={14} strokeWidth={1.8} style={{ flexShrink: 0 }} />
+          Help & docs
+        </Link>
       </nav>
-      <div className="m-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="text-xs font-semibold text-slate-900">Phase 1 Foundation</div>
-        <p className="mt-1 text-xs leading-5 text-slate-500">Workspace, authentication, database and dashboard foundation are ready.</p>
+
+      {/* User */}
+      <div className="sb-footer">
+        <div className="sb-user">
+          <div className="sb-avatar">S</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="sb-user-name">Sumaya Rahman</div>
+            <div className="sb-user-plan">Free plan</div>
+          </div>
+          <ChevronDown size={12} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+        </div>
       </div>
     </aside>
   );
