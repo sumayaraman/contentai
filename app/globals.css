@@ -224,6 +224,33 @@ img { display: block; max-width: 100%; }
   gap: 12px;
 }
 
+.ai-input {
+  width: 100%;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 11px 14px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+}
+
+.ai-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ai-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.ai-input option {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
 .page {
   flex: 1;
   padding: 28px 32px;
