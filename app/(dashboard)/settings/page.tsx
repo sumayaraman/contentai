@@ -24,12 +24,36 @@ export default async function SettingsPage() {
   })) as TeamMember[];
 
   const socialAccounts = await listSocialAccounts(workspaceId);
-  return <div className="mx-auto max-w-5xl space-y-6">
-    <div><p className="text-sm font-medium text-blue-600">Workspace settings</p><h1 className="mt-1 text-2xl font-bold text-slate-950">Settings</h1><p className="mt-1 text-sm text-slate-500">Manage your profile, workspace, team access, AI preferences and simulated social connections.</p></div>
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><h2 className="font-semibold text-slate-950">Profile</h2><p className="mt-1 text-sm text-slate-500">Your profile information is stored in the ContentAI database.</p><div className="mt-6"><ProfileSection profile={profile} /></div></section>
-    <WorkspaceSettings workspace={workspace} role={role} members={members} />
-    <SocialAccounts accounts={socialAccounts} role={role} />
-  </div>;
+
+  return (
+    <div className="page animate-fade-up">
+      <div className="page-header">
+        <div>
+          <p className="ai-tag" style={{ marginBottom: 6 }}>Workspace settings</p>
+          <h1 className="page-title">Settings</h1>
+          <p className="page-subtitle">Manage your profile, workspace, team access, AI preferences and simulated social connections.</p>
+        </div>
+      </div>
+
+      {/* Profile */}
+      <div className="card" style={{ marginBottom: 16 }}>
+        <div className="card-h">
+          <div>
+            <div className="card-title">Profile</div>
+            <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
+              Your profile information is stored in the ContentAI database.
+            </p>
+          </div>
+        </div>
+        <div className="card-body">
+          <ProfileSection profile={profile} />
+        </div>
+      </div>
+
+      <WorkspaceSettings workspace={workspace} role={role} members={members} />
+      <SocialAccounts accounts={socialAccounts} role={role} />
+    </div>
+  );
 }
 
 function ProfileSection({ profile }: { profile: Awaited<ReturnType<typeof getCurrentUser>>["profile"] }) {
