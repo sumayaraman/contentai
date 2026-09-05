@@ -39,15 +39,153 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
 
   const list = (posts ?? []) as unknown as Post[];
   const categoryList = (categories ?? []) as Category[];
-  const savedMessages: Record<string, string> = { created: "Post created successfully.", updated: "Post updated successfully.", deleted: "Post deleted successfully.", duplicated: "Post duplicated as a draft." };
+  const savedMessages: Record<string, string> = {
+    created: "Post created successfully.",
+    updated: "Post updated successfully.",
+    deleted: "Post deleted successfully.",
+    duplicated: "Post duplicated as a draft.",
+  };
 
-  return <div className="mx-auto max-w-7xl space-y-6">
-    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-sm font-medium text-blue-600">Content management</p><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Posts</h1><p className="mt-1 text-sm text-slate-500">Create, organize, and manage your social content in one place.</p></div><div className="flex gap-2"><Link href="/posts/categories" className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"><FolderOpen size={16} /> Categories</Link><Link href="/posts/new" className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"><Plus size={17} /> Create Post</Link></div></div>
-    {savedMessages[saved] && <div role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">{savedMessages[saved]}</div>}
-    <PostsToolbar categories={categoryList} values={{ search, platform, status, category, sort }} />
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="hidden grid-cols-[minmax(0,1.8fr)_150px_150px_150px_130px_110px] gap-4 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 lg:grid"><div>Post</div><div>Platform</div><div>Category</div><div>Status</div><div>Schedule</div><div className="text-right">Actions</div></div>
-      {list.length === 0 ? <div className="px-5 py-16 text-center"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">{search || platform || status || category ? <SearchX size={21} className="text-slate-400" /> : <FileText size={21} className="text-slate-400" />}</div><h2 className="mt-4 text-base font-semibold text-slate-900">{search || platform || status || category ? "No posts match your filters" : "No posts yet"}</h2><p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{search || platform || status || category ? "Try changing your search or filters." : "Create your first post to start building your content library."}</p>{search || platform || status || category ? <Link href="/posts" className="mt-4 inline-flex rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Clear filters</Link> : <Link href="/posts/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"><Plus size={16} /> Create your first post</Link>}</div> : <div className="divide-y divide-slate-100">{list.map((post) => { const cat = categoryList.find((item) => item.id === post.category_id); return <div key={post.id} className="grid gap-4 px-5 py-4 lg:grid-cols-[minmax(0,1.8fr)_150px_150px_150px_130px_110px] lg:items-center"><div className="flex min-w-0 items-center gap-3"><div className="hidden h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-100 sm:block">{post.image_url ? <img src={post.image_url} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center"><FileText size={18} className="text-slate-400" /></div>}</div><div className="min-w-0"><Link href={`/posts/${post.id}/edit`} className="block truncate text-sm font-semibold text-slate-900 hover:text-blue-600">{post.title}</Link><p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">{post.caption || "No caption added yet."}</p></div></div><PlatformBadge platform={post.platform} /><div>{cat ? <span className="inline-flex items-center gap-2 text-sm text-slate-600"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: cat.color }} />{cat.name}</span> : <span className="text-sm text-slate-400">Uncategorized</span>}</div><div><PostStatusBadge status={post.status} /></div><div className="text-xs text-slate-500">{post.scheduled_at ? new Date(post.scheduled_at).toLocaleString() : "Not scheduled"}</div><PostActions postId={post.id} /></div> })}</div>}
+  return (
+    <div className="page animate-fade-up">
+      {/* Header */}
+      <div className="page-header">
+        <div>
+          <p className="ai-tag" style={{ marginBottom: 6 }}>Content management</p>
+          <h1 className="page-title">Posts</h1>
+          <p className="page-subtitle">Create, organize, and manage your social content in one place.</p>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Link href="/posts/categories" className="btn btn-primary">
+            <FolderOpen size={15} /> Categories
+          </Link>
+          <Link href="/posts/new" className="btn btn-ai">
+            <Plus size={15} /> Create Post
+          </Link>
+        </div>
+      </div>
+
+      {/* Success message */}
+      {savedMessages[saved] && (
+        <div className="badge badge-success" style={{ padding: '10px 16px', borderRadius: 'var(--r-md)', fontSize: 13, marginBottom: 16, display: 'block' }}>
+          {savedMessages[saved]}
+        </div>
+      )}
+
+      {/* Toolbar */}
+      <PostsToolbar categories={categoryList} values={{ search, platform, status, category, sort }} />
+
+      {/* Table */}
+      <div className="card" style={{ marginTop: 16, overflow: 'hidden' }}>
+        {/* Table header */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0,1.8fr) 150px 150px 150px 130px 110px',
+          gap: 16,
+          padding: '10px 20px',
+          borderBottom: '1px solid var(--border)',
+          fontSize: 10.5,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          color: 'var(--text-muted)',
+        }} className="hidden lg:grid">
+          <div>Post</div>
+          <div>Platform</div>
+          <div>Category</div>
+          <div>Status</div>
+          <div>Schedule</div>
+          <div style={{ textAlign: 'right' }}>Actions</div>
+        </div>
+
+        {/* Empty state */}
+        {list.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">
+              {search || platform || status || category ? <SearchX size={20} /> : <FileText size={20} />}
+            </div>
+            <p className="empty-title">
+              {search || platform || status || category ? "No posts match your filters" : "No posts yet"}
+            </p>
+            <p className="empty-desc">
+              {search || platform || status || category
+                ? "Try changing your search or filters."
+                : "Create your first post to start building your content library."}
+            </p>
+            {search || platform || status || category
+              ? <Link href="/posts" className="btn btn-primary">Clear filters</Link>
+              : <Link href="/posts/new" className="btn btn-ai"><Plus size={15} /> Create your first post</Link>
+            }
+          </div>
+        ) : (
+          <div>
+            {list.map((post) => {
+              const cat = categoryList.find((item) => item.id === post.category_id);
+              return (
+                <div key={post.id} style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'minmax(0,1.8fr) 150px 150px 150px 130px 110px',
+                  gap: 16,
+                  padding: '14px 20px',
+                  borderBottom: '1px solid var(--border-subtle)',
+                  alignItems: 'center',
+                  transition: 'background 0.12s',
+                }} className="lg:grid hover:bg-white/5">
+                  {/* Post info */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                    <div style={{
+                      width: 44, height: 44, borderRadius: 'var(--r-md)',
+                      background: 'var(--bg-elevated)', flexShrink: 0, overflow: 'hidden',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      {post.image_url
+                        ? <img src={post.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <FileText size={16} color="var(--text-muted)" />
+                      }
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      <Link href={`/posts/${post.id}/edit`} style={{
+                        display: 'block', fontSize: 13, fontWeight: 600,
+                        color: 'var(--text-primary)', overflow: 'hidden',
+                        textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      }}>
+                        {post.title}
+                      </Link>
+                      <p style={{
+                        marginTop: 3, fontSize: 11.5, color: 'var(--text-secondary)',
+                        overflow: 'hidden', display: '-webkit-box',
+                        WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                      }}>
+                        {post.caption || "No caption added yet."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <PlatformBadge platform={post.platform} />
+
+                  <div>
+                    {cat
+                      ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-secondary)' }}>
+                          <span style={{ width: 8, height: 8, borderRadius: '50%', background: cat.color, flexShrink: 0 }} />
+                          {cat.name}
+                        </span>
+                      : <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Uncategorized</span>
+                    }
+                  </div>
+
+                  <div><PostStatusBadge status={post.status} /></div>
+
+                  <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
+                    {post.scheduled_at ? new Date(post.scheduled_at).toLocaleString() : "Not scheduled"}
+                  </div>
+
+                  <PostActions postId={post.id} />
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
-  </div>;
+  );
 }
