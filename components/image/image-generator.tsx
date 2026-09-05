@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import { Check, Clipboard, ImageIcon, Loader2, RefreshCw, Save, Sparkles, Upload } from "lucide-react";
@@ -75,16 +75,36 @@ export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pic
     if (!prompt) return;
     setIsGeneratingVideo(true); setVideoError(""); setVideoUrl("");
     try {
-      const res = await fetch("/api/generate-video", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
-      const data = await res.json();
-      if (data.video) setVideoUrl(data.video);
-      else setVideoError(data.error || "Video generation failed. Try again.");
+      const token = process.env.NEXT_PUBLIC_HUGGINGFACE_API_TOKEN;
+      if (!token) {
+        setVideoError("Video provider is not configured. Set NEXT_PUBLIC_HUGGINGFACE_API_TOKEN.");
+        return;
+      }
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/stabilityai/stable-video-diffusion-img2vid",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "x-wait-for-model": "true",
+          },
+          body: JSON.stringify({ inputs: prompt, parameters: { num_frames: 14 } }),
+        }
+      );
+      if (!response.ok) {
+        const err = await response.text();
+        setVideoError(`Video generation failed: ${err.slice(0, 200)}`);
+        return;
+      }
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = "";
+      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+      const base64 = btoa(binary);
+      setVideoUrl(`data:video/mp4;base64,${base64}`);
     } catch {
-      setVideoError("Video generation failed.");
+      setVideoError("Video generation failed. Try again.");
     } finally {
       setIsGeneratingVideo(false);
     }
