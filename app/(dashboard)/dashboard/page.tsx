@@ -178,10 +178,15 @@ export default async function DashboardPage() {
       </div>
 
       {/* Main grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16 }}>
+      {/* FIX: minmax(0, 1fr) instead of 1fr — prevents the left column from
+          "blowing out" past its available width when its content (the table)
+          is wide, which was pushing the whole page past the viewport edge. */}
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 320px", gap: 16 }}>
 
         {/* Recent posts */}
-        <div className="card">
+        {/* FIX: minWidth: 0 lets this card actually shrink to fit the grid
+            column above, instead of forcing its own natural content width. */}
+        <div className="card" style={{ minWidth: 0 }}>
           <div className="card-h">
             <span className="card-title">Recent content</span>
             <Link href="/posts" className="btn btn-ghost btn-sm" style={{ fontSize: 11.5 }}>
@@ -221,7 +226,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Right column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
 
           {/* Content Performance */}
           <div className="card" style={{ padding: "16px 18px" }}>
