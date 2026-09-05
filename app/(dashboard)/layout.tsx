@@ -8,5 +8,5 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { profile } = await getCurrentUser();
   const { workspaceId } = await getActiveWorkspace();
   const workspaces = await getWorkspaceOptions();
-  return <div className="flex min-h-screen"><Sidebar /><div className="flex min-w-0 flex-1 flex-col lg:ml-[220px] lg:w-[calc(100%_-_220px)]"><Topbar profile={profile} workspaceId={workspaceId} workspaces={workspaces} /><main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:pb-6">{children}</main></div><MobileNav /></div>;
+  return <div className="flex min-h-screen"><Sidebar /><div className="flex min-w-0 flex-1 flex-col lg:pl-[220px]"><Topbar profile={profile} workspaceId={workspaceId} workspaces={workspaces} /><main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:pb-6">{children}</main></div><MobileNav /></div>;
 }
