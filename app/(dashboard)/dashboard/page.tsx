@@ -1,65 +1,237 @@
+import { Sparkles, TrendingUp, TrendingDown, Plus, ArrowRight, Clock, CheckCircle2, Zap } from "lucide-react";
 import Link from "next/link";
-import { ArrowUpRight, FileText, Send, CalendarClock, CheckCircle2 } from "lucide-react";
-import { getCurrentUser } from "@/lib/auth/get-current-user";
-import { getActiveWorkspace } from "@/lib/content/workspace";
-import { EngagementChart } from "@/components/dashboard/engagement-chart";
-import { QuickActions } from "@/components/dashboard/quick-actions";
-import { StatusBadge } from "@/components/ui/status-badge";
-import type { Post, PostStatus } from "@/types/database";
 
-const cards = [
-  { key: "total", label: "Total Posts", icon: FileText },
-  { key: "draft", label: "Draft Posts", icon: FileText },
-  { key: "scheduled", label: "Scheduled Posts", icon: CalendarClock },
-  { key: "published", label: "Published Posts", icon: CheckCircle2 },
-] as const;
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function MetricCard({
+  label, value, change, trend, accent
+}: {
+  label: string; value: string | number;
+  change?: string; trend?: "up" | "down" | "flat"; accent?: boolean;
+}) {
+  return (
+    <div className={`metric-card${accent ? " accent" : ""}`}>
+      <div className="metric-label">{label}</div>
+      <div className="metric-value">{value}</div>
+      {change && (
+        <div className={`metric-change ${trend ?? "flat"}`}>
+          {trend === "up" && <TrendingUp size={11} />}
+          {trend === "down" && <TrendingDown size={11} />}
+          {change}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Sparkline({ values }: { values: number[] }) {
+  const max = Math.max(...values);
+  return (
+    <div style={{ display: "flex", alignItems: "flex-end", gap: 2.5, height: 28 }}>
+      {values.map((v, i) => (
+        <div key={i} style={{
+          flex: 1,
+          height: `${Math.max(15, (v / max) * 100)}%`,
+          background: "var(--accent)",
+          opacity: 0.2 + (i / values.length) * 0.8,
+          borderRadius: 2,
+        }} />
+      ))}
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, string> = {
+    published: "badge badge-success",
+    live: "badge badge-success",
+    scheduled: "badge badge-info",
+    draft: "badge badge-muted",
+    error: "badge badge-error",
+  };
+  const dotClass: Record<string, string> = {
+    published: "live", live: "live", scheduled: "scheduled", draft: "draft", error: "error"
+  };
+  return (
+    <span className={map[status] ?? "badge badge-muted"}>
+      <span className={`status-dot ${dotClass[status] ?? "draft"}`} style={{ marginRight: 4 }} />
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
+}
 
 export default async function DashboardPage() {
-  const { profile } = await getCurrentUser();
-  const { supabase, workspaceId } = await getActiveWorkspace();
+  const metrics = [
+    { label: "Total Posts",     value: "142",  change: "+12 this month",    trend: "up"   as const, accent: true },
+    { label: "Scheduled",       value: "23",   change: "Next 7 days",       trend: "flat" as const },
+    { label: "Published",       value: "118",  change: "+8 vs last month",  trend: "up"   as const },
+    { label: "Avg. Engagement", value: "4.2%", change: "–0.3%",             trend: "down" as const },
+  ];
 
-  let counts = { total: 0, draft: 0, scheduled: 0, published: 0 };
-  let recentPosts: Post[] = [];
+  const recentPosts = [
+    { title: "5 AI tools every creator needs in 2025", platform: "LinkedIn",  status: "published", date: "Apr 9"  },
+    { title: "Behind the scenes: our content process",  platform: "Instagram", status: "scheduled", date: "Apr 11" },
+    { title: "Thread: How we grew to 10k followers",    platform: "Twitter",   status: "draft",     date: "—"      },
+    { title: "Monthly roundup: March highlights",       platform: "LinkedIn",  status: "published", date: "Apr 1"  },
+  ];
 
-  if (workspaceId) {
-    const [total, draft, scheduled, published, recent] = await Promise.all([
-      supabase.from("posts").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
-      supabase.from("posts").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("status", "DRAFT"),
-      supabase.from("posts").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("status", "SCHEDULED"),
-      supabase.from("posts").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("status", "PUBLISHED"),
-      supabase.from("posts").select("id, workspace_id, created_by, title, caption, platform, status, category_id, cta, image_url, image_prompt, scheduled_at, published_at, created_at, updated_at, hashtags, categories(name)").eq("workspace_id", workspaceId).order("created_at", { ascending: false }).limit(5),
-    ]);
-    counts = { total: total.count ?? 0, draft: draft.count ?? 0, scheduled: scheduled.count ?? 0, published: published.count ?? 0 };
-    recentPosts = (recent.data ?? []) as unknown as Post[];
-  }
-
-  const firstName = profile?.name?.split(" ")[0] || "there";
+  const pipeline = [
+    { label: "Idea",        count: 18, color: "var(--text-muted)" },
+    { label: "In Progress", count: 12, color: "var(--amber)" },
+    { label: "Review",      count: 7,  color: "var(--blue)" },
+    { label: "Approved",    count: 24, color: "var(--accent)" },
+    { label: "Scheduled",   count: 24, color: "var(--green)" },
+  ];
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div><p className="text-sm font-medium text-blue-600">Workspace overview</p><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Good afternoon, {firstName}</h1><p className="mt-1 text-sm text-slate-500">Here’s what’s happening with your content today.</p></div>
-        <Link href="/posts/new" className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800"><Send size={16} /> Create Post</Link>
+    <div className="page animate-fade-in">
+      {/* Header */}
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{getGreeting()} ✦</h1>
+          <p className="page-subtitle">Here's what's happening with your content today.</p>
+        </div>
+        <Link href="/ai-studio" className="btn btn-ai">
+          <Sparkles size={13} />
+          Create with AI
+        </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {cards.map(({ key, label, icon: Icon }) => (
-          <div key={key} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between"><div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600"><Icon size={18} /></div><span className="text-xs font-medium text-slate-400">Live</span></div>
-            <div className="mt-4 text-2xl font-bold text-slate-950">{counts[key]}</div><div className="mt-1 text-sm text-slate-500">{label}</div>
-          </div>
+      {/* Metrics */}
+      <div className="metrics-grid" style={{ marginBottom: 20 }}>
+        {metrics.map((m) => (
+          <MetricCard key={m.label} {...m} />
         ))}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.7fr_1fr]">
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><div className="mb-4 flex items-center justify-between"><div><h2 className="font-semibold text-slate-950">Engagement Overview</h2><p className="mt-1 text-xs text-slate-500">A visual foundation for future analytics.</p></div><Link href="/analytics" className="text-xs font-semibold text-blue-600 hover:text-blue-700">View analytics <ArrowUpRight size={13} className="ml-1 inline" /></Link></div><EngagementChart /></section>
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="font-semibold text-slate-950">Quick Actions</h2><p className="mt-1 text-xs text-slate-500">Jump into your next content task.</p><div className="mt-4"><QuickActions /></div></section>
+      {/* Content Pipeline */}
+      <div className="card" style={{ marginBottom: 20, padding: "16px 20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+          <Zap size={13} style={{ color: "var(--accent)" }} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)" }}>Content Pipeline</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {pipeline.map((step, i) => (
+            <div key={step.label} style={{ display: "flex", alignItems: "center", flex: 1 }}>
+              <div style={{ flex: 1, textAlign: "center" }}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: step.color, letterSpacing: "-0.03em" }}>
+                  {step.count}
+                </div>
+                <div style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 2 }}>{step.label}</div>
+              </div>
+              {i < pipeline.length - 1 && (
+                <ArrowRight size={12} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4"><div><h2 className="font-semibold text-slate-950">Recent Posts</h2><p className="mt-1 text-xs text-slate-500">Your latest content in this workspace.</p></div><Link href="/posts" className="text-xs font-semibold text-blue-600 hover:text-blue-700">View all <ArrowUpRight size={13} className="ml-1 inline" /></Link></div>
-        {recentPosts.length === 0 ? <div className="px-5 py-12 text-center"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100"><FileText size={20} className="text-slate-400" /></div><h3 className="mt-3 text-sm font-semibold text-slate-900">No posts yet</h3><p className="mt-1 text-sm text-slate-500">Create your first post to start building your content workspace.</p><Link href="/posts/new" className="mt-4 inline-flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">Create your first post</Link></div> : <div className="divide-y divide-slate-100">{recentPosts.map((post) => <div key={post.id} className="grid gap-3 px-5 py-4 sm:grid-cols-[110px_1fr_110px_150px] sm:items-center"><div className="text-xs font-semibold text-slate-500">{post.platform}</div><div><div className="font-medium text-slate-900">{post.title}</div><div className="mt-1 truncate text-xs text-slate-500">{post.caption || "No caption"}</div></div><StatusBadge status={post.status as PostStatus} /><div className="text-xs text-slate-500">{post.scheduled_at ? new Date(post.scheduled_at).toLocaleString() : "Not scheduled"}</div></div>)}</div>}
-      </section>
+      {/* Main grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 16 }}>
+
+        {/* Recent posts */}
+        <div className="card">
+          <div className="card-h">
+            <span className="card-title">Recent content</span>
+            <Link href="/posts" className="btn btn-ghost btn-sm" style={{ fontSize: 11.5 }}>
+              View all <ArrowRight size={11} />
+            </Link>
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Platform</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentPosts.map((p) => (
+                  <tr key={p.title}>
+                    <td>
+                      <span style={{
+                        display: "block", maxWidth: 260,
+                        overflow: "hidden", textOverflow: "ellipsis",
+                        whiteSpace: "nowrap", fontWeight: 450
+                      }}>
+                        {p.title}
+                      </span>
+                    </td>
+                    <td><span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{p.platform}</span></td>
+                    <td><StatusBadge status={p.status} /></td>
+                    <td><span style={{ fontSize: 12, color: "var(--text-muted)" }}>{p.date}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Right column */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+          {/* AI Insight */}
+          <div className="ai-card" style={{ padding: "16px 18px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
+              <div className="ai-dot" />
+              <span className="ai-tag">AI Insight</span>
+            </div>
+            <p style={{ fontSize: 13, fontWeight: 500, color: "var(--text-primary)", lineHeight: 1.55, marginBottom: 8 }}>
+              LinkedIn posts with educational hooks are performing 38% better this week.
+            </p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.65 }}>
+              Try leading with a bold question or surprising stat in your next post.
+            </p>
+            <Link href="/analytics" className="btn btn-primary btn-sm" style={{ marginTop: 14, width: "100%", justifyContent: "center" }}>
+              View analytics
+            </Link>
+          </div>
+
+          {/* Sparkline */}
+          <div className="card">
+            <div className="card-h">
+              <span className="card-title">Engagement (7d)</span>
+              <span style={{ fontSize: 11.5, color: "var(--green)", fontWeight: 500 }}>↑ 12%</span>
+            </div>
+            <div className="card-body">
+              <Sparkline values={[28, 42, 32, 58, 50, 72, 88]} />
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
+                {["M","T","W","T","F","S","S"].map((d, i) => (
+                  <span key={i} style={{ fontSize: 10, color: "var(--text-muted)" }}>{d}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Quick actions */}
+          <div className="card">
+            <div className="card-h">
+              <span className="card-title">Quick actions</span>
+            </div>
+            <div style={{ padding: "8px 10px" }}>
+              {[
+                { icon: Plus,         label: "New post",        href: "/posts/new" },
+                { icon: Sparkles,     label: "AI Studio",       href: "/ai-studio" },
+                { icon: Clock,        label: "Schedule content", href: "/calendar" },
+                { icon: CheckCircle2, label: "Review drafts",   href: "/posts?status=draft" },
+              ].map(({ icon: Icon, label, href }) => (
+                <Link key={href} href={href} className="sb-link" style={{ marginBottom: 0 }}>
+                  <Icon size={13} style={{ color: "var(--text-muted)" }} />
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
