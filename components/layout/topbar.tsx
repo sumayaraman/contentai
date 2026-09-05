@@ -55,7 +55,7 @@ export function Topbar({ profile }: TopbarProps) {
       {/* Create with AI */}
       <Link href="/ai-studio" className="btn btn-ai btn-sm" style={{ gap: 6 }}>
         <Sparkles size={12} />
-        Create with AI
+        <span className="tb-create-label">Create with AI</span>
       </Link>
     </header>
   );
