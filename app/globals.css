@@ -8,21 +8,21 @@
 
 :root {
   /* ── Core palette ── */
-  --bg-base:          #07070f;   /* deepest background */
-  --bg-surface:       #0c0c18;   /* cards, panels */
-  --bg-elevated:      #10101f;   /* hover, raised */
-  --bg-overlay:       #14142a;   /* modals, dropdowns */
+  --bg-base:          #0d0d17;   /* deepest background */
+  --bg-surface:       #15151f;   /* cards, panels */
+  --bg-elevated:      #1b1b28;   /* hover, raised */
+  --bg-overlay:       #21212f;   /* modals, dropdowns */
 
   /* ── Borders ── */
-  --border:           rgba(255,255,255,0.06);
-  --border-subtle:    rgba(255,255,255,0.04);
-  --border-strong:    rgba(255,255,255,0.10);
+  --border:           rgba(255,255,255,0.09);
+  --border-subtle:    rgba(255,255,255,0.06);
+  --border-strong:    rgba(255,255,255,0.16);
   --border-accent:    rgba(109,92,255,0.25);
 
   /* ── Text ── */
   --text-primary:     #e8e8f5;
-  --text-secondary:   #7070a0;
-  --text-muted:       #3a3a5c;
+  --text-secondary:   #8f8fc0;
+  --text-muted:       #55557e;
   --text-inverse:     #07070f;
 
   /* ── Accent — electric violet ── */
@@ -582,8 +582,8 @@ img { display: block; max-width: 100%; }
 }
 
 .card-title {
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.01em;
 }
@@ -934,11 +934,15 @@ img { display: block; max-width: 100%; }
 }
 
 .page-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.15;
+  background: linear-gradient(135deg, #ffffff 0%, #b9aeff 60%, #a855f7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
 }
 
 .page-subtitle {
