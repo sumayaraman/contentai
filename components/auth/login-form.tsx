@@ -5,24 +5,108 @@ import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { safeNextPath } from "@/lib/security/paths";
+import { Loader2 } from "lucide-react";
+
 export function LoginForm() {
   const searchParams = useSearchParams();
   const next = safeNextPath(searchParams.get("next"));
-  const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState<string | null>(null); const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError(null);
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) { setError(error.message); return; }
-      window.location.assign(next);
-    } catch {
-      setError("Something went wrong. Please try again in a moment.");
-    } finally {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setError(error.message);
       setLoading(false);
+      return;
     }
+    window.location.assign(next);
   }
-  return <AuthShell title="Welcome back" subtitle="Sign in to continue to your ContentAI workspace."><form onSubmit={submit} className="mt-6 space-y-4"><div><label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">Email</label><input id="email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-blue-500" /></div><div><div className="mb-2 flex justify-between"><label htmlFor="password" className="text-sm font-medium text-slate-700">Password</label></div><input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-blue-500" /></div>{error && <div className="rounded-lg bg-red-50 px-3 py-2.5 text-sm text-red-700">{error}</div>}<button disabled={loading} className="w-full rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50">{loading ? "Signing in..." : "Sign in"}</button></form><p className="mt-6 text-center text-sm text-slate-500">New to ContentAI? <Link href="/signup" className="font-semibold text-blue-600 hover:text-blue-700">Create an account</Link></p></AuthShell>;
+
+  return (
+    <AuthShell title="Welcome back" subtitle="Sign in to continue to your ContentAI workspace.">
+      <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+        <div>
+          <label htmlFor="email" className="label">Email address</label>
+          <input
+            id="email"
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input"
+            placeholder="you@company.com"
+          />
+        </div>
+
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+            <label htmlFor="password" className="label" style={{ marginBottom: 0 }}>Password</label>
+            <Link href="/forgot-password" style={{ fontSize: 12, color: "var(--accent)" }}>
+              Forgot password?
+            </Link>
+          </div>
+          <input
+            id="password"
+            type="password"
+            required
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input"
+            placeholder="••••••••"
+          />
+        </div>
+
+        {error && (
+          <div style={{
+            background: "var(--red-soft)",
+            border: "1px solid rgba(239,68,68,0.2)",
+            borderRadius: "var(--r-sm)",
+            padding: "10px 13px",
+            fontSize: 12.5,
+            color: "var(--red)",
+            animation: "bounce-in 0.3s ease forwards"
+          }}>
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn btn-ai btn-lg"
+          style={{ width: "100%", marginTop: 4 }}
+        >
+          {loading ? (
+            <>
+              <Loader2 size={14} style={{ animation: "spin-slow 1s linear infinite" }} />
+              Signing in…
+            </>
+          ) : "Sign in"}
+        </button>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 0" }}>
+          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+          <span style={{ fontSize: 11.5, color: "var(--text-muted)" }}>or</span>
+          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+        </div>
+
+        <p style={{ textAlign: "center", fontSize: 13, color: "var(--text-secondary)" }}>
+          New to ContentAI?{" "}
+          <Link href="/signup" style={{ color: "var(--accent)", fontWeight: 500 }}>
+            Create an account
+          </Link>
+        </p>
+      </form>
+    </AuthShell>
+  );
 }
