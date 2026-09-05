@@ -20,22 +20,27 @@ export default async function CalendarPage() {
       .eq("workspace_id", workspaceId)
       .order("name", { ascending: true }),
   ]);
-
   if (postsError) throw new Error(postsError.message);
   if (categoriesError) throw new Error(categoriesError.message);
 
   const calendarPosts = (posts ?? []) as unknown as (Post & { categories: { name: string; color: string } | null })[];
   const categoryList = (categories ?? []) as Category[];
 
-  return <div className="mx-auto max-w-[1500px] space-y-6">
-    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-      <div>
-        <p className="flex items-center gap-2 text-sm font-medium text-blue-600"><CalendarDays size={16} /> Content planning</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Calendar</h1>
-        <p className="mt-1 max-w-2xl text-sm text-slate-500">Plan scheduled content, review your publishing rhythm, and move posts to a better time.</p>
+  return (
+    <div className="page animate-fade-up">
+      <div className="page-header">
+        <div>
+          <p className="ai-tag" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <CalendarDays size={13} /> Content planning
+          </p>
+          <h1 className="page-title">Calendar</h1>
+          <p className="page-subtitle">Plan scheduled content, review your publishing rhythm, and move posts to a better time.</p>
+        </div>
+        <Link href="/posts/new" className="btn btn-ai">
+          <Plus size={15} /> Create Post
+        </Link>
       </div>
-      <Link href="/posts/new" className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"><Plus size={17} /> Create Post</Link>
+      <ContentCalendar posts={calendarPosts} categories={categoryList} />
     </div>
-    <ContentCalendar posts={calendarPosts} categories={categoryList} />
-  </div>;
+  );
 }
