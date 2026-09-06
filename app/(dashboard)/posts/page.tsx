@@ -77,19 +77,8 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
 
       {/* Table */}
       <div className="card" style={{ marginTop: 16, overflow: 'hidden' }}>
-        {/* Table header */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0,1.8fr) 150px 150px 150px 130px 110px',
-          gap: 16,
-          padding: '10px 20px',
-          borderBottom: '1px solid var(--border)',
-          fontSize: 10.5,
-          fontWeight: 600,
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-          color: 'var(--text-muted)',
-        }} className="hidden lg:grid">
+        {/* Table header — hidden on mobile, shown as grid on desktop (≥1024px) */}
+        <div className="posts-table-header">
           <div>Post</div>
           <div>Platform</div>
           <div>Category</div>
@@ -122,15 +111,7 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
             {list.map((post) => {
               const cat = categoryList.find((item) => item.id === post.category_id);
               return (
-                <div key={post.id} style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'minmax(0,1.8fr) 150px 150px 150px 130px 110px',
-                  gap: 16,
-                  padding: '14px 20px',
-                  borderBottom: '1px solid var(--border-subtle)',
-                  alignItems: 'center',
-                  transition: 'background 0.12s',
-                }} className="lg:grid hover:bg-white/5">
+                <div key={post.id} className="posts-row">
                   {/* Post info */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                     <div style={{
