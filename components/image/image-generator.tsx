@@ -111,7 +111,7 @@ export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pic
   }
 
   return (
-    <div className="space-y-6 pb-24">
+    <div className="space-y-6 pb-40">
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-3 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -197,7 +197,7 @@ export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pic
       </section>
 
       {image && (
-        <section className="rounded-2xl border border-purple-200 bg-white p-5 shadow-sm">
+        <section className="rounded-2xl border border-purple-200 bg-white p-5 shadow-sm mb-10">
           <div className="flex items-center gap-3 mb-5 border-b border-slate-100 pb-5">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
