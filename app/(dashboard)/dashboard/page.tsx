@@ -178,10 +178,10 @@ export default async function DashboardPage() {
       </div>
 
       {/* Main grid */}
-      {/* FIX: minmax(0, 1fr) instead of 1fr — prevents the left column from
-          "blowing out" past its available width when its content (the table)
-          is wide, which was pushing the whole page past the viewport edge. */}
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 320px", gap: 16 }}>
+      {/* FIX: use the responsive .dashboard-grid class (defined in globals.css)
+          instead of an inline style, so the two-column layout collapses to a
+          single column on mobile via its @media (max-width: 899px) rule. */}
+      <div className="dashboard-grid">
 
         {/* Recent posts */}
         {/* FIX: minWidth: 0 lets this card actually shrink to fit the grid
