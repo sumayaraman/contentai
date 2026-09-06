@@ -16,14 +16,14 @@ function formatPercent(value: number) { return `${value.toFixed(2)}%`; }
 
 function MetricCard({ label, value, icon: Icon, helper }: { label: string; value: string; icon: typeof TrendingUp; helper?: string }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600"><Icon size={18} /></div>
         <span className="text-xs font-medium text-slate-400">MVP</span>
       </div>
-      <div className="mt-5 text-2xl font-bold tracking-tight text-slate-950">{value}</div>
-      <div className="mt-2 text-sm font-medium text-slate-600">{label}</div>
-      {helper && <div className="mt-1.5 text-xs text-slate-400">{helper}</div>}
+      <div className="mt-6 text-2xl font-bold tracking-tight text-slate-950">{value}</div>
+      <div className="mt-2.5 text-sm font-medium text-slate-600">{label}</div>
+      {helper && <div className="mt-2 text-xs text-slate-400">{helper}</div>}
     </div>
   );
 }
@@ -42,18 +42,18 @@ function EmptyChart({ message }: { message: string }) { return <div className="f
 function HorizontalBars({ rows, label, value }: { rows: Array<{ name: string; value: number; helper: string }>; label: string; value: (v: number) => string }) {
   if (!rows.length) return <EmptyChart message={`No ${label.toLowerCase()} data yet.`} />;
   const max = Math.max(...rows.map((row) => row.value), 1);
-  return <div className="space-y-6">{rows.map((row) => <div key={row.name}><div className="mb-2.5 flex items-center justify-between gap-4"><div className="min-w-0"><div className="truncate text-sm font-semibold text-slate-800">{row.name}</div><div className="mt-0.5 text-xs text-slate-400">{row.helper}</div></div><div className="text-sm font-semibold text-slate-700">{value(row.value)}</div></div><div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-600" style={{ width: `${Math.max(3, (row.value / max) * 100)}%` }} /></div></div>)}</div>;
+  return <div className="space-y-7">{rows.map((row) => <div key={row.name}><div className="mb-3 flex items-center justify-between gap-4"><div className="min-w-0"><div className="truncate text-sm font-semibold text-slate-800">{row.name}</div><div className="mt-1 text-xs text-slate-400">{row.helper}</div></div><div className="text-sm font-semibold text-slate-700">{value(row.value)}</div></div><div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-600" style={{ width: `${Math.max(3, (row.value / max) * 100)}%` }} /></div></div>)}</div>;
 }
 
 function Filters({ platform, setPlatform, category, setCategory, categories }: { platform: Platform | "ALL"; setPlatform: (v: Platform | "ALL") => void; category: string; setCategory: (v: string) => void; categories: Array<{ id: string; name: string }> }) {
   return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-400"><Filter size={14} /> Filters</div>
-      <select value={platform} onChange={(e) => setPlatform(e.target.value as Platform | "ALL")} className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-500">
+      <select value={platform} onChange={(e) => setPlatform(e.target.value as Platform | "ALL")} className="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none focus:border-blue-500">
         <option value="ALL">All platforms</option>
         {platformOrder.map((p) => <option key={p} value={p}>{platformLabels[p]}</option>)}
       </select>
-      <select value={category} onChange={(e) => setCategory(e.target.value)} className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-500">
+      <select value={category} onChange={(e) => setCategory(e.target.value)} className="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none focus:border-blue-500">
         <option value="ALL">All categories</option>
         {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
       </select>
@@ -90,75 +90,75 @@ export function AnalyticsDashboard({ initialData, categories, posts, initialPlat
   const scorePost = posts.find((p) => p.id === scorePostId);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 sm:space-y-7">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+    <div className="mx-auto max-w-7xl space-y-8 sm:space-y-9">
+      <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <p className="text-sm font-medium text-blue-600">Performance intelligence</p>
-          <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Analytics</h1>
-          <p className="mt-2 text-sm text-slate-500">Understand what is resonating and improve your next piece of content.</p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Analytics</h1>
+          <p className="mt-2.5 text-sm text-slate-500">Understand what is resonating and improve your next piece of content.</p>
         </div>
         <div className="inline-flex items-center gap-2 self-start rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 sm:self-auto">
           <BarChart3 size={14} /> Demo analytics fallback enabled
         </div>
       </div>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <Filters platform={platform} setPlatform={(value) => { setPlatform(value); updateFilter(value, category); }} category={category} setCategory={(value) => { setCategory(value); updateFilter(platform, value); }} categories={categories} />
       </section>
 
-      <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4">
         <MetricCard label="Published Posts" value={formatNumber(initialData.summary.totalPublishedPosts)} icon={CheckCircle2} />
         <MetricCard label="Likes" value={formatNumber(initialData.summary.likes)} icon={TrendingUp} />
         <MetricCard label="Comments" value={formatNumber(initialData.summary.comments)} icon={MessageCircle} />
         <MetricCard label="Shares" value={formatNumber(initialData.summary.shares)} icon={Share2} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3 sm:gap-5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-6">
         <MetricCard label="Reach" value={formatNumber(initialData.summary.reach)} icon={Users} />
         <MetricCard label="Impressions" value={formatNumber(initialData.summary.impressions)} icon={BarChart3} />
         <MetricCard label="Engagement Rate" value={formatPercent(initialData.summary.engagementRate)} icon={Gauge} helper="Interactions ÷ reach" />
       </div>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-        <div className="mb-5 flex items-center justify-between">
+      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="mb-6 flex items-center justify-between">
           <div>
             <h2 className="font-semibold text-slate-950">Engagement Over Time</h2>
-            <p className="mt-1.5 text-xs text-slate-500">Engagement rate across published content.</p>
+            <p className="mt-2 text-xs text-slate-500">Engagement rate across published content.</p>
           </div>
           <span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-500">{data.bestPosts.length ? "Filtered view" : "No matching posts"}</span>
         </div>
         <LineChart points={data.engagementOverTime} />
       </section>
 
-      <div className="grid gap-4 sm:gap-5 xl:grid-cols-2">
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="mb-6"><h2 className="font-semibold text-slate-950">Platform Performance</h2><p className="mt-1.5 text-xs text-slate-500">Compare engagement by platform.</p></div>
+      <div className="grid grid-cols-1 gap-5 sm:gap-6 xl:grid-cols-2">
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="mb-7"><h2 className="font-semibold text-slate-950">Platform Performance</h2><p className="mt-2 text-xs text-slate-500">Compare engagement by platform.</p></div>
           <HorizontalBars label="platform" rows={data.platformPerformance.map((row) => ({ name: platformLabels[row.platform], value: row.engagementRate, helper: `${row.posts} published · ${formatNumber(row.reach)} reach` }))} value={formatPercent} />
         </section>
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="mb-6"><h2 className="font-semibold text-slate-950">Category Performance</h2><p className="mt-1.5 text-xs text-slate-500">See which content themes perform best.</p></div>
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="mb-7"><h2 className="font-semibold text-slate-950">Category Performance</h2><p className="mt-2 text-xs text-slate-500">See which content themes perform best.</p></div>
           <HorizontalBars label="category" rows={data.categoryPerformance.map((row) => ({ name: row.categoryName, value: row.engagementRate, helper: `${row.posts} published · ${formatNumber(row.reach)} reach` }))} value={formatPercent} />
         </section>
       </div>
 
       <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-4 sm:px-5">
-          <div><h2 className="font-semibold text-slate-950">Best Performing Content</h2><p className="mt-1.5 text-xs text-slate-500">Top published posts ranked by engagement rate.</p></div>
+        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-5 sm:px-6">
+          <div><h2 className="font-semibold text-slate-950">Best Performing Content</h2><p className="mt-2 text-xs text-slate-500">Top published posts ranked by engagement rate.</p></div>
           <TrendingUp size={18} className="text-slate-400" />
         </div>
         {data.bestPosts.length === 0 ? (
-          <div className="px-4 py-12 text-center text-sm text-slate-500 sm:px-5">No published posts match these filters.</div>
+          <div className="px-5 py-14 text-center text-sm text-slate-500 sm:px-6">No published posts match these filters.</div>
         ) : (
           <div className="divide-y divide-slate-100">
             {data.bestPosts.map((post, index) => (
-              <div key={post.id} className="grid gap-3 px-4 py-5 sm:px-5 md:grid-cols-[32px_1fr_110px_120px] md:items-center">
+              <div key={post.id} className="grid gap-4 px-5 py-6 sm:px-6 md:grid-cols-[32px_1fr_110px_120px] md:items-center">
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500">{index + 1}</div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2"><span className="text-xs font-semibold text-slate-500">{platformShort[post.platform]}</span><span className="text-xs text-slate-400">· {post.categoryName}</span></div>
-                  <div className="mt-1.5 truncate font-medium text-slate-900">{post.title}</div>
-                  <div className="mt-1 truncate text-xs text-slate-500">{post.caption || "No caption"}</div>
+                  <div className="mt-2 truncate font-medium text-slate-900">{post.title}</div>
+                  <div className="mt-1.5 truncate text-xs text-slate-500">{post.caption || "No caption"}</div>
                 </div>
-                <div><div className="text-sm font-bold text-slate-900">{formatPercent(post.engagementRate)}</div><div className="mt-0.5 text-xs text-slate-400">engagement</div></div>
+                <div><div className="text-sm font-bold text-slate-900">{formatPercent(post.engagementRate)}</div><div className="mt-1 text-xs text-slate-400">engagement</div></div>
                 <div className="text-xs leading-relaxed text-slate-500">{formatNumber(post.likes)} likes<br />{formatNumber(post.reach)} reach</div>
               </div>
             ))}
@@ -166,49 +166,49 @@ export function AnalyticsDashboard({ initialData, categories, posts, initialPlat
         )}
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
+      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
           <div>
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600"><Sparkles size={18} /></div>
-              <div><h2 className="font-semibold text-slate-950">Content Intelligence</h2><p className="mt-1.5 text-xs text-slate-500">Score a post from 0–100 using your existing AI provider, with a deterministic fallback.</p></div>
+              <div><h2 className="font-semibold text-slate-950">Content Intelligence</h2><p className="mt-2 text-xs text-slate-500">Score a post from 0–100 using your existing AI provider, with a deterministic fallback.</p></div>
             </div>
           </div>
           {scoreResult && <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600">{scoreResult.provider.startsWith("mock") ? "Demo Mode" : `Real API · ${scoreResult.provider}`}</div>}
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
-          <div className="space-y-5">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[320px_1fr]">
+          <div className="space-y-6">
             <label className="block text-xs font-semibold text-slate-600">
               Post
-              <select value={scorePostId} onChange={(e) => setScorePostId(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-500">
+              <select value={scorePostId} onChange={(e) => setScorePostId(e.target.value)} className="mt-2.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none focus:border-blue-500">
                 <option value="">Choose a post</option>
                 {posts.map((post) => <option key={post.id} value={post.id}>{post.title}</option>)}
               </select>
             </label>
             <label className="block text-xs font-semibold text-slate-600">
               Target audience
-              <input value={audience} onChange={(e) => setAudience(e.target.value)} maxLength={300} className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-500" />
+              <input value={audience} onChange={(e) => setAudience(e.target.value)} maxLength={300} className="mt-2.5 w-full rounded-lg border border-slate-200 px-3 py-3 text-sm text-slate-700 outline-none focus:border-blue-500" />
             </label>
-            <button type="button" onClick={handleScore} disabled={isPending || !scorePostId} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="button" onClick={handleScore} disabled={isPending || !scorePostId} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
               {isPending ? <><RefreshCw size={15} className="animate-spin" /> Scoring…</> : <><Sparkles size={15} /> Score Content</>}
             </button>
             {scoreError && <p className="text-xs font-medium text-red-600">{scoreError}</p>}
           </div>
 
           {!scoreResult ? (
-            <div className="flex min-h-56 items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50/50 px-6 text-center">
-              <div><Gauge size={24} className="mx-auto text-slate-400" /><p className="mt-3 text-sm font-semibold text-slate-700">No score yet</p><p className="mt-1.5 text-xs text-slate-500">Select a post and score it to see strengths and recommendations.</p></div>
+            <div className="flex min-h-56 items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50/50 px-6 py-8 text-center">
+              <div><Gauge size={24} className="mx-auto text-slate-400" /><p className="mt-3 text-sm font-semibold text-slate-700">No score yet</p><p className="mt-2 text-xs text-slate-500">Select a post and score it to see strengths and recommendations.</p></div>
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-[160px_1fr]">
-              <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-5">
+            <div className="grid gap-7 md:grid-cols-[160px_1fr]">
+              <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-6">
                 <div className="text-5xl font-bold tracking-tight text-slate-950">{scoreResult.score}</div>
-                <div className="mt-1.5 text-sm font-medium text-slate-500">/ 100</div>
-                <div className="mt-3 text-xs font-semibold text-blue-600">Content Score</div>
+                <div className="mt-2 text-sm font-medium text-slate-500">/ 100</div>
+                <div className="mt-4 text-xs font-semibold text-blue-600">Content Score</div>
               </div>
               <div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-5 sm:grid-cols-2">
                   <ScoreBar label="Hook strength" value={scoreResult.breakdown.hookStrength} />
                   <ScoreBar label="Readability" value={scoreResult.breakdown.readability} />
                   <ScoreBar label="CTA strength" value={scoreResult.breakdown.ctaStrength} />
@@ -216,9 +216,9 @@ export function AnalyticsDashboard({ initialData, categories, posts, initialPlat
                   <ScoreBar label="Audience relevance" value={scoreResult.breakdown.audienceRelevance} />
                   <ScoreBar label="Hashtag quality" value={scoreResult.breakdown.hashtagQuality} />
                 </div>
-                <div className="mt-6 rounded-lg border border-slate-200 bg-white p-4">
+                <div className="mt-7 rounded-lg border border-slate-200 bg-white p-5">
                   <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Recommendations</div>
-                  <ul className="mt-3 space-y-2.5">
+                  <ul className="mt-3.5 space-y-3">
                     {scoreResult.recommendations.map((recommendation, i) => (
                       <li key={`${recommendation}-${i}`} className="flex gap-2 text-sm text-slate-600"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />{recommendation}</li>
                     ))}
@@ -228,7 +228,7 @@ export function AnalyticsDashboard({ initialData, categories, posts, initialPlat
             </div>
           )}
         </div>
-        {scorePost && <p className="mt-5 text-xs text-slate-400">Scored: {scorePost.title}</p>}
+        {scorePost && <p className="mt-6 text-xs text-slate-400">Scored: {scorePost.title}</p>}
       </section>
     </div>
   );
@@ -237,7 +237,7 @@ export function AnalyticsDashboard({ initialData, categories, posts, initialPlat
 function ScoreBar({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="mb-1.5 flex justify-between text-xs font-medium text-slate-500"><span>{label}</span><span>{Math.round(value)}</span></div>
+      <div className="mb-2 flex justify-between text-xs font-medium text-slate-500"><span>{label}</span><span>{Math.round(value)}</span></div>
       <div className="h-1.5 rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-600" style={{ width: `${Math.max(2, Math.min(100, value))}%` }} /></div>
     </div>
   );
