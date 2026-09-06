@@ -1038,3 +1038,41 @@ main {
 @media (max-width: 899px) {
   .dashboard-grid { grid-template-columns: 1fr; }
 }
+
+/* ══════════════════════════════════════════════════════
+   POSTS TABLE — RESPONSIVE (stacks as cards on mobile)
+══════════════════════════════════════════════════════ */
+.posts-table-header {
+  display: none;
+  grid-template-columns: minmax(0,1.8fr) 150px 150px 150px 130px 110px;
+  gap: 16px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+@media (min-width: 1024px) {
+  .posts-table-header { display: grid; }
+}
+
+.posts-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.12s;
+}
+.posts-row:hover { background: rgba(255,255,255,0.05); }
+
+@media (min-width: 1024px) {
+  .posts-row {
+    display: grid;
+    grid-template-columns: minmax(0,1.8fr) 150px 150px 150px 130px 110px;
+    gap: 16px;
+    align-items: center;
+  }
+}
