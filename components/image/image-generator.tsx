@@ -111,7 +111,7 @@ export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pic
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24">
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-3 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
