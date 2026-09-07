@@ -29,8 +29,9 @@ const goals: Array<[AIObjective, string]> = [["AWARENESS", "Brand awareness"], [
 
 const tomorrow = () => { const date = new Date(); date.setDate(date.getDate() + 1); return date.toISOString().slice(0, 10); };
 
-const inputClass = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[#f0f0ff] placeholder-[#50507a] outline-none focus:border-[#6d5cff]/60 focus:ring-2 focus:ring-[#6d5cff]/20 transition-all";
-const labelClass = "block text-xs font-semibold text-[#9090c0] mb-2 uppercase tracking-wider";
+// FIXED: use plain CSS classes from globals.css instead of Tailwind utility strings
+const inputClass = "ai-input";
+const labelClass = "label";
 
 export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [brandName, setBrandName] = useState(workspace.brand_name || workspace.name);
