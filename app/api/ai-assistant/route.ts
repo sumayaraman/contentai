@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gemma2-9b-it",
+        model: "meta-llama/llama-4-scout-17b-16e-instruct",
         messages: [
           {
             role: "system",
