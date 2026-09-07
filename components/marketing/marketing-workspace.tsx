@@ -29,7 +29,7 @@ const goals: Array<[AIObjective, string]> = [["AWARENESS", "Brand awareness"], [
 
 const tomorrow = () => { const date = new Date(); date.setDate(date.getDate() + 1); return date.toISOString().slice(0, 10); };
 
-// FIXED: use plain CSS classes from globals.css instead of Tailwind utility strings
+// Uses plain CSS classes from globals.css instead of Tailwind utility strings
 const inputClass = "ai-input";
 const labelClass = "label";
 
@@ -120,7 +120,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
         const variation = item.slot > 1 ? ` Daily variation ${item.slot}: use a distinctly different composition, camera angle and supporting scene.` : "";
         const prompt = `${item.imagePrompt} Brand: ${brandName}. Brand colors ${primary} and ${secondary}. Leave clean negative space in the top-left for the brand mark; do not generate text or a logo.${variation}`;
         const result = await generateMarketingImage(prompt, imageSize);
-        if (!result.ok) throw new Error(result.error || "Image generation failed.");
+        if (!result.ok || !result.image) throw new Error(result.error || "Image generation failed.");
         const branded = await composeLogo(result.image.url);
         const saveForm = new FormData();
         saveForm.set("image_url", branded); saveForm.set("prompt", prompt); saveForm.set("provider", result.image.provider); saveForm.set("model", result.image.model);
