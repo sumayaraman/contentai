@@ -33,6 +33,7 @@ const inputClass = "ai-input mw-input";
 const labelClass = "label mw-label";
 
 export function MarketingWorkspace({ workspace, canEdit }: Props) {
+  const [activeTab, setActiveTab] = useState<"brand" | "plan">("brand");
   const [brandName, setBrandName] = useState(workspace.brand_name || workspace.name);
   const [description, setDescription] = useState(workspace.brand_description || "");
   const [voice, setVoice] = useState(workspace.brand_voice || "Friendly, warm and professional");
@@ -153,19 +154,23 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
     });
   }
 
+  const canGenerate = brandName.trim() && description.trim() && audience.trim();
+
   return (
     <div className="mw-page">
       <style>{`
         .mw-page {
           display: flex;
           flex-direction: column;
-          gap: 24px;
+          gap: 20px;
           padding: 32px 36px 90px;
           max-width: 1440px;
           margin: 0 auto;
           width: 100%;
           box-sizing: border-box;
         }
+
+        /* Stats bar — fixed to never clip text, stacks on narrow width */
         .mw-stats-bar {
           display: flex;
           align-items: center;
@@ -173,62 +178,71 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           background: rgba(109,92,255,0.08);
           border: 1px solid rgba(109,92,255,0.2);
           border-radius: 16px;
-          padding: 18px 26px;
-          flex-wrap: wrap;
+          padding: 16px 24px;
           gap: 12px;
+          flex-wrap: wrap;
         }
+        .mw-stats-label { display: flex; align-items: center; gap: 8px; color: #a89dff; font-size: 13px; font-weight: 600; white-space: nowrap; }
+        .mw-stats-value { font-size: 20px; font-weight: 800; color: #f0f0ff; white-space: nowrap; }
+        .mw-stats-value span { font-size: 12.5px; font-weight: 400; color: #9090c0; }
+
         .mw-grid {
           display: grid;
           grid-template-columns: 380px minmax(0, 1fr);
-          gap: 24px;
+          gap: 20px;
           align-items: start;
           width: 100%;
         }
-        .mw-left {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          min-width: 0;
-        }
+
         .mw-card {
           background: var(--bg-surface);
           border: 1px solid var(--border);
           border-radius: 20px;
-          padding: 28px;
           box-sizing: border-box;
+          overflow: hidden;
         }
-        .mw-card-header {
+
+        /* Tabs */
+        .mw-tabs {
           display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 26px;
-          padding-bottom: 18px;
-          border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.05));
+          gap: 4px;
+          padding: 6px;
+          background: rgba(0,0,0,0.2);
+          border-bottom: 1px solid var(--border);
         }
-        .mw-fields {
-          display: flex;
-          flex-direction: column;
-          gap: 22px;
+        .mw-tab {
+          flex: 1;
+          text-align: center;
+          padding: 10px 12px;
+          border-radius: 10px;
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--text-secondary, #9090c0);
+          cursor: pointer;
+          transition: all 0.15s;
+          border: none;
+          background: transparent;
         }
-        .mw-field {
-          display: flex;
-          flex-direction: column;
+        .mw-tab.active {
+          background: rgba(109,92,255,0.18);
+          color: #b0a0ff;
         }
-        .mw-label {
-          margin-bottom: 10px !important;
-          font-size: 10.5px !important;
-          letter-spacing: 0.09em !important;
+        .mw-tab-body {
+          padding: 26px;
         }
-        .mw-input {
-          padding: 13px 15px !important;
-          font-size: 14px !important;
-          line-height: 1.4 !important;
+        .mw-tab-intro {
+          font-size: 12.5px;
+          color: #6d6d95;
+          line-height: 1.6;
+          margin-bottom: 22px;
         }
-        .mw-row-2 {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-        }
+
+        .mw-fields { display: flex; flex-direction: column; gap: 20px; }
+        .mw-field { display: flex; flex-direction: column; }
+        .mw-label { margin-bottom: 9px !important; font-size: 10.5px !important; letter-spacing: 0.08em !important; }
+        .mw-input { padding: 12px 14px !important; font-size: 13.5px !important; }
+        .mw-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
         .mw-content-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -243,34 +257,27 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           gap: 12px;
         }
 
-        /* ── Tablet / small desktop ── */
         @media (max-width: 1100px) {
           .mw-page { padding: 22px 20px 90px; }
-          .mw-grid { grid-template-columns: 330px minmax(0, 1fr); gap: 18px; }
-          .mw-card { padding: 22px; }
+          .mw-grid { grid-template-columns: 330px minmax(0, 1fr); gap: 16px; }
         }
 
-        /* ── Mobile: stack everything into a single column ── */
         @media (max-width: 767px) {
-          .mw-page { padding: 16px 14px 100px; gap: 16px; }
-          .mw-grid { grid-template-columns: 1fr; gap: 16px; }
-          .mw-card { padding: 20px; border-radius: 16px; }
-          .mw-card-header { margin-bottom: 20px; padding-bottom: 14px; }
-          .mw-fields { gap: 18px; }
-          .mw-row-2 { grid-template-columns: 1fr; gap: 14px; }
-          .mw-stats-bar { padding: 16px 18px; }
+          .mw-page { padding: 16px 14px 100px; gap: 14px; }
+          .mw-grid { grid-template-columns: 1fr; gap: 14px; }
+          .mw-tab-body { padding: 20px; }
+          .mw-fields { gap: 16px; }
+          .mw-row-2 { grid-template-columns: 1fr; gap: 12px; }
+          .mw-stats-bar { padding: 14px 16px; }
+          .mw-stats-value { font-size: 17px; }
           .mw-content-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
         }
       `}</style>
 
       {/* Stats bar */}
       <div className="mw-stats-bar">
-        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#a89dff", fontSize: 13, fontWeight: 600 }}>
-          <WandSparkles size={15} /> Planned output
-        </div>
-        <div style={{ fontSize: 22, fontWeight: 800, color: "#f0f0ff" }}>
-          {total} <span style={{ fontSize: 13, fontWeight: 400, color: "#9090c0" }}>posts · {duration} days · {postsPerDay}/day</span>
-        </div>
+        <div className="mw-stats-label"><WandSparkles size={15} /> Planned output</div>
+        <div className="mw-stats-value">{total} <span>posts · {duration} days · {postsPerDay}/day</span></div>
       </div>
 
       {/* Alert */}
@@ -283,134 +290,138 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
       {/* Main grid */}
       <div className="mw-grid">
 
-        {/* LEFT — Brand + Plan */}
-        <div className="mw-left">
+        {/* LEFT — tabbed card: Brand / Plan */}
+        <div className="mw-card">
+          <div className="mw-tabs">
+            <button className={`mw-tab ${activeTab === "brand" ? "active" : ""}`} onClick={() => setActiveTab("brand")}>
+              <Palette size={13} style={{ marginRight: 6, verticalAlign: -2 }} />
+              Brand
+            </button>
+            <button className={`mw-tab ${activeTab === "plan" ? "active" : ""}`} onClick={() => setActiveTab("plan")}>
+              <CalendarDays size={13} style={{ marginRight: 6, verticalAlign: -2 }} />
+              Content plan
+            </button>
+          </div>
 
-          {/* Brand identity card */}
-          <div className="mw-card">
-            <div className="mw-card-header">
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(109,92,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <Palette size={16} color="#a89dff" />
+          {activeTab === "brand" ? (
+            <div className="mw-tab-body">
+              <p className="mw-tab-intro">Set this up once — it's reused every time you generate a content plan.</p>
+              <div className="mw-fields">
+                <div className="mw-field">
+                  <div className={labelClass}>Brand name</div>
+                  <input disabled={!canEdit} value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="Your business name" className={inputClass} />
+                </div>
+                <div className="mw-field">
+                  <div className={labelClass}>What do you sell?</div>
+                  <textarea disabled={!canEdit} value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Specialty coffee, pastries and cozy cafe experiences." className={inputClass} style={{ resize: "vertical" }} />
+                </div>
+                <div className="mw-field">
+                  <div className={labelClass}>Brand voice</div>
+                  <input disabled={!canEdit} value={voice} onChange={e => setVoice(e.target.value)} placeholder="Warm, witty, premium…" className={inputClass} />
+                </div>
+                <div className="mw-row-2">
+                  <div className="mw-field">
+                    <div className={labelClass}>Primary color</div>
+                    <input disabled={!canEdit} type="color" value={primary} onChange={e => setPrimary(e.target.value)} style={{ width: "100%", height: 46, borderRadius: 12, border: "1px solid rgba(255,255,255,0.12)", background: primary, padding: 4, cursor: "pointer" }} />
+                  </div>
+                  <div className="mw-field">
+                    <div className={labelClass}>Accent color</div>
+                    <input disabled={!canEdit} type="color" value={secondary} onChange={e => setSecondary(e.target.value)} style={{ width: "100%", height: 46, borderRadius: 12, border: "1px solid rgba(255,255,255,0.12)", background: secondary, padding: 4, cursor: "pointer" }} />
+                  </div>
+                </div>
+
+                <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", padding: "13px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: "pointer" }}>
+                  <Upload size={14} />
+                  {logoUrl ? "Replace logo" : "Upload logo"}
+                  <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style={{ display: "none" }} onChange={e => void handleLogo(e.target.files?.[0])} />
+                </label>
+
+                {logoUrl && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, borderRadius: 12, border: "1px solid rgba(109,92,255,0.2)", background: "rgba(109,92,255,0.05)", padding: 13 }}>
+                    <img src={logoUrl} alt="Brand logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
+                    <span style={{ fontSize: 12, color: "#9090c0" }}>Added to every generated image.</span>
+                  </div>
+                )}
+
+                {canEdit && (
+                  <button onClick={saveBrand} disabled={isPending} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", padding: "13px 16px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1, marginTop: 4 }}>
+                    {isPending ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Check size={14} />}
+                    Save brand
+                  </button>
+                )}
               </div>
-              <span style={{ fontSize: 15, fontWeight: 700, color: "#f0f0ff" }}>Brand identity</span>
             </div>
-
-            <div className="mw-fields">
-              <div className="mw-field">
-                <div className={labelClass}>Brand name</div>
-                <input disabled={!canEdit} value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="Your business name" className={inputClass} />
-              </div>
-              <div className="mw-field">
-                <div className={labelClass}>What do you sell?</div>
-                <textarea disabled={!canEdit} value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Specialty coffee, pastries and cozy cafe experiences." className={inputClass} style={{ resize: "vertical" }} />
-              </div>
-              <div className="mw-field">
-                <div className={labelClass}>Brand voice</div>
-                <input disabled={!canEdit} value={voice} onChange={e => setVoice(e.target.value)} placeholder="Warm, witty, premium…" className={inputClass} />
-              </div>
-              <div className="mw-row-2">
+          ) : (
+            <div className="mw-tab-body">
+              <p className="mw-tab-intro">Tell us who you're talking to and how you want to show up — we'll build the full calendar from this.</p>
+              <div className="mw-fields">
                 <div className="mw-field">
-                  <div className={labelClass}>Primary</div>
-                  <input disabled={!canEdit} type="color" value={primary} onChange={e => setPrimary(e.target.value)} style={{ width: "100%", height: 48, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
+                  <div className={labelClass}>Target audience</div>
+                  <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="Coffee lovers, students, young professionals" className={inputClass} />
+                </div>
+                <div className="mw-row-2">
+                  <div className="mw-field">
+                    <div className={labelClass}>Platform</div>
+                    <select value={platform} onChange={e => setPlatform(e.target.value as AIPlatform)} className={inputClass}>
+                      {platforms.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                    </select>
+                  </div>
+                  <div className="mw-field">
+                    <div className={labelClass}>Posts / day</div>
+                    <select value={postsPerDay} onChange={e => setPostsPerDay(Number(e.target.value))} className={inputClass}>
+                      {[1, 2, 3].map(n => <option key={n} value={n}>{n} post{n > 1 ? "s" : ""}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="mw-row-2">
+                  <div className="mw-field">
+                    <div className={labelClass}>Days</div>
+                    <select value={duration} onChange={e => setDuration(Number(e.target.value))} className={inputClass}>
+                      {Array.from({ length: 30 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1} days</option>)}
+                    </select>
+                  </div>
+                  <div className="mw-field">
+                    <div className={labelClass}>Start date</div>
+                    <input type="date" min={tomorrow()} value={startDate} onChange={e => setStartDate(e.target.value)} className={inputClass} />
+                  </div>
+                </div>
+                <div className="mw-row-2">
+                  <div className="mw-field">
+                    <div className={labelClass}>Tone</div>
+                    <select value={tone} onChange={e => setTone(e.target.value as AITone)} className={inputClass}>
+                      {tones.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                    </select>
+                  </div>
+                  <div className="mw-field">
+                    <div className={labelClass}>Goal</div>
+                    <select value={goal} onChange={e => setGoal(e.target.value as AIObjective)} className={inputClass}>
+                      {goals.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                    </select>
+                  </div>
                 </div>
                 <div className="mw-field">
-                  <div className={labelClass}>Accent</div>
-                  <input disabled={!canEdit} type="color" value={secondary} onChange={e => setSecondary(e.target.value)} style={{ width: "100%", height: 48, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
+                  <div className={labelClass}>Image format</div>
+                  <select value={imageSize} onChange={e => setImageSize(e.target.value as typeof imageSize)} className={inputClass}>
+                    <option value="1024x1024">Square — Instagram post</option>
+                    <option value="1536x1024">Landscape</option>
+                    <option value="1024x1536">Portrait</option>
+                  </select>
                 </div>
-              </div>
 
-              <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", padding: "14px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: "pointer", transition: "all 0.2s" }}>
-                <Upload size={14} />
-                {logoUrl ? "Replace logo" : "Upload logo"}
-                <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style={{ display: "none" }} onChange={e => void handleLogo(e.target.files?.[0])} />
-              </label>
-
-              {logoUrl && (
-                <div style={{ display: "flex", alignItems: "center", gap: 12, borderRadius: 12, border: "1px solid rgba(109,92,255,0.2)", background: "rgba(109,92,255,0.05)", padding: 14 }}>
-                  <img src={logoUrl} alt="Brand logo" style={{ width: 42, height: 42, borderRadius: 8, objectFit: "contain" }} />
-                  <span style={{ fontSize: 12, color: "#9090c0" }}>Logo will be added to every generated image.</span>
-                </div>
-              )}
-
-              {canEdit && (
-                <button onClick={saveBrand} disabled={isPending} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", padding: "13px 16px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1, transition: "all 0.2s" }}>
-                  {isPending ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Check size={14} />}
-                  Save brand
+                <button onClick={generatePlan} disabled={isPending || !canGenerate}
+                  title={!canGenerate ? "Fill in brand name, description (Brand tab) and target audience first" : undefined}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)", padding: "14px 16px", fontSize: 14, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || !canGenerate) ? 0.5 : 1, boxShadow: "0 4px 20px rgba(109,92,255,0.25)", marginTop: 4 }}>
+                  {isPending ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Sparkles size={16} />}
+                  Generate {total} content pieces
                 </button>
-              )}
+                {!canGenerate && (
+                  <p style={{ fontSize: 11.5, color: "#6d6d95", textAlign: "center", marginTop: -8 }}>
+                    Fill in your brand name & description on the <b style={{ color: "#9090c0" }}>Brand</b> tab first.
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Content plan card */}
-          <div className="mw-card">
-            <div className="mw-card-header">
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(96,165,250,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <CalendarDays size={16} color="#60a5fa" />
-              </div>
-              <span style={{ fontSize: 15, fontWeight: 700, color: "#f0f0ff" }}>30-day content plan</span>
-            </div>
-
-            <div className="mw-fields">
-              <div className="mw-field">
-                <div className={labelClass}>Target audience</div>
-                <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="Coffee lovers, students, young professionals" className={inputClass} />
-              </div>
-              <div className="mw-row-2">
-                <div className="mw-field">
-                  <div className={labelClass}>Platform</div>
-                  <select value={platform} onChange={e => setPlatform(e.target.value as AIPlatform)} className={inputClass}>
-                    {platforms.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                  </select>
-                </div>
-                <div className="mw-field">
-                  <div className={labelClass}>Posts / day</div>
-                  <select value={postsPerDay} onChange={e => setPostsPerDay(Number(e.target.value))} className={inputClass}>
-                    {[1, 2, 3].map(n => <option key={n} value={n}>{n} post{n > 1 ? "s" : ""}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="mw-row-2">
-                <div className="mw-field">
-                  <div className={labelClass}>Days</div>
-                  <select value={duration} onChange={e => setDuration(Number(e.target.value))} className={inputClass}>
-                    {Array.from({ length: 30 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1} days</option>)}
-                  </select>
-                </div>
-                <div className="mw-field">
-                  <div className={labelClass}>Start date</div>
-                  <input type="date" min={tomorrow()} value={startDate} onChange={e => setStartDate(e.target.value)} className={inputClass} />
-                </div>
-              </div>
-              <div className="mw-row-2">
-                <div className="mw-field">
-                  <div className={labelClass}>Tone</div>
-                  <select value={tone} onChange={e => setTone(e.target.value as AITone)} className={inputClass}>
-                    {tones.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                  </select>
-                </div>
-                <div className="mw-field">
-                  <div className={labelClass}>Goal</div>
-                  <select value={goal} onChange={e => setGoal(e.target.value as AIObjective)} className={inputClass}>
-                    {goals.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="mw-field">
-                <div className={labelClass}>Image format</div>
-                <select value={imageSize} onChange={e => setImageSize(e.target.value as typeof imageSize)} className={inputClass}>
-                  <option value="1024x1024">Square — Instagram post</option>
-                  <option value="1536x1024">Landscape</option>
-                  <option value="1024x1536">Portrait</option>
-                </select>
-              </div>
-
-              <button onClick={generatePlan} disabled={isPending || !brandName.trim() || !description.trim() || !audience.trim()}
-                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)", padding: "15px 16px", fontSize: 14, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || !brandName.trim() || !description.trim() || !audience.trim()) ? 0.5 : 1, boxShadow: "0 4px 20px rgba(109,92,255,0.25)", transition: "all 0.2s", marginTop: 4 }}>
-                {isPending ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Sparkles size={16} />}
-                Generate {total} content pieces
-              </button>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* RIGHT — Content grid */}
@@ -427,7 +438,6 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
             </div>
           ) : (
             <div>
-              {/* Toolbar */}
               <div className="mw-toolbar">
                 <div>
                   <div style={{ fontWeight: 700, color: "#f0f0ff", fontSize: 15 }}>Content batch</div>
@@ -445,17 +455,15 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                 </div>
               </div>
 
-              {/* Progress */}
               {progress > 0 && progress < 100 && (
                 <div style={{ height: 4, borderRadius: 99, background: "rgba(255,255,255,0.08)", marginBottom: 18, overflow: "hidden" }}>
                   <div style={{ height: "100%", borderRadius: 99, background: "linear-gradient(90deg, #6d5cff, #a855f7)", width: `${progress}%`, transition: "width 0.3s" }} />
                 </div>
               )}
 
-              {/* Grid */}
               <div className="mw-content-grid">
                 {items.map((item) => (
-                  <article key={`${item.day}-${item.slot}`} style={{ borderRadius: 16, border: "1px solid rgba(255,255,255,0.08)", background: "var(--bg-surface)", overflow: "hidden", transition: "border-color 0.2s" }}>
+                  <article key={`${item.day}-${item.slot}`} style={{ borderRadius: 16, border: "1px solid rgba(255,255,255,0.08)", background: "var(--bg-surface)", overflow: "hidden" }}>
                     <div style={{ aspectRatio: "1", background: "var(--bg-elevated)" }}>
                       {item.imageUrl ? (
                         <img src={item.imageUrl} alt={item.contentIdea} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
