@@ -131,6 +131,15 @@ export function AIStudio({ categories }: { categories: Category[] }) {
             <Check size={16} style={{ color: "var(--accent)", flexShrink: 0 }} />{notice}
           </div>
         )}
+        {errors.form && (
+          <div role="alert" style={{
+            marginTop: 16, borderRadius: "var(--r-md)",
+            border: "1px solid rgba(239,68,68,0.3)", background: "var(--red-soft)", padding: "10px 14px",
+            fontSize: 12.5, fontWeight: 500, color: "var(--red)",
+          }}>
+            {errors.form}
+          </div>
+        )}
         {!content ? (
           <div style={{ display: "flex", minHeight: 480, flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 24px", textAlign: "center" }}>
             <div style={{ display: "flex", height: 56, width: 56, alignItems: "center", justifyContent: "center", borderRadius: "var(--r-xl)", background: "var(--bg-elevated)", color: "var(--text-muted)" }}><Sparkles size={24} /></div>
