@@ -29,9 +29,8 @@ const goals: Array<[AIObjective, string]> = [["AWARENESS", "Brand awareness"], [
 
 const tomorrow = () => { const date = new Date(); date.setDate(date.getDate() + 1); return date.toISOString().slice(0, 10); };
 
-// Uses plain CSS classes from globals.css instead of Tailwind utility strings
-const inputClass = "ai-input";
-const labelClass = "label";
+const inputClass = "ai-input mw-input";
+const labelClass = "label mw-label";
 
 export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [brandName, setBrandName] = useState(workspace.brand_name || workspace.name);
@@ -160,8 +159,8 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
         .mw-page {
           display: flex;
           flex-direction: column;
-          gap: 20px;
-          padding: 28px 32px 80px;
+          gap: 24px;
+          padding: 32px 36px 90px;
           max-width: 1440px;
           margin: 0 auto;
           width: 100%;
@@ -174,62 +173,92 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           background: rgba(109,92,255,0.08);
           border: 1px solid rgba(109,92,255,0.2);
           border-radius: 16px;
-          padding: 16px 24px;
+          padding: 18px 26px;
           flex-wrap: wrap;
-          gap: 10px;
+          gap: 12px;
         }
         .mw-grid {
           display: grid;
-          grid-template-columns: 360px minmax(0, 1fr);
-          gap: 20px;
+          grid-template-columns: 380px minmax(0, 1fr);
+          gap: 24px;
           align-items: start;
           width: 100%;
         }
         .mw-left {
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 20px;
           min-width: 0;
         }
         .mw-card {
           background: var(--bg-surface);
           border: 1px solid var(--border);
           border-radius: 20px;
-          padding: 24px;
+          padding: 28px;
           box-sizing: border-box;
+        }
+        .mw-card-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 26px;
+          padding-bottom: 18px;
+          border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.05));
+        }
+        .mw-fields {
+          display: flex;
+          flex-direction: column;
+          gap: 22px;
+        }
+        .mw-field {
+          display: flex;
+          flex-direction: column;
+        }
+        .mw-label {
+          margin-bottom: 10px !important;
+          font-size: 10.5px !important;
+          letter-spacing: 0.09em !important;
+        }
+        .mw-input {
+          padding: 13px 15px !important;
+          font-size: 14px !important;
+          line-height: 1.4 !important;
         }
         .mw-row-2 {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 12px;
+          gap: 16px;
         }
         .mw-content-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-          gap: 16px;
+          gap: 18px;
         }
         .mw-toolbar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: 16px;
+          margin-bottom: 18px;
           flex-wrap: wrap;
           gap: 12px;
         }
 
         /* ── Tablet / small desktop ── */
-        @media (max-width: 1023px) {
-          .mw-page { padding: 20px 20px 80px; }
-          .mw-grid { grid-template-columns: 320px minmax(0, 1fr); gap: 16px; }
+        @media (max-width: 1100px) {
+          .mw-page { padding: 22px 20px 90px; }
+          .mw-grid { grid-template-columns: 330px minmax(0, 1fr); gap: 18px; }
+          .mw-card { padding: 22px; }
         }
 
         /* ── Mobile: stack everything into a single column ── */
         @media (max-width: 767px) {
-          .mw-page { padding: 16px 14px 90px; gap: 14px; }
-          .mw-grid { grid-template-columns: 1fr; gap: 14px; }
-          .mw-card { padding: 18px; border-radius: 16px; }
-          .mw-row-2 { grid-template-columns: 1fr; gap: 10px; }
-          .mw-stats-bar { padding: 14px 16px; }
+          .mw-page { padding: 16px 14px 100px; gap: 16px; }
+          .mw-grid { grid-template-columns: 1fr; gap: 16px; }
+          .mw-card { padding: 20px; border-radius: 16px; }
+          .mw-card-header { margin-bottom: 20px; padding-bottom: 14px; }
+          .mw-fields { gap: 18px; }
+          .mw-row-2 { grid-template-columns: 1fr; gap: 14px; }
+          .mw-stats-bar { padding: 16px 18px; }
           .mw-content-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
         }
       `}</style>
@@ -246,7 +275,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
 
       {/* Alert */}
       {(message || error) && (
-        <div style={{ borderRadius: 12, padding: "12px 16px", fontSize: 13, fontWeight: 500, border: error ? "1px solid rgba(239,68,68,0.2)" : "1px solid rgba(109,92,255,0.3)", background: error ? "rgba(239,68,68,0.08)" : "rgba(109,92,255,0.08)", color: error ? "#f87171" : "#a89dff" }}>
+        <div style={{ borderRadius: 12, padding: "14px 18px", fontSize: 13, fontWeight: 500, border: error ? "1px solid rgba(239,68,68,0.2)" : "1px solid rgba(109,92,255,0.3)", background: error ? "rgba(239,68,68,0.08)" : "rgba(109,92,255,0.08)", color: error ? "#f87171" : "#a89dff" }}>
           {error || message}
         </div>
       )}
@@ -259,52 +288,52 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
 
           {/* Brand identity card */}
           <div className="mw-card">
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(109,92,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Palette size={15} color="#a89dff" />
+            <div className="mw-card-header">
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(109,92,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Palette size={16} color="#a89dff" />
               </div>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#f0f0ff" }}>Brand identity</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#f0f0ff" }}>Brand identity</span>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div>
+            <div className="mw-fields">
+              <div className="mw-field">
                 <div className={labelClass}>Brand name</div>
                 <input disabled={!canEdit} value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="Your business name" className={inputClass} />
               </div>
-              <div>
+              <div className="mw-field">
                 <div className={labelClass}>What do you sell?</div>
                 <textarea disabled={!canEdit} value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Specialty coffee, pastries and cozy cafe experiences." className={inputClass} style={{ resize: "vertical" }} />
               </div>
-              <div>
+              <div className="mw-field">
                 <div className={labelClass}>Brand voice</div>
                 <input disabled={!canEdit} value={voice} onChange={e => setVoice(e.target.value)} placeholder="Warm, witty, premium…" className={inputClass} />
               </div>
               <div className="mw-row-2">
-                <div>
+                <div className="mw-field">
                   <div className={labelClass}>Primary</div>
-                  <input disabled={!canEdit} type="color" value={primary} onChange={e => setPrimary(e.target.value)} style={{ width: "100%", height: 44, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
+                  <input disabled={!canEdit} type="color" value={primary} onChange={e => setPrimary(e.target.value)} style={{ width: "100%", height: 48, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
                 </div>
-                <div>
+                <div className="mw-field">
                   <div className={labelClass}>Accent</div>
-                  <input disabled={!canEdit} type="color" value={secondary} onChange={e => setSecondary(e.target.value)} style={{ width: "100%", height: 44, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
+                  <input disabled={!canEdit} type="color" value={secondary} onChange={e => setSecondary(e.target.value)} style={{ width: "100%", height: 48, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
                 </div>
               </div>
 
-              <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", padding: "12px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: "pointer", transition: "all 0.2s" }}>
+              <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", padding: "14px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: "pointer", transition: "all 0.2s" }}>
                 <Upload size={14} />
                 {logoUrl ? "Replace logo" : "Upload logo"}
                 <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style={{ display: "none" }} onChange={e => void handleLogo(e.target.files?.[0])} />
               </label>
 
               {logoUrl && (
-                <div style={{ display: "flex", alignItems: "center", gap: 12, borderRadius: 12, border: "1px solid rgba(109,92,255,0.2)", background: "rgba(109,92,255,0.05)", padding: 12 }}>
-                  <img src={logoUrl} alt="Brand logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: 12, borderRadius: 12, border: "1px solid rgba(109,92,255,0.2)", background: "rgba(109,92,255,0.05)", padding: 14 }}>
+                  <img src={logoUrl} alt="Brand logo" style={{ width: 42, height: 42, borderRadius: 8, objectFit: "contain" }} />
                   <span style={{ fontSize: 12, color: "#9090c0" }}>Logo will be added to every generated image.</span>
                 </div>
               )}
 
               {canEdit && (
-                <button onClick={saveBrand} disabled={isPending} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1, transition: "all 0.2s" }}>
+                <button onClick={saveBrand} disabled={isPending} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", padding: "13px 16px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1, transition: "all 0.2s" }}>
                   {isPending ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Check size={14} />}
                   Save brand
                 </button>
@@ -314,26 +343,26 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
 
           {/* Content plan card */}
           <div className="mw-card">
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(96,165,250,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <CalendarDays size={15} color="#60a5fa" />
+            <div className="mw-card-header">
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(96,165,250,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <CalendarDays size={16} color="#60a5fa" />
               </div>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#f0f0ff" }}>30-day content plan</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#f0f0ff" }}>30-day content plan</span>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div>
+            <div className="mw-fields">
+              <div className="mw-field">
                 <div className={labelClass}>Target audience</div>
                 <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="Coffee lovers, students, young professionals" className={inputClass} />
               </div>
               <div className="mw-row-2">
-                <div>
+                <div className="mw-field">
                   <div className={labelClass}>Platform</div>
                   <select value={platform} onChange={e => setPlatform(e.target.value as AIPlatform)} className={inputClass}>
                     {platforms.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                   </select>
                 </div>
-                <div>
+                <div className="mw-field">
                   <div className={labelClass}>Posts / day</div>
                   <select value={postsPerDay} onChange={e => setPostsPerDay(Number(e.target.value))} className={inputClass}>
                     {[1, 2, 3].map(n => <option key={n} value={n}>{n} post{n > 1 ? "s" : ""}</option>)}
@@ -341,32 +370,32 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                 </div>
               </div>
               <div className="mw-row-2">
-                <div>
+                <div className="mw-field">
                   <div className={labelClass}>Days</div>
                   <select value={duration} onChange={e => setDuration(Number(e.target.value))} className={inputClass}>
                     {Array.from({ length: 30 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1} days</option>)}
                   </select>
                 </div>
-                <div>
+                <div className="mw-field">
                   <div className={labelClass}>Start date</div>
                   <input type="date" min={tomorrow()} value={startDate} onChange={e => setStartDate(e.target.value)} className={inputClass} />
                 </div>
               </div>
               <div className="mw-row-2">
-                <div>
+                <div className="mw-field">
                   <div className={labelClass}>Tone</div>
                   <select value={tone} onChange={e => setTone(e.target.value as AITone)} className={inputClass}>
                     {tones.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                   </select>
                 </div>
-                <div>
+                <div className="mw-field">
                   <div className={labelClass}>Goal</div>
                   <select value={goal} onChange={e => setGoal(e.target.value as AIObjective)} className={inputClass}>
                     {goals.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                   </select>
                 </div>
               </div>
-              <div>
+              <div className="mw-field">
                 <div className={labelClass}>Image format</div>
                 <select value={imageSize} onChange={e => setImageSize(e.target.value as typeof imageSize)} className={inputClass}>
                   <option value="1024x1024">Square — Instagram post</option>
@@ -376,7 +405,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
               </div>
 
               <button onClick={generatePlan} disabled={isPending || !brandName.trim() || !description.trim() || !audience.trim()}
-                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)", padding: "13px 16px", fontSize: 14, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || !brandName.trim() || !description.trim() || !audience.trim()) ? 0.5 : 1, boxShadow: "0 4px 20px rgba(109,92,255,0.25)", transition: "all 0.2s", marginTop: 4 }}>
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)", padding: "15px 16px", fontSize: 14, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || !brandName.trim() || !description.trim() || !audience.trim()) ? 0.5 : 1, boxShadow: "0 4px 20px rgba(109,92,255,0.25)", transition: "all 0.2s", marginTop: 4 }}>
                 {isPending ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Sparkles size={16} />}
                 Generate {total} content pieces
               </button>
@@ -387,12 +416,12 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
         {/* RIGHT — Content grid */}
         <div style={{ minWidth: 0 }}>
           {!items.length ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 500, borderRadius: 20, border: "1px dashed rgba(255,255,255,0.1)", background: "var(--bg-surface)", padding: 32, textAlign: "center", boxSizing: "border-box" }}>
-              <div style={{ width: 64, height: 64, borderRadius: 18, background: "linear-gradient(135deg, rgba(109,92,255,0.2), rgba(168,85,247,0.2))", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 500, borderRadius: 20, border: "1px dashed rgba(255,255,255,0.1)", background: "var(--bg-surface)", padding: 40, textAlign: "center", boxSizing: "border-box" }}>
+              <div style={{ width: 64, height: 64, borderRadius: 18, background: "linear-gradient(135deg, rgba(109,92,255,0.2), rgba(168,85,247,0.2))", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 22 }}>
                 <Sparkles size={28} color="#a89dff" />
               </div>
               <h3 style={{ fontSize: 18, fontWeight: 700, color: "#f0f0ff", margin: 0 }}>Your content calendar will appear here</h3>
-              <p style={{ fontSize: 13, color: "#50507a", marginTop: 10, lineHeight: 1.7, maxWidth: 420 }}>
+              <p style={{ fontSize: 13, color: "#50507a", marginTop: 12, lineHeight: 1.7, maxWidth: 420 }}>
                 For a coffee business, the AI mixes product shots, education, customer moments, offers, behind-the-scenes and engagement posts. Your logo is composited after generation so it stays pixel-perfect.
               </p>
             </div>
@@ -402,15 +431,15 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
               <div className="mw-toolbar">
                 <div>
                   <div style={{ fontWeight: 700, color: "#f0f0ff", fontSize: 15 }}>Content batch</div>
-                  <div style={{ fontSize: 12, color: "#50507a", marginTop: 2 }}>{ready}/{items.length} images ready · {duration} days · {postsPerDay}/day</div>
+                  <div style={{ fontSize: 12, color: "#50507a", marginTop: 4 }}>{ready}/{items.length} images ready · {duration} days · {postsPerDay}/day</div>
                 </div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   <button onClick={() => void generateImages()} disabled={isPending || items.some(i => i.status === "generating")}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: "9px 14px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1 }}>
+                    style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: "10px 14px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1 }}>
                     <ImageIcon size={14} />{ready ? "Regenerate" : "Generate images"}
                   </button>
                   <button onClick={scheduleBatch} disabled={isPending || ready !== items.length}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, background: "linear-gradient(135deg, #6d5cff, #a855f7)", padding: "9px 14px", fontSize: 13, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || ready !== items.length) ? 0.4 : 1, boxShadow: "0 4px 16px rgba(109,92,255,0.25)" }}>
+                    style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, background: "linear-gradient(135deg, #6d5cff, #a855f7)", padding: "10px 14px", fontSize: 13, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || ready !== items.length) ? 0.4 : 1, boxShadow: "0 4px 16px rgba(109,92,255,0.25)" }}>
                     <CalendarDays size={14} />Add to calendar
                   </button>
                 </div>
@@ -418,7 +447,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
 
               {/* Progress */}
               {progress > 0 && progress < 100 && (
-                <div style={{ height: 4, borderRadius: 99, background: "rgba(255,255,255,0.08)", marginBottom: 16, overflow: "hidden" }}>
+                <div style={{ height: 4, borderRadius: 99, background: "rgba(255,255,255,0.08)", marginBottom: 18, overflow: "hidden" }}>
                   <div style={{ height: "100%", borderRadius: 99, background: "linear-gradient(90deg, #6d5cff, #a855f7)", width: `${progress}%`, transition: "width 0.3s" }} />
                 </div>
               )}
@@ -437,17 +466,17 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                         </div>
                       )}
                     </div>
-                    <div style={{ padding: 14 }}>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                    <div style={{ padding: 16 }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                         <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6d5cff" }}>Day {item.day}{postsPerDay > 1 ? ` · ${item.slot}` : ""}</span>
                         <span style={{ fontSize: 10, color: "#50507a" }}>{new Date(`${item.suggestedDate}T12:00:00`).toLocaleDateString()}</span>
                       </div>
                       <h4 style={{ fontSize: 13, fontWeight: 700, color: "#f0f0ff", margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{item.hook}</h4>
-                      <p style={{ fontSize: 11, color: "#9090c0", marginTop: 6, lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{item.caption}</p>
-                      <p style={{ fontSize: 11, fontWeight: 600, color: "#6d5cff", marginTop: 6 }}>→ {item.cta}</p>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 10 }}>
+                      <p style={{ fontSize: 11, color: "#9090c0", marginTop: 8, lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{item.caption}</p>
+                      <p style={{ fontSize: 11, fontWeight: 600, color: "#6d5cff", marginTop: 8 }}>→ {item.cta}</p>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: 12 }}>
                         {item.hashtags.slice(0, 4).map(tag => (
-                          <span key={tag} style={{ borderRadius: 99, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)", padding: "2px 8px", fontSize: 10, color: "#9090c0" }}>{tag}</span>
+                          <span key={tag} style={{ borderRadius: 99, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)", padding: "3px 9px", fontSize: 10, color: "#9090c0" }}>{tag}</span>
                         ))}
                       </div>
                     </div>
