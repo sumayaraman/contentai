@@ -14,9 +14,6 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <head>
-        <script src="https://js.puter.com/v2/" async defer></script>
-      </head>
       <body>{children}</body>
     </html>
   );
