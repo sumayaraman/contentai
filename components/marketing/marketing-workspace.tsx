@@ -29,8 +29,8 @@ const goals: Array<[AIObjective, string]> = [["AWARENESS", "Brand awareness"], [
 
 const tomorrow = () => { const date = new Date(); date.setDate(date.getDate() + 1); return date.toISOString().slice(0, 10); };
 
-const inputClass = "w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-[#f0f0ff] placeholder-[#50507a] outline-none focus:border-[#6d5cff]/60 focus:ring-2 focus:ring-[#6d5cff]/20 transition-all";
-const labelClass = "block text-xs font-semibold text-[#9090c0] mb-1.5 uppercase tracking-wider";
+const inputClass = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[#f0f0ff] placeholder-[#50507a] outline-none focus:border-[#6d5cff]/60 focus:ring-2 focus:ring-[#6d5cff]/20 transition-all";
+const labelClass = "block text-xs font-semibold text-[#9090c0] mb-2 uppercase tracking-wider";
 
 export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [brandName, setBrandName] = useState(workspace.brand_name || workspace.name);
@@ -143,11 +143,8 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
       const rows = generated.map((item) => ({
         title: `${brandName} — Day ${item.day}${postsPerDay > 1 ? ` · Post ${item.slot}` : ""}`,
         caption: `${item.hook}\n\n${item.caption}`,
-        platform,
-        cta: item.cta,
-        hashtags: item.hashtags,
-        imageUrl: item.imageUrl || null,
-        imagePrompt: item.imagePrompt,
+        platform, cta: item.cta, hashtags: item.hashtags,
+        imageUrl: item.imageUrl || null, imagePrompt: item.imagePrompt,
         scheduledAt: new Date(`${item.suggestedDate}T${String(9 + (item.slot - 1) * 6).padStart(2, "0")}:00:00`).toISOString(),
         status: "SCHEDULED" as const,
       }));
@@ -157,156 +154,142 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   }
 
   return (
-    <div className="space-y-6 pb-20">
+    <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingBottom: 80 }}>
 
-      {/* Hero header */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#6d5cff]/20 via-[#16162a] to-[#a855f7]/10 p-8">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,rgba(109,92,255,0.15),transparent)]" />
-        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#6d5cff]/30 bg-[#6d5cff]/10 px-3 py-1 text-xs font-semibold text-[#a89dff]">
-              <WandSparkles size={12} /> Brand Content Workspace
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight text-[#f0f0ff]">Your brand → a month of content</h2>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-[#9090c0]">
-              Save your brand once, choose posts per day, then generate a full content calendar with captions, hashtags, and branded images.
-            </p>
-          </div>
-          <div className="shrink-0 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-right backdrop-blur-sm">
-            <div className="text-xs text-[#9090c0]">Planned output</div>
-            <div className="mt-1 text-2xl font-bold text-[#f0f0ff]">{total} <span className="text-sm font-normal text-[#9090c0]">posts / {duration} days</span></div>
-          </div>
+      {/* Stats bar */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(109,92,255,0.08)", border: "1px solid rgba(109,92,255,0.2)", borderRadius: 16, padding: "16px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#a89dff", fontSize: 13, fontWeight: 600 }}>
+          <WandSparkles size={15} /> Planned output
+        </div>
+        <div style={{ fontSize: 22, fontWeight: 800, color: "#f0f0ff" }}>
+          {total} <span style={{ fontSize: 13, fontWeight: 400, color: "#9090c0" }}>posts · {duration} days · {postsPerDay}/day</span>
         </div>
       </div>
 
-      {/* Alert messages */}
+      {/* Alert */}
       {(message || error) && (
-        <div className={`rounded-xl border px-4 py-3 text-sm font-medium ${error
-          ? "border-red-500/20 bg-red-500/10 text-red-400"
-          : "border-[#6d5cff]/30 bg-[#6d5cff]/10 text-[#a89dff]"}`}>
+        <div style={{ borderRadius: 12, padding: "12px 16px", fontSize: 13, fontWeight: 500, border: error ? "1px solid rgba(239,68,68,0.2)" : "1px solid rgba(109,92,255,0.3)", background: error ? "rgba(239,68,68,0.08)" : "rgba(109,92,255,0.08)", color: error ? "#f87171" : "#a89dff" }}>
           {error || message}
         </div>
       )}
 
-      <div className="grid gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
+      {/* Main grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "360px 1fr", gap: 20, alignItems: "start" }}>
 
-        {/* LEFT PANEL */}
-        <div className="space-y-4">
+        {/* LEFT — Brand + Plan */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
-          {/* Brand identity */}
-          <div className="rounded-2xl border border-white/10 bg-[#0f0f1a] p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#6d5cff]/15">
-                <Palette size={14} className="text-[#a89dff]" />
+          {/* Brand identity card */}
+          <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(109,92,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Palette size={15} color="#a89dff" />
               </div>
-              <span className="text-sm font-semibold text-[#f0f0ff]">Brand identity</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#f0f0ff" }}>Brand identity</span>
             </div>
 
-            <div className="space-y-3">
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label className={labelClass}>Brand name</label>
-                <input disabled={!canEdit} value={brandName} onChange={e => setBrandName(e.target.value)} className={inputClass} placeholder="Your business name" />
+                <div className={labelClass}>Brand name</div>
+                <input disabled={!canEdit} value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="Your business name" className={inputClass} />
               </div>
               <div>
-                <label className={labelClass}>What do you sell?</label>
-                <textarea disabled={!canEdit} value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Specialty coffee, pastries and cozy cafe experiences." className={`${inputClass} resize-y`} />
+                <div className={labelClass}>What do you sell?</div>
+                <textarea disabled={!canEdit} value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Specialty coffee, pastries and cozy cafe experiences." className={inputClass} style={{ resize: "vertical" }} />
               </div>
               <div>
-                <label className={labelClass}>Brand voice</label>
+                <div className={labelClass}>Brand voice</div>
                 <input disabled={!canEdit} value={voice} onChange={e => setVoice(e.target.value)} placeholder="Warm, witty, premium…" className={inputClass} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
-                  <label className={labelClass}>Primary color</label>
-                  <input disabled={!canEdit} type="color" value={primary} onChange={e => setPrimary(e.target.value)}
-                    className="mt-0.5 h-11 w-full cursor-pointer rounded-xl border border-white/10 bg-white/5 p-1.5 transition-all hover:border-white/20" />
+                  <div className={labelClass}>Primary</div>
+                  <input disabled={!canEdit} type="color" value={primary} onChange={e => setPrimary(e.target.value)} style={{ width: "100%", height: 44, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
                 </div>
                 <div>
-                  <label className={labelClass}>Accent color</label>
-                  <input disabled={!canEdit} type="color" value={secondary} onChange={e => setSecondary(e.target.value)}
-                    className="mt-0.5 h-11 w-full cursor-pointer rounded-xl border border-white/10 bg-white/5 p-1.5 transition-all hover:border-white/20" />
+                  <div className={labelClass}>Accent</div>
+                  <input disabled={!canEdit} type="color" value={secondary} onChange={e => setSecondary(e.target.value)} style={{ width: "100%", height: 44, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
                 </div>
               </div>
 
-              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-white/15 bg-white/5 px-3 py-3 text-sm font-medium text-[#9090c0] transition-all hover:border-[#6d5cff]/40 hover:bg-[#6d5cff]/5 hover:text-[#a89dff]">
-                <Upload size={15} />
+              <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", padding: "12px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: "pointer", transition: "all 0.2s" }}>
+                <Upload size={14} />
                 {logoUrl ? "Replace logo" : "Upload logo"}
-                <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" className="hidden" onChange={e => void handleLogo(e.target.files?.[0])} />
+                <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style={{ display: "none" }} onChange={e => void handleLogo(e.target.files?.[0])} />
               </label>
 
               {logoUrl && (
-                <div className="flex items-center gap-3 rounded-xl border border-[#6d5cff]/20 bg-[#6d5cff]/5 p-3">
-                  <img src={logoUrl} alt="Brand logo" className="h-10 w-10 rounded-lg object-contain" />
-                  <span className="text-xs text-[#9090c0]">Logo composited onto every generated image.</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, borderRadius: 12, border: "1px solid rgba(109,92,255,0.2)", background: "rgba(109,92,255,0.05)", padding: 12 }}>
+                  <img src={logoUrl} alt="Brand logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
+                  <span style={{ fontSize: 12, color: "#9090c0" }}>Logo will be added to every generated image.</span>
                 </div>
               )}
 
               {canEdit && (
-                <button onClick={saveBrand} disabled={isPending}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/8 px-4 py-2.5 text-sm font-semibold text-[#f0f0ff] transition-all hover:bg-white/12 disabled:opacity-40">
-                  {isPending ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
+                <button onClick={saveBrand} disabled={isPending} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1, transition: "all 0.2s" }}>
+                  {isPending ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Check size={14} />}
                   Save brand
                 </button>
               )}
             </div>
           </div>
 
-          {/* Content plan */}
-          <div className="rounded-2xl border border-white/10 bg-[#0f0f1a] p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/15">
-                <CalendarDays size={14} className="text-blue-400" />
+          {/* Content plan card */}
+          <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(96,165,250,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <CalendarDays size={15} color="#60a5fa" />
               </div>
-              <span className="text-sm font-semibold text-[#f0f0ff]">30-day content plan</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#f0f0ff" }}>30-day content plan</span>
             </div>
 
-            <div className="space-y-3">
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label className={labelClass}>Target audience</label>
+                <div className={labelClass}>Target audience</div>
                 <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="Coffee lovers, students, young professionals" className={inputClass} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
-                  <label className={labelClass}>Platform</label>
+                  <div className={labelClass}>Platform</div>
                   <select value={platform} onChange={e => setPlatform(e.target.value as AIPlatform)} className={inputClass}>
                     {platforms.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className={labelClass}>Posts / day</label>
+                  <div className={labelClass}>Posts / day</div>
                   <select value={postsPerDay} onChange={e => setPostsPerDay(Number(e.target.value))} className={inputClass}>
                     {[1, 2, 3].map(n => <option key={n} value={n}>{n} post{n > 1 ? "s" : ""}</option>)}
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
-                  <label className={labelClass}>Days</label>
+                  <div className={labelClass}>Days</div>
                   <select value={duration} onChange={e => setDuration(Number(e.target.value))} className={inputClass}>
                     {Array.from({ length: 30 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1} days</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className={labelClass}>Start date</label>
+                  <div className={labelClass}>Start date</div>
                   <input type="date" min={tomorrow()} value={startDate} onChange={e => setStartDate(e.target.value)} className={inputClass} />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
-                  <label className={labelClass}>Tone</label>
+                  <div className={labelClass}>Tone</div>
                   <select value={tone} onChange={e => setTone(e.target.value as AITone)} className={inputClass}>
                     {tones.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className={labelClass}>Goal</label>
+                  <div className={labelClass}>Goal</div>
                   <select value={goal} onChange={e => setGoal(e.target.value as AIObjective)} className={inputClass}>
                     {goals.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className={labelClass}>Image format</label>
+                <div className={labelClass}>Image format</div>
                 <select value={imageSize} onChange={e => setImageSize(e.target.value as typeof imageSize)} className={inputClass}>
                   <option value="1024x1024">Square — Instagram post</option>
                   <option value="1536x1024">Landscape</option>
@@ -314,92 +297,79 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                 </select>
               </div>
 
-              <button
-                onClick={generatePlan}
-                disabled={isPending || !brandName.trim() || !description.trim() || !audience.trim()}
-                className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6d5cff] to-[#a855f7] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-[#6d5cff]/20 transition-all hover:opacity-90 disabled:opacity-40">
-                {isPending ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+              <button onClick={generatePlan} disabled={isPending || !brandName.trim() || !description.trim() || !audience.trim()}
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)", padding: "13px 16px", fontSize: 14, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || !brandName.trim() || !description.trim() || !audience.trim()) ? 0.5 : 1, boxShadow: "0 4px 20px rgba(109,92,255,0.25)", transition: "all 0.2s", marginTop: 4 }}>
+                {isPending ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Sparkles size={16} />}
                 Generate {total} content pieces
               </button>
             </div>
           </div>
         </div>
 
-        {/* RIGHT PANEL */}
-        <div className="min-w-0">
+        {/* RIGHT — Content grid */}
+        <div>
           {!items.length ? (
-            <div className="flex min-h-[640px] flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-[#0f0f1a] px-8 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#6d5cff]/20 to-[#a855f7]/20 shadow-lg">
-                <Sparkles size={28} className="text-[#a89dff]" />
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 600, borderRadius: 20, border: "1px dashed rgba(255,255,255,0.1)", background: "var(--bg-surface)", padding: 40, textAlign: "center" }}>
+              <div style={{ width: 64, height: 64, borderRadius: 18, background: "linear-gradient(135deg, rgba(109,92,255,0.2), rgba(168,85,247,0.2))", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+                <Sparkles size={28} color="#a89dff" />
               </div>
-              <h3 className="mt-5 text-lg font-bold text-[#f0f0ff]">Your content calendar will appear here</h3>
-              <p className="mt-2 max-w-md text-sm leading-6 text-[#50507a]">
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#f0f0ff", margin: 0 }}>Your content calendar will appear here</h3>
+              <p style={{ fontSize: 13, color: "#50507a", marginTop: 10, lineHeight: 1.7, maxWidth: 420 }}>
                 For a coffee business, the AI mixes product shots, education, customer moments, offers, behind-the-scenes and engagement posts. Your logo is composited after generation so it stays pixel-perfect.
               </p>
             </div>
           ) : (
             <div>
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              {/* Toolbar */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
                 <div>
-                  <h3 className="font-bold text-[#f0f0ff]">Content batch</h3>
-                  <p className="text-xs text-[#50507a]">{ready}/{items.length} images ready · {duration} days · {postsPerDay}/day</p>
+                  <div style={{ fontWeight: 700, color: "#f0f0ff", fontSize: 15 }}>Content batch</div>
+                  <div style={{ fontSize: 12, color: "#50507a", marginTop: 2 }}>{ready}/{items.length} images ready · {duration} days · {postsPerDay}/day</div>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => void generateImages()}
-                    disabled={isPending || items.some(i => i.status === "generating")}
-                    className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-sm font-semibold text-[#f0f0ff] transition-all hover:bg-white/10 disabled:opacity-40">
-                    <ImageIcon size={15} />
-                    {ready ? "Regenerate images" : "Generate all images"}
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={() => void generateImages()} disabled={isPending || items.some(i => i.status === "generating")}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: "9px 14px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1 }}>
+                    <ImageIcon size={14} />{ready ? "Regenerate" : "Generate images"}
                   </button>
-                  <button
-                    onClick={scheduleBatch}
-                    disabled={isPending || ready !== items.length}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6d5cff] to-[#a855f7] px-3.5 py-2 text-sm font-bold text-white shadow-lg shadow-[#6d5cff]/20 transition-all hover:opacity-90 disabled:opacity-40">
-                    <CalendarDays size={15} />
-                    Add all to calendar
+                  <button onClick={scheduleBatch} disabled={isPending || ready !== items.length}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, background: "linear-gradient(135deg, #6d5cff, #a855f7)", padding: "9px 14px", fontSize: 13, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || ready !== items.length) ? 0.4 : 1, boxShadow: "0 4px 16px rgba(109,92,255,0.25)" }}>
+                    <CalendarDays size={14} />Add to calendar
                   </button>
                 </div>
               </div>
 
+              {/* Progress */}
               {progress > 0 && progress < 100 && (
-                <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full rounded-full bg-gradient-to-r from-[#6d5cff] to-[#a855f7] transition-all duration-300" style={{ width: `${progress}%` }} />
+                <div style={{ height: 4, borderRadius: 99, background: "rgba(255,255,255,0.08)", marginBottom: 16, overflow: "hidden" }}>
+                  <div style={{ height: "100%", borderRadius: 99, background: "linear-gradient(90deg, #6d5cff, #a855f7)", width: `${progress}%`, transition: "width 0.3s" }} />
                 </div>
               )}
 
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {items.map((item, index) => (
-                  <article key={`${item.day}-${item.slot}`} className="overflow-hidden rounded-2xl border border-white/10 bg-[#0f0f1a] transition-all hover:border-[#6d5cff]/30 hover:shadow-lg hover:shadow-[#6d5cff]/5">
-                    <div className="aspect-square bg-[#16162a]">
+              {/* Grid */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
+                {items.map((item) => (
+                  <article key={`${item.day}-${item.slot}`} style={{ borderRadius: 16, border: "1px solid rgba(255,255,255,0.08)", background: "var(--bg-surface)", overflow: "hidden", transition: "border-color 0.2s" }}>
+                    <div style={{ aspectRatio: "1", background: "var(--bg-elevated)" }}>
                       {item.imageUrl ? (
-                        <img src={item.imageUrl} alt={item.contentIdea} className="h-full w-full object-cover" />
+                        <img src={item.imageUrl} alt={item.contentIdea} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       ) : (
-                        <div className="flex h-full flex-col items-center justify-center px-5 text-center text-[#50507a]">
-                          {item.status === "generating"
-                            ? <Loader2 size={24} className="animate-spin text-[#6d5cff]" />
-                            : <ImageIcon size={24} />}
-                          <span className="mt-2 text-xs font-semibold">
-                            Day {item.day}{postsPerDay > 1 ? ` · Post ${item.slot}` : ""}
-                          </span>
+                        <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#50507a" }}>
+                          {item.status === "generating" ? <Loader2 size={22} style={{ animation: "spin 1s linear infinite", color: "#6d5cff" }} /> : <ImageIcon size={22} />}
+                          <span style={{ marginTop: 8, fontSize: 11, fontWeight: 600 }}>Day {item.day}{postsPerDay > 1 ? ` · ${item.slot}` : ""}</span>
                         </div>
                       )}
                     </div>
-                    <div className="p-4">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#6d5cff]">
-                          Day {item.day}{postsPerDay > 1 ? ` · ${item.slot}` : ""}
-                        </span>
-                        <span className="text-[10px] text-[#50507a]">
-                          {new Date(`${item.suggestedDate}T12:00:00`).toLocaleDateString()}
-                        </span>
+                    <div style={{ padding: 14 }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6d5cff" }}>Day {item.day}{postsPerDay > 1 ? ` · ${item.slot}` : ""}</span>
+                        <span style={{ fontSize: 10, color: "#50507a" }}>{new Date(`${item.suggestedDate}T12:00:00`).toLocaleDateString()}</span>
                       </div>
-                      <h4 className="mt-2 line-clamp-2 text-sm font-bold text-[#f0f0ff]">{item.hook}</h4>
-                      <p className="mt-2 line-clamp-4 whitespace-pre-line text-xs leading-5 text-[#9090c0]">{item.caption}</p>
-                      <p className="mt-2 line-clamp-1 text-xs font-semibold text-[#6d5cff]">→ {item.cta}</p>
-                      <div className="mt-3 flex flex-wrap gap-1">
+                      <h4 style={{ fontSize: 13, fontWeight: 700, color: "#f0f0ff", margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{item.hook}</h4>
+                      <p style={{ fontSize: 11, color: "#9090c0", marginTop: 6, lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{item.caption}</p>
+                      <p style={{ fontSize: 11, fontWeight: 600, color: "#6d5cff", marginTop: 6 }}>→ {item.cta}</p>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 10 }}>
                         {item.hashtags.slice(0, 4).map(tag => (
-                          <span key={tag} className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-[#9090c0]">{tag}</span>
+                          <span key={tag} style={{ borderRadius: 99, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)", padding: "2px 8px", fontSize: 10, color: "#9090c0" }}>{tag}</span>
                         ))}
                       </div>
                     </div>
