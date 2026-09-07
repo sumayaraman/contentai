@@ -9,6 +9,21 @@ const MAX_FALLBACK_BYTES = 1 * 1024 * 1024;
 async function resolveImage(url: string) {
   const match = url.match(/^data:(image\/(?:png|jpeg|webp|svg\+xml));base64,([A-Za-z0-9+/=]+)$/);
   if (match) return { mimeType: match[1], bytes: Buffer.from(match[2], "base64") };
+
+  if (/^https?:\/\//i.test(url)) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const contentType = response.headers.get("content-type") || "";
+      const allowed = ["image/png", "image/jpeg", "image/webp", "image/svg+xml"];
+      const mimeType = allowed.find((type) => contentType.includes(type)) || "image/png";
+      const arrayBuffer = await response.arrayBuffer();
+      return { mimeType, bytes: Buffer.from(arrayBuffer) };
+    } catch {
+      return null;
+    }
+  }
+
   return null;
 }
 export async function generateImage(formData: FormData) {
