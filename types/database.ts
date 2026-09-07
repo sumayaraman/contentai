@@ -18,6 +18,12 @@ export interface Workspace {
   created_at: string;
   updated_at: string;
   ai_provider?: "auto" | "mock" | "openai" | "anthropic" | "groq";
+  brand_name?: string | null;
+  brand_description?: string | null;
+  brand_logo_url?: string | null;
+  brand_primary_color?: string | null;
+  brand_secondary_color?: string | null;
+  brand_voice?: string | null;
 }
 
 export interface Category {

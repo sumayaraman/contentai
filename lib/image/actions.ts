@@ -37,7 +37,7 @@ export async function generateImage(formData: FormData) {
 }
 export async function saveGeneratedImage(formData: FormData) {
   const { supabase, userId, workspaceId } = await getActiveWorkspace();
-  const imageUrl = normalizeText(formData.get("image_url"), 20_000);
+  const imageUrl = normalizeText(formData.get("image_url"), 15_000_000);
   const prompt = normalizeText(formData.get("prompt"), MAX_PROMPT);
   const provider = normalizeText(formData.get("provider"), 50) || "mock";
   const model = normalizeText(formData.get("model"), 100) || null;

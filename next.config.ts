@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: true,
+  experimental: {
+    serverActions: { bodySizeLimit: "10mb" },
+  },
   poweredByHeader: false,
   images: {
     remotePatterns: [

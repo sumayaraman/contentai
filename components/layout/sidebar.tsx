@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3, CalendarDays, FolderKanban, Image,
+  BarChart3, CalendarDays, FolderKanban, Image, WandSparkles,
   LayoutDashboard, Megaphone, PenSquare, RadioTower,
   Settings, Sparkles, ChevronDown, HelpCircle
 } from "lucide-react";
@@ -13,6 +13,7 @@ const navMain = [
   { href: "/posts",         label: "Posts",         icon: PenSquare },
   { href: "/calendar",      label: "Calendar",      icon: CalendarDays },
   { href: "/campaigns",     label: "Campaigns",     icon: Megaphone },
+  { href: "/workspace",     label: "Content Workspace", icon: WandSparkles },
   { href: "/analytics",     label: "Analytics",     icon: BarChart3 },
   { href: "/publishing",    label: "Publishing",    icon: RadioTower },
   { href: "/media-library", label: "Media Library", icon: Image },

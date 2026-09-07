@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, CalendarDays, LayoutDashboard, PenSquare, Sparkles } from "lucide-react";
+import { BarChart3, CalendarDays, LayoutDashboard, PenSquare, Sparkles, WandSparkles } from "lucide-react";
 
 const items = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/posts", label: "Posts", icon: PenSquare },
   { href: "/ai-studio", label: "AI", icon: Sparkles },
   { href: "/calendar", label: "Calendar", icon: CalendarDays },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/workspace", label: "Workspace", icon: WandSparkles },
 ];
 
 export function MobileNav() {

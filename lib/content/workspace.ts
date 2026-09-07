@@ -17,7 +17,7 @@ export async function getActiveWorkspace() {
 
   let query = supabase
     .from("workspace_members")
-    .select("workspace_id, role, workspaces!inner(id, name, owner_id, ai_provider, created_at, updated_at)")
+    .select("workspace_id, role, workspaces!inner(id, name, owner_id, ai_provider, brand_name, brand_description, brand_logo_url, brand_primary_color, brand_secondary_color, brand_voice, created_at, updated_at)")
     .eq("user_id", authData.user.id);
 
   if (preferredId) query = query.eq("workspace_id", preferredId);
@@ -28,7 +28,7 @@ export async function getActiveWorkspace() {
   if ((!membership || error) && preferredId) {
     const fallback = await supabase
       .from("workspace_members")
-      .select("workspace_id, role, workspaces!inner(id, name, owner_id, ai_provider, created_at, updated_at)")
+      .select("workspace_id, role, workspaces!inner(id, name, owner_id, ai_provider, brand_name, brand_description, brand_logo_url, brand_primary_color, brand_secondary_color, brand_voice, created_at, updated_at)")
       .eq("user_id", authData.user.id)
       .order("created_at", { ascending: true })
       .limit(1)
@@ -39,7 +39,7 @@ export async function getActiveWorkspace() {
 
   if (error || !membership) throw new Error("No workspace is available for this account.");
 
-  const workspace = membership.workspaces as unknown as { id: string; name: string; owner_id: string; ai_provider: string; created_at: string; updated_at: string };
+  const workspace = membership.workspaces as unknown as { id: string; name: string; owner_id: string; ai_provider: string; brand_name: string | null; brand_description: string | null; brand_logo_url: string | null; brand_primary_color: string | null; brand_secondary_color: string | null; brand_voice: string | null; created_at: string; updated_at: string };
   return {
     supabase,
     userId: authData.user.id,
