@@ -155,10 +155,87 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingBottom: 80 }}>
+    <div className="mw-page">
+      <style>{`
+        .mw-page {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          padding: 28px 32px 80px;
+          max-width: 1440px;
+          margin: 0 auto;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .mw-stats-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: rgba(109,92,255,0.08);
+          border: 1px solid rgba(109,92,255,0.2);
+          border-radius: 16px;
+          padding: 16px 24px;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .mw-grid {
+          display: grid;
+          grid-template-columns: 360px minmax(0, 1fr);
+          gap: 20px;
+          align-items: start;
+          width: 100%;
+        }
+        .mw-left {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          min-width: 0;
+        }
+        .mw-card {
+          background: var(--bg-surface);
+          border: 1px solid var(--border);
+          border-radius: 20px;
+          padding: 24px;
+          box-sizing: border-box;
+        }
+        .mw-row-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .mw-content-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+          gap: 16px;
+        }
+        .mw-toolbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16px;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        /* ── Tablet / small desktop ── */
+        @media (max-width: 1023px) {
+          .mw-page { padding: 20px 20px 80px; }
+          .mw-grid { grid-template-columns: 320px minmax(0, 1fr); gap: 16px; }
+        }
+
+        /* ── Mobile: stack everything into a single column ── */
+        @media (max-width: 767px) {
+          .mw-page { padding: 16px 14px 90px; gap: 14px; }
+          .mw-grid { grid-template-columns: 1fr; gap: 14px; }
+          .mw-card { padding: 18px; border-radius: 16px; }
+          .mw-row-2 { grid-template-columns: 1fr; gap: 10px; }
+          .mw-stats-bar { padding: 14px 16px; }
+          .mw-content-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+        }
+      `}</style>
 
       {/* Stats bar */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(109,92,255,0.08)", border: "1px solid rgba(109,92,255,0.2)", borderRadius: 16, padding: "16px 24px" }}>
+      <div className="mw-stats-bar">
         <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#a89dff", fontSize: 13, fontWeight: 600 }}>
           <WandSparkles size={15} /> Planned output
         </div>
@@ -175,13 +252,13 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
       )}
 
       {/* Main grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "360px 1fr", gap: 20, alignItems: "start" }}>
+      <div className="mw-grid">
 
         {/* LEFT — Brand + Plan */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className="mw-left">
 
           {/* Brand identity card */}
-          <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 24 }}>
+          <div className="mw-card">
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
               <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(109,92,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Palette size={15} color="#a89dff" />
@@ -202,7 +279,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                 <div className={labelClass}>Brand voice</div>
                 <input disabled={!canEdit} value={voice} onChange={e => setVoice(e.target.value)} placeholder="Warm, witty, premium…" className={inputClass} />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="mw-row-2">
                 <div>
                   <div className={labelClass}>Primary</div>
                   <input disabled={!canEdit} type="color" value={primary} onChange={e => setPrimary(e.target.value)} style={{ width: "100%", height: 44, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: 6, cursor: "pointer" }} />
@@ -236,7 +313,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           </div>
 
           {/* Content plan card */}
-          <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 24 }}>
+          <div className="mw-card">
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
               <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(96,165,250,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <CalendarDays size={15} color="#60a5fa" />
@@ -249,7 +326,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                 <div className={labelClass}>Target audience</div>
                 <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="Coffee lovers, students, young professionals" className={inputClass} />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="mw-row-2">
                 <div>
                   <div className={labelClass}>Platform</div>
                   <select value={platform} onChange={e => setPlatform(e.target.value as AIPlatform)} className={inputClass}>
@@ -263,7 +340,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                   </select>
                 </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="mw-row-2">
                 <div>
                   <div className={labelClass}>Days</div>
                   <select value={duration} onChange={e => setDuration(Number(e.target.value))} className={inputClass}>
@@ -275,7 +352,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                   <input type="date" min={tomorrow()} value={startDate} onChange={e => setStartDate(e.target.value)} className={inputClass} />
                 </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="mw-row-2">
                 <div>
                   <div className={labelClass}>Tone</div>
                   <select value={tone} onChange={e => setTone(e.target.value as AITone)} className={inputClass}>
@@ -308,9 +385,9 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
         </div>
 
         {/* RIGHT — Content grid */}
-        <div>
+        <div style={{ minWidth: 0 }}>
           {!items.length ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 600, borderRadius: 20, border: "1px dashed rgba(255,255,255,0.1)", background: "var(--bg-surface)", padding: 40, textAlign: "center" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 500, borderRadius: 20, border: "1px dashed rgba(255,255,255,0.1)", background: "var(--bg-surface)", padding: 32, textAlign: "center", boxSizing: "border-box" }}>
               <div style={{ width: 64, height: 64, borderRadius: 18, background: "linear-gradient(135deg, rgba(109,92,255,0.2), rgba(168,85,247,0.2))", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
                 <Sparkles size={28} color="#a89dff" />
               </div>
@@ -322,12 +399,12 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           ) : (
             <div>
               {/* Toolbar */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
+              <div className="mw-toolbar">
                 <div>
                   <div style={{ fontWeight: 700, color: "#f0f0ff", fontSize: 15 }}>Content batch</div>
                   <div style={{ fontSize: 12, color: "#50507a", marginTop: 2 }}>{ready}/{items.length} images ready · {duration} days · {postsPerDay}/day</div>
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   <button onClick={() => void generateImages()} disabled={isPending || items.some(i => i.status === "generating")}
                     style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: "9px 14px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1 }}>
                     <ImageIcon size={14} />{ready ? "Regenerate" : "Generate images"}
@@ -347,7 +424,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
               )}
 
               {/* Grid */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
+              <div className="mw-content-grid">
                 {items.map((item) => (
                   <article key={`${item.day}-${item.slot}`} style={{ borderRadius: 16, border: "1px solid rgba(255,255,255,0.08)", background: "var(--bg-surface)", overflow: "hidden", transition: "border-color 0.2s" }}>
                     <div style={{ aspectRatio: "1", background: "var(--bg-elevated)" }}>
