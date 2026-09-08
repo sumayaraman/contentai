@@ -1,28 +1,15 @@
-import { MarketingWorkspace } from "@/components/marketing/marketing-workspace";
-import { getActiveWorkspace } from "@/lib/content/workspace";
+"use client";
 
-export default async function WorkspacePage() {
-  try {
-    const { workspace, role } = await getActiveWorkspace();
-    return (
-      <div className="page animate-fade-up">
-        <div className="page-header">
-          <div>
-            <p className="ai-tag" style={{ marginBottom: 6 }}>✦ Marketing Workspace</p>
-            <h1 className="page-title">Your brand → a month of content</h1>
-            <p className="page-subtitle">Create a reusable brand identity, generate daily content, add your logo to every image, and send the finished batch to your calendar.</p>
-          </div>
-        </div>
-        <MarketingWorkspace workspace={workspace} canEdit={role === "OWNER" || role === "ADMIN"} />
+export default function WorkspaceError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return (
+    <div className="page animate-fade-up">
+      <div style={{ padding: 40, color: "red", fontSize: 14, fontFamily: "monospace", whiteSpace: "pre-wrap", background: "rgba(255,0,0,0.05)", borderRadius: 12, border: "1px solid rgba(255,0,0,0.2)" }}>
+        <strong>Error:</strong> {error?.message || "Unknown error"}
+        {"\n\n"}
+        <strong>Stack:</strong> {error?.stack || "No stack"}
+        {"\n\n"}
+        <button onClick={reset} style={{ padding: "8px 16px", background: "#6d5cff", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>Try again</button>
       </div>
-    );
-  } catch (e) {
-    return (
-      <div className="page animate-fade-up">
-        <div style={{ padding: 40, color: "red", fontSize: 14, fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
-          {e instanceof Error ? e.message + "\n" + e.stack : String(e)}
-        </div>
-      </div>
-    );
-  }
+    </div>
+  );
 }
