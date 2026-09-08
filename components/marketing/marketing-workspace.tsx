@@ -89,9 +89,10 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
     setError(""); setMessage(""); setItems([]); setProgress(0);
     startTransition(async () => {
       const result = await generateMarketingPlan({ businessName: brandName, description, audience, platform, tone, goal, startDate, duration, postsPerDay, brandVoice: voice });
-      if (!result.ok) { setError(result.error); return; }
+      if (!result.ok && !result.items?.length) { setError(result.error); return; }
+      if (result.error) setError(result.error);
       setItems(result.items.map((item) => ({ ...item, status: "pending", imageUrl: null })));
-      setMessage(`Plan ready — ${result.items.length} content pieces across ${duration} days.`);
+      setMessage(`Plan ready — ${result.items.length} content pieces generated!`);
     });
   }
 
