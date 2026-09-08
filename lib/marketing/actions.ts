@@ -35,7 +35,7 @@ export async function generateMarketingPlan(input: {
   try {
     for (let slot = 0; slot < postsPerDay; slot += 1) {
       const result = await provider.generateCampaign({
-        topic: `${input.businessName}: ${input.description}. Create content angle ${slot + 1} of ${postsPerDay}; keep this angle distinct from the other daily slots. Brand voice: ${input.brandVoice || "friendly and professional"}.`,
+        topic: `${input.businessName}: ${input.description}. Create content angle ${slot + 1} of ${postsPerDay}; keep this angle distinct from the other daily slots. Brand voice: ${input.brandVoice || "friendly and professional"}. IMPORTANT: You MUST generate exactly ${duration} days of content. Do not stop early. Every single day from day 1 to day ${duration} must be included.`,
         targetAudience: input.audience,
         platform: input.platform,
         tone: input.tone,
