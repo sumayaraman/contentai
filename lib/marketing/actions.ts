@@ -64,7 +64,8 @@ export async function generateMarketingPlan(input: {
 
   for (let dayIndex = 0; dayIndex < duration; dayIndex += 1) {
     for (let slotIndex = 0; slotIndex < postsPerDay; slotIndex += 1) {
-      const day = plans[slotIndex][dayIndex];
+      const day = plans[slotIndex]?.[dayIndex];
+      if (!day) continue;
       items.push({
         day: dayIndex + 1,
         slot: slotIndex + 1,
