@@ -47,6 +47,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [duration, setDuration] = useState(30);
   const [postsPerDay, setPostsPerDay] = useState(1);
   const [startDate, setStartDate] = useState("");
+  const [minDate, setMinDate] = useState("");
   const [imageSize, setImageSize] = useState<"1024x1024" | "1536x1024" | "1024x1536">("1024x1024");
   const [items, setItems] = useState<MarketingItem[]>([]);
   const [message, setMessage] = useState("");
@@ -54,7 +55,11 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [progress, setProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => { setStartDate(tomorrow()); }, []);
+  useEffect(() => {
+    const t = tomorrow();
+    setStartDate(t);
+    setMinDate(t);
+  }, []);
 
   const total = duration * postsPerDay;
   const ready = items.filter((item) => item.status === "ready").length;
@@ -354,7 +359,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                   </div>
                   <div className="mw-field">
                     <div className={labelClass}>Start date</div>
-                    <input type="date" min={tomorrow()} value={startDate} onChange={e => setStartDate(e.target.value)} className={inputClass} />
+                    <input type="date" min={minDate} value={startDate} onChange={e => setStartDate(e.target.value)} className={inputClass} />
                   </div>
                 </div>
                 <div className="mw-row-2">
