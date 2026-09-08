@@ -72,9 +72,16 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
 
   function saveBrand() {
     setError(""); setMessage("");
+    const cleanPrimary = /^#[0-9A-Fa-f]{6}$/.test(primary) ? primary : "#111827";
+    const cleanSecondary = /^#[0-9A-Fa-f]{6}$/.test(secondary) ? secondary : "#f59e0b";
     startTransition(async () => {
-      const result = await updateBrandSettings(workspace.id, { brandName, description, primaryColor: primary, secondaryColor: secondary, voice });
-      if (!result.ok) setError(result.error); else setMessage("Brand workspace saved.");
+      try {
+        const result = await updateBrandSettings(workspace.id, { brandName, description, primaryColor: cleanPrimary, secondaryColor: cleanSecondary, voice });
+        if (!result.ok) setError(result.error ?? "Save failed.");
+        else setMessage("✅ Brand saved successfully!");
+      } catch (e) {
+        setError("Something went wrong. Please try again.");
+      }
     });
   }
 
@@ -169,8 +176,6 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           width: 100%;
           box-sizing: border-box;
         }
-
-        /* Stats bar — fixed to never clip text, stacks on narrow width */
         .mw-stats-bar {
           display: flex;
           align-items: center;
@@ -185,7 +190,6 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
         .mw-stats-label { display: flex; align-items: center; gap: 8px; color: #a89dff; font-size: 13px; font-weight: 600; white-space: nowrap; }
         .mw-stats-value { font-size: 20px; font-weight: 800; color: #f0f0ff; white-space: nowrap; }
         .mw-stats-value span { font-size: 12.5px; font-weight: 400; color: #9090c0; }
-
         .mw-grid {
           display: grid;
           grid-template-columns: 380px minmax(0, 1fr);
@@ -193,7 +197,6 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           align-items: start;
           width: 100%;
         }
-
         .mw-card {
           background: var(--bg-surface);
           border: 1px solid var(--border);
@@ -201,8 +204,6 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           box-sizing: border-box;
           overflow: hidden;
         }
-
-        /* Tabs */
         .mw-tabs {
           display: flex;
           gap: 4px;
@@ -227,41 +228,19 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           background: rgba(109,92,255,0.18);
           color: #b0a0ff;
         }
-        .mw-tab-body {
-          padding: 26px;
-        }
-        .mw-tab-intro {
-          font-size: 12.5px;
-          color: #6d6d95;
-          line-height: 1.6;
-          margin-bottom: 22px;
-        }
-
+        .mw-tab-body { padding: 26px; }
+        .mw-tab-intro { font-size: 12.5px; color: #6d6d95; line-height: 1.6; margin-bottom: 22px; }
         .mw-fields { display: flex; flex-direction: column; gap: 20px; }
         .mw-field { display: flex; flex-direction: column; }
         .mw-label { margin-bottom: 9px !important; font-size: 10.5px !important; letter-spacing: 0.08em !important; }
         .mw-input { padding: 12px 14px !important; font-size: 13.5px !important; }
         .mw-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-        .mw-content-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-          gap: 18px;
-        }
-        .mw-toolbar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 18px;
-          flex-wrap: wrap;
-          gap: 12px;
-        }
-
+        .mw-content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+        .mw-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
         @media (max-width: 1100px) {
           .mw-page { padding: 22px 20px 90px; }
           .mw-grid { grid-template-columns: 330px minmax(0, 1fr); gap: 16px; }
         }
-
         @media (max-width: 767px) {
           .mw-page { padding: 16px 14px 100px; gap: 14px; }
           .mw-grid { grid-template-columns: 1fr; gap: 14px; }
@@ -274,32 +253,25 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
         }
       `}</style>
 
-      {/* Stats bar */}
       <div className="mw-stats-bar">
         <div className="mw-stats-label"><WandSparkles size={15} /> Planned output</div>
         <div className="mw-stats-value">{total} <span>posts · {duration} days · {postsPerDay}/day</span></div>
       </div>
 
-      {/* Alert */}
       {(message || error) && (
         <div style={{ borderRadius: 12, padding: "14px 18px", fontSize: 13, fontWeight: 500, border: error ? "1px solid rgba(239,68,68,0.2)" : "1px solid rgba(109,92,255,0.3)", background: error ? "rgba(239,68,68,0.08)" : "rgba(109,92,255,0.08)", color: error ? "#f87171" : "#a89dff" }}>
           {error || message}
         </div>
       )}
 
-      {/* Main grid */}
       <div className="mw-grid">
-
-        {/* LEFT — tabbed card: Brand / Plan */}
         <div className="mw-card">
           <div className="mw-tabs">
             <button className={`mw-tab ${activeTab === "brand" ? "active" : ""}`} onClick={() => setActiveTab("brand")}>
-              <Palette size={13} style={{ marginRight: 6, verticalAlign: -2 }} />
-              Brand
+              <Palette size={13} style={{ marginRight: 6, verticalAlign: -2 }} />Brand
             </button>
             <button className={`mw-tab ${activeTab === "plan" ? "active" : ""}`} onClick={() => setActiveTab("plan")}>
-              <CalendarDays size={13} style={{ marginRight: 6, verticalAlign: -2 }} />
-              Content plan
+              <CalendarDays size={13} style={{ marginRight: 6, verticalAlign: -2 }} />Content plan
             </button>
           </div>
 
@@ -329,20 +301,17 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                     <input disabled={!canEdit} type="color" value={secondary} onChange={e => setSecondary(e.target.value)} style={{ width: "100%", height: 46, borderRadius: 12, border: "1px solid rgba(255,255,255,0.12)", background: secondary, padding: 4, cursor: "pointer" }} />
                   </div>
                 </div>
-
                 <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", padding: "13px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: "pointer" }}>
                   <Upload size={14} />
                   {logoUrl ? "Replace logo" : "Upload logo"}
                   <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style={{ display: "none" }} onChange={e => void handleLogo(e.target.files?.[0])} />
                 </label>
-
                 {logoUrl && (
                   <div style={{ display: "flex", alignItems: "center", gap: 12, borderRadius: 12, border: "1px solid rgba(109,92,255,0.2)", background: "rgba(109,92,255,0.05)", padding: 13 }}>
                     <img src={logoUrl} alt="Brand logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
                     <span style={{ fontSize: 12, color: "#9090c0" }}>Added to every generated image.</span>
                   </div>
                 )}
-
                 {canEdit && (
                   <button onClick={saveBrand} disabled={isPending} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", padding: "13px 16px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1, marginTop: 4 }}>
                     {isPending ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Check size={14} />}
@@ -407,9 +376,8 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                     <option value="1024x1536">Portrait</option>
                   </select>
                 </div>
-
                 <button onClick={generatePlan} disabled={isPending || !canGenerate}
-                  title={!canGenerate ? "Fill in brand name, description (Brand tab) and target audience first" : undefined}
+                  title={!canGenerate ? "Fill in brand name, description and target audience first" : undefined}
                   style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)", padding: "14px 16px", fontSize: 14, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || !canGenerate) ? 0.5 : 1, boxShadow: "0 4px 20px rgba(109,92,255,0.25)", marginTop: 4 }}>
                   {isPending ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Sparkles size={16} />}
                   Generate {total} content pieces
@@ -424,7 +392,6 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           )}
         </div>
 
-        {/* RIGHT — Content grid */}
         <div style={{ minWidth: 0 }}>
           {!items.length ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 500, borderRadius: 20, border: "1px dashed rgba(255,255,255,0.1)", background: "var(--bg-surface)", padding: 40, textAlign: "center", boxSizing: "border-box" }}>
