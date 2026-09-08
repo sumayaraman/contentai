@@ -31,9 +31,10 @@ export async function generateMarketingPlan(input: {
   if (Number.isNaN(new Date(`${input.startDate}T12:00:00`).getTime())) return { ok: false as const, error: "Choose a valid start date.", items: [] };
 
   const plans: CampaignDay[][] = [];
-let provider: ReturnType<typeof getAIProvider>;
-try {
-  provider = getAIProvider();
+  let provider: ReturnType<typeof getAIProvider>;
+  try {
+    provider = getAIProvider();
+    for (let slot = 0; slot < postsPerDay; slot += 1) {
       const result = await provider.generateCampaign({
         topic: `${input.businessName}: ${input.description}. Create content angle ${slot + 1} of ${postsPerDay}; keep this angle distinct from the other daily slots. Brand voice: ${input.brandVoice || "friendly and professional"}. IMPORTANT: You MUST generate exactly ${duration} days of content. Do not stop early. Every single day from day 1 to day ${duration} must be included.`,
         targetAudience: input.audience,
