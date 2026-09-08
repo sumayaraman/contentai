@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { CalendarDays, Check, ImageIcon, Loader2, Palette, Sparkles, Upload, WandSparkles } from "lucide-react";
 import { generateMarketingImage, generateMarketingPlan, saveMarketingPosts } from "@/lib/marketing/actions";
 import { saveGeneratedImage } from "@/lib/image/actions";
@@ -46,13 +46,15 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [goal, setGoal] = useState<AIObjective>("AWARENESS");
   const [duration, setDuration] = useState(30);
   const [postsPerDay, setPostsPerDay] = useState(1);
-  const [startDate, setStartDate] = useState(tomorrow());
+  const [startDate, setStartDate] = useState("");
   const [imageSize, setImageSize] = useState<"1024x1024" | "1536x1024" | "1024x1536">("1024x1024");
   const [items, setItems] = useState<MarketingItem[]>([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [progress, setProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => { setStartDate(tomorrow()); }, []);
 
   const total = duration * postsPerDay;
   const ready = items.filter((item) => item.status === "ready").length;
@@ -88,7 +90,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   function generatePlan() {
     setError(""); setMessage(""); setItems([]); setProgress(0);
     startTransition(async () => {
-      const result = await generateMarketingPlan({ businessName: brandName, description, audience, platform, tone, goal, startDate, duration, postsPerDay, brandVoice: voice });
+      const result = await generateMarketingPlan({ businessName: brandName, description, audience, platform, tone, goal, startDate: startDate || tomorrow(), duration, postsPerDay, brandVoice: voice });
       if (!result.ok && !result.items?.length) { setError(result.error); return; }
       if (result.error) setError(result.error);
       setItems(result.items.map((item) => ({ ...item, status: "pending", imageUrl: null })));
