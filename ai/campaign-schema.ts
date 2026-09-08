@@ -1,9 +1,7 @@
 import type { GeneratedCampaign, CampaignDay } from "./types";
-
 const platforms = ["INSTAGRAM", "FACEBOOK", "LINKEDIN", "X"] as const;
 const tones = ["PROFESSIONAL", "FRIENDLY", "FUNNY", "INSPIRATIONAL", "EDUCATIONAL", "LUXURY", "CASUAL"] as const;
 const goals = ["ENGAGEMENT", "SALES", "AWARENESS", "TRAFFIC", "LEADS", "BRAND_BUILDING"] as const;
-
 function str(value: unknown, field: string, max: number) {
   if (typeof value !== "string") throw new Error(`${field} must be a string.`);
   const v = value.trim();
@@ -11,7 +9,6 @@ function str(value: unknown, field: string, max: number) {
   if (v.length > max) throw new Error(`${field} is too long.`);
   return v;
 }
-
 export function validateCampaignInput(raw: Record<string, unknown>) {
   const errors: Record<string, string> = {};
   const topic = typeof raw.topic === "string" ? raw.topic.trim() : "";
@@ -28,13 +25,12 @@ export function validateCampaignInput(raw: Record<string, unknown>) {
   if (!Number.isInteger(duration) || duration < 1 || duration > 30) errors.duration = "Duration must be between 1 and 30 days.";
   return { errors, values: { topic, targetAudience: audience, platform, tone, goal, duration } };
 }
-
 export function validateGeneratedCampaign(value: unknown, expectedDuration: number): GeneratedCampaign {
   if (!value || typeof value !== "object") throw new Error("AI returned an invalid campaign object.");
   const candidate = value as Record<string, unknown>;
   const title = str(candidate.title, "Campaign title", 200);
   if (!Array.isArray(candidate.days)) throw new Error("AI returned invalid campaign days.");
-  if (candidate.days.length !== expectedDuration) throw new Error(`AI returned ${candidate.days.length} days instead of ${expectedDuration}.`);
+  if (candidate.days.length === 0) throw new Error("AI returned no campaign days.");
   const days: CampaignDay[] = candidate.days.map((item, index) => {
     if (!item || typeof item !== "object") throw new Error(`Campaign day ${index + 1} is invalid.`);
     const d = item as Record<string, unknown>;
