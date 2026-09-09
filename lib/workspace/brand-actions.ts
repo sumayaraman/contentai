@@ -29,25 +29,29 @@ export async function updateBrandSettings(
   return { ok: true as const };
 }
 
-export async function uploadBrandLogo(workspaceId: string, dataUrl: string) {
+export async function uploadBrandLogo(workspaceId: string, form: FormData) {
   const { supabase, workspaceId: activeId } = await getActiveWorkspace();
   if (workspaceId !== activeId) return { ok: false as const, error: "Unauthorized.", url: "" };
-  const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
-  if (!match) return { ok: false as const, error: "Invalid image data.", url: "" };
-  const mimeType = match[1];
-  const base64 = match[2];
+
+  const file = form.get("file") as File | null;
+  if (!file) return { ok: false as const, error: "No file provided.", url: "" };
+
+  const mimeType = file.type || "image/png";
   const ext = mimeType.split("/")[1]?.replace("jpeg", "jpg") ?? "png";
   const path = `${workspaceId}/logo-${Date.now()}.${ext}`;
-  const buffer = Buffer.from(base64, "base64");
+  const buffer = Buffer.from(await file.arrayBuffer());
+
   const { error: uploadError } = await supabase.storage
     .from("brand-assets")
     .upload(path, buffer, { contentType: mimeType, upsert: true });
   if (uploadError) return { ok: false as const, error: uploadError.message, url: "" };
+
   const { data } = supabase.storage.from("brand-assets").getPublicUrl(path);
   const { error: dbError } = await supabase
     .from("workspaces")
     .update({ brand_logo_url: data.publicUrl, updated_at: new Date().toISOString() })
     .eq("id", workspaceId);
   if (dbError) return { ok: false as const, error: dbError.message, url: "" };
+
   return { ok: true as const, url: data.publicUrl };
 }
