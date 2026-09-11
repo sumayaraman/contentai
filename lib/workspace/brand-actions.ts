@@ -41,17 +41,25 @@ export async function uploadBrandLogo(workspaceId: string, form: FormData) {
   const path = `${workspaceId}/logo-${Date.now()}.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
+  console.error("UPLOAD DEBUG: workspaceId =", workspaceId, "path =", path, "mimeType =", mimeType, "size =", buffer.length);
+
   const { error: uploadError } = await supabase.storage
     .from("brand-assets")
     .upload(path, buffer, { contentType: mimeType, upsert: true });
-  if (uploadError) return { ok: false as const, error: uploadError.message, url: "" };
+  if (uploadError) {
+    console.error("UPLOAD ERROR FULL:", JSON.stringify(uploadError, null, 2));
+    return { ok: false as const, error: uploadError.message, url: "" };
+  }
 
   const { data } = supabase.storage.from("brand-assets").getPublicUrl(path);
   const { error: dbError } = await supabase
     .from("workspaces")
     .update({ brand_logo_url: data.publicUrl, updated_at: new Date().toISOString() })
     .eq("id", workspaceId);
-  if (dbError) return { ok: false as const, error: dbError.message, url: "" };
+  if (dbError) {
+    console.error("DB UPDATE ERROR FULL:", JSON.stringify(dbError, null, 2));
+    return { ok: false as const, error: dbError.message, url: "" };
+  }
 
   return { ok: true as const, url: data.publicUrl };
 }
