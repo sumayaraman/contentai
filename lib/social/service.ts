@@ -32,7 +32,7 @@ export async function getSocialAccounts(workspaceId: string) {
 
 async function getAccountSecret(accountId: string, workspaceId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("social_accounts").select("id,platform,access_token_encrypted,refresh_token_encrypted,token_expires_at,metadata").eq("id", accountId).eq("workspace_id", workspaceId).maybeSingle();
+  const { data, error } = await supabase.from("social_accounts").select("id,platform,account_id,access_token_encrypted,refresh_token_encrypted,token_expires_at,metadata").eq("id", accountId).eq("workspace_id", workspaceId).maybeSingle();
   if (error || !data) throw new Error("Social account not found in this workspace.");
   const secret = JSON.parse(decryptSecret(data.access_token_encrypted)) as { accessToken: string; refreshToken?: string | null; expiresAt?: string | null };
   return { supabase, data, secret };

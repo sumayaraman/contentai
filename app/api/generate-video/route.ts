@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
     const videoUrl = `data:video/mp4;base64,${base64}`;
     return NextResponse.json({ video: videoUrl });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to generate video";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

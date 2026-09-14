@@ -207,7 +207,7 @@ export default function DashboardPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">{getGreeting()} ✦</h1>
-          <p className="page-subtitle">Here's what's happening with your content today.</p>
+          <p className="page-subtitle">Here&apos;s what&apos;s happening with your content today.</p>
         </div>
         <Link href="/ai-studio" className="btn btn-ai">
           <Sparkles size={13} /> Create with AI

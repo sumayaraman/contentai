@@ -26,15 +26,15 @@ export class FalVideoProvider {
     const requestId = submitted.request_id;
 
     // Poll for result
-    let result: any = null;
+    let result: { status?: string; output?: { video?: { url?: string } } } | null = null;
     for (let i = 0; i < 60; i++) {
       await new Promise(r => setTimeout(r, 5000));
       const pollRes = await fetch(`https://queue.fal.run/fal-ai/kling-video/v1.6/standard/text-to-video/requests/${requestId}`, {
         headers: { "Authorization": `Key ${apiKey}` },
       });
-      result = await pollRes.json();
-      if (result.status === "COMPLETED") break;
-      if (result.status === "FAILED") throw new Error("Video generation failed");
+      result = (await pollRes.json()) as { status?: string; output?: { video?: { url?: string } } };
+      if (result?.status === "COMPLETED") break;
+      if (result?.status === "FAILED") throw new Error("Video generation failed");
     }
 
     const videoUrl = result?.output?.video?.url;

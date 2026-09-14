@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { CalendarDays, Check, ImageIcon, Loader2, Palette, Sparkles, Upload, WandSparkles } from "lucide-react";
+import { CalendarDays, Check, Coffee, ImageIcon, Loader2, Palette, Sparkles, Upload, WandSparkles, X } from "lucide-react";
 import { generateMarketingImage, generateMarketingPlan, saveMarketingPosts } from "@/lib/marketing/actions";
 import { saveGeneratedImage } from "@/lib/image/actions";
 import { updateBrandSettings, uploadBrandLogo } from "@/lib/workspace/brand-actions";
@@ -40,6 +40,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [primary, setPrimary] = useState(workspace.brand_primary_color || "#6d5cff");
   const [secondary, setSecondary] = useState(workspace.brand_secondary_color || "#f59e0b");
   const [logoUrl, setLogoUrl] = useState(workspace.brand_logo_url || "");
+  const [logoPosition, setLogoPosition] = useState<"bottom-right" | "top-right" | "top-left" | "bottom-left">("bottom-right");
   const [audience, setAudience] = useState("");
   const [platform, setPlatform] = useState<AIPlatform>("INSTAGRAM");
   const [tone, setTone] = useState<AITone>("FRIENDLY");
@@ -63,8 +64,15 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
     setError(""); setMessage("Uploading logo…");
     const reader = new FileReader();
     reader.onload = async () => {
-      const result = await uploadBrandLogo(workspace.id, String(reader.result || ""));
-      if (!result.ok) setError(result.error); else { setLogoUrl(result.url); setMessage("Logo saved. It will be applied to generated images."); }
+      const dataUrl = String(reader.result || "");
+      setLogoUrl(dataUrl);
+      const result = await uploadBrandLogo(workspace.id, dataUrl);
+      if (!result.ok) {
+        setMessage("Logo loaded for this session.");
+      } else {
+        setLogoUrl(result.url);
+        setMessage("Logo saved and ready. It will be composited onto every generated image.");
+      }
     };
     reader.onerror = () => setError("Could not read the logo file.");
     reader.readAsDataURL(file);
@@ -73,8 +81,16 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   function saveBrand() {
     setError(""); setMessage("");
     startTransition(async () => {
-      const result = await updateBrandSettings(workspace.id, { brandName, description, primaryColor: primary, secondaryColor: secondary, voice });
-      if (!result.ok) setError(result.error); else setMessage("Brand workspace saved.");
+      const result = await updateBrandSettings(workspace.id, {
+        brandName,
+        description,
+        primaryColor: primary,
+        secondaryColor: secondary,
+        voice,
+        logoUrl,
+      });
+      if (!result.ok) setError(result.error);
+      else setMessage("Brand workspace and logo saved.");
     });
   }
 
@@ -88,26 +104,130 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
     });
   }
 
-  async function composeLogo(imageUrl: string) {
+  async function loadSafeImage(src: string): Promise<HTMLImageElement> {
+    if (src.startsWith("data:")) {
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("Failed to load image data"));
+        img.src = src;
+      });
+      return img;
+    }
+
+    try {
+      const res = await fetch(src);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          resolve();
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error("Failed to decode image blob"));
+        };
+        img.src = objectUrl;
+      });
+      return img;
+    } catch {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("Failed to load image"));
+        img.src = src;
+      });
+      return img;
+    }
+  }
+
+  async function composeLogo(imageUrl: string): Promise<string> {
     if (!logoUrl) return imageUrl;
-    const image = new Image(); image.crossOrigin = "anonymous";
-    const logo = new Image(); logo.crossOrigin = "anonymous";
-    await Promise.all([
-      new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error("Generated image could not be loaded.")); image.src = imageUrl; }),
-      new Promise<void>((resolve, reject) => { logo.onload = () => resolve(); logo.onerror = () => reject(new Error("Logo could not be loaded.")); logo.src = logoUrl; })
-    ]);
-    const canvas = document.createElement("canvas");
-    canvas.width = image.naturalWidth || 1024; canvas.height = image.naturalHeight || 1024;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return imageUrl;
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const pad = Math.max(20, Math.round(canvas.width * 0.035));
-    const maxW = Math.round(canvas.width * 0.18);
-    const ratio = logo.naturalHeight / Math.max(1, logo.naturalWidth);
-    const w = Math.min(maxW, logo.naturalWidth); const h = Math.round(w * ratio);
-    ctx.save(); ctx.globalAlpha = 0.96; ctx.shadowColor = "rgba(0,0,0,.3)"; ctx.shadowBlur = 14;
-    ctx.drawImage(logo, pad, pad, w, h); ctx.restore();
-    return canvas.toDataURL("image/jpeg", 0.86);
+    try {
+      const [image, logo] = await Promise.all([
+        loadSafeImage(imageUrl),
+        loadSafeImage(logoUrl),
+      ]);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth || 1024;
+      canvas.height = image.naturalHeight || 1024;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return imageUrl;
+
+      // 1. Draw base marketing image
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      // 2. Compute proportional logo dimensions
+      const targetWidth = Math.round(canvas.width * 0.18);
+      const naturalW = logo.naturalWidth || 1;
+      const naturalH = logo.naturalHeight || 1;
+      const ratio = naturalH / naturalW;
+
+      let w = targetWidth;
+      let h = Math.round(w * ratio);
+      const maxHeight = Math.round(canvas.height * 0.16);
+      if (h > maxHeight) {
+        h = maxHeight;
+        w = Math.round(h / ratio);
+      }
+
+      // 3. Compute position
+      const pad = Math.max(24, Math.round(canvas.width * 0.035));
+      let x = pad;
+      let y = pad;
+
+      if (logoPosition === "top-right") {
+        x = canvas.width - w - pad;
+        y = pad;
+      } else if (logoPosition === "bottom-right") {
+        x = canvas.width - w - pad;
+        y = canvas.height - h - pad;
+      } else if (logoPosition === "bottom-left") {
+        x = pad;
+        y = canvas.height - h - pad;
+      }
+
+      // 4. Draw frosted rounded glass badge behind logo for optimal contrast
+      const badgePadX = Math.max(10, Math.round(w * 0.08));
+      const badgePadY = Math.max(8, Math.round(h * 0.08));
+      const rx = x - badgePadX;
+      const ry = y - badgePadY;
+      const rw = w + badgePadX * 2;
+      const rh = h + badgePadY * 2;
+      const radius = Math.min(14, Math.round(rw * 0.14));
+
+      ctx.save();
+      ctx.beginPath();
+      if (typeof ctx.roundRect === "function") {
+        ctx.roundRect(rx, ry, rw, rh, radius);
+      } else {
+        ctx.rect(rx, ry, rw, rh);
+      }
+      ctx.fillStyle = "rgba(12, 12, 22, 0.72)";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+      ctx.shadowBlur = 14;
+      ctx.shadowOffsetY = 4;
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.22)";
+      ctx.stroke();
+      ctx.restore();
+
+      // 5. Draw logo inside the badge
+      ctx.save();
+      ctx.drawImage(logo, x, y, w, h);
+      ctx.restore();
+
+      return canvas.toDataURL("image/jpeg", 0.9);
+    } catch (err) {
+      console.warn("Logo watermark failed, returning unwatermarked image:", err);
+      return imageUrl;
+    }
   }
 
   async function generateImages() {
@@ -118,7 +238,8 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
       setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "generating" } : candidate));
       try {
         const variation = item.slot > 1 ? ` Daily variation ${item.slot}: use a distinctly different composition, camera angle and supporting scene.` : "";
-        const prompt = `${item.imagePrompt} Brand: ${brandName}. Brand colors ${primary} and ${secondary}. Leave clean negative space in the top-left for the brand mark; do not generate text or a logo.${variation}`;
+        const posName = logoPosition.replace("-", " ");
+        const prompt = `${item.imagePrompt} Brand: ${brandName}. Brand colors ${primary} and ${secondary}. Leave clean negative space in the ${posName} for the brand mark; do not generate text or a logo.${variation}`;
         const result = await generateMarketingImage(prompt, imageSize);
         if (!result.ok || !result.image) throw new Error(result.error || "Image generation failed.");
         const branded = await composeLogo(result.image.url);
@@ -130,7 +251,6 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
       } catch (e) {
         setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "error" } : candidate));
         setError(`Image ${index + 1} failed: ${e instanceof Error ? e.message : "Unknown error"}`);
-        break;
       }
       setProgress(Math.round(((index + 1) / items.length) * 100));
     }
@@ -305,7 +425,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
 
           {activeTab === "brand" ? (
             <div className="mw-tab-body">
-              <p className="mw-tab-intro">Set this up once — it's reused every time you generate a content plan.</p>
+              <p className="mw-tab-intro">Set this up once — it&apos;s reused every time you generate a content plan.</p>
               <div className="mw-fields">
                 <div className="mw-field">
                   <div className={labelClass}>Brand name</div>
@@ -330,17 +450,67 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                   </div>
                 </div>
 
-                <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", padding: "13px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: "pointer" }}>
-                  <Upload size={14} />
-                  {logoUrl ? "Replace logo" : "Upload logo"}
-                  <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style={{ display: "none" }} onChange={e => void handleLogo(e.target.files?.[0])} />
-                </label>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <label style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.03)", padding: "13px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: canEdit ? "pointer" : "default" }}>
+                    <Upload size={14} />
+                    {logoUrl ? "Replace logo" : "Upload brand logo"}
+                    <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style={{ display: "none" }} onChange={e => void handleLogo(e.target.files?.[0])} />
+                  </label>
+                  {logoUrl && canEdit && (
+                    <button type="button" onClick={() => setLogoUrl("")} style={{ display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", padding: "0 14px", color: "#f87171", cursor: "pointer" }} title="Remove logo">
+                      <X size={15} />
+                    </button>
+                  )}
+                </div>
 
                 {logoUrl && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, borderRadius: 12, border: "1px solid rgba(109,92,255,0.2)", background: "rgba(109,92,255,0.05)", padding: 13 }}>
-                    <img src={logoUrl} alt="Brand logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
-                    <span style={{ fontSize: 12, color: "#9090c0" }}>Added to every generated image.</span>
-                  </div>
+                  <>
+                    <div className="mw-field">
+                      <div className={labelClass}>Watermark position on photos</div>
+                      <select disabled={!canEdit} value={logoPosition} onChange={e => setLogoPosition(e.target.value as typeof logoPosition)} className={inputClass}>
+                        <option value="bottom-right">Bottom-Right (Recommended)</option>
+                        <option value="top-right">Top-Right</option>
+                        <option value="bottom-left">Bottom-Left</option>
+                        <option value="top-left">Top-Left</option>
+                      </select>
+                    </div>
+
+                    {/* Live Watermark Preview Mockup */}
+                    <div style={{ borderRadius: 14, border: "1px solid rgba(109,92,255,0.25)", background: "#0a0a14", padding: 14 }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#a89dff" }}>✦ Live Watermark Preview</span>
+                        <span style={{ fontSize: 10.5, color: "#9090c0" }}>Position: {logoPosition}</span>
+                      </div>
+                      <div style={{ position: "relative", width: "100%", height: 160, borderRadius: 10, overflow: "hidden", background: "radial-gradient(circle at 60% 40%, #3d2b26 0%, #171110 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <div style={{ opacity: 0.55, textAlign: "center" }}>
+                          <Coffee size={38} color="#f59e0b" style={{ margin: "0 auto" }} />
+                          <p style={{ fontSize: 11, color: "#e2e8f0", marginTop: 4, fontWeight: 500 }}>Sample Coffee Post</p>
+                        </div>
+                        <div style={{
+                          position: "absolute",
+                          ...(logoPosition === "bottom-right" ? { bottom: 12, right: 12 } :
+                              logoPosition === "top-right" ? { top: 12, right: 12 } :
+                              logoPosition === "bottom-left" ? { bottom: 12, left: 12 } :
+                              { top: 12, left: 12 }),
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          padding: "5px 10px",
+                          borderRadius: 8,
+                          background: "rgba(12, 12, 22, 0.72)",
+                          border: "1px solid rgba(255, 255, 255, 0.22)",
+                          boxShadow: "0 4px 14px rgba(0,0,0,0.45)",
+                          backdropFilter: "blur(6px)",
+                        }}>
+                          <img src={logoUrl} alt="Logo preview" style={{ height: 22, maxWidth: 65, objectFit: "contain" }} />
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#f0f0ff" }}>{brandName}</span>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: 11, color: "#6d6d95", marginTop: 8, textAlign: "center" }}>
+                        This frosted watermark badge will be composited on every generated picture.
+                      </p>
+                    </div>
+                  </>
                 )}
 
                 {canEdit && (
@@ -353,7 +523,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
             </div>
           ) : (
             <div className="mw-tab-body">
-              <p className="mw-tab-intro">Tell us who you're talking to and how you want to show up — we'll build the full calendar from this.</p>
+              <p className="mw-tab-intro">Tell us who you&apos;re talking to and how you want to show up — we&apos;ll build the full calendar from this.</p>
               <div className="mw-fields">
                 <div className="mw-field">
                   <div className={labelClass}>Target audience</div>

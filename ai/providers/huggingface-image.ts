@@ -53,7 +53,7 @@ export class GeminiImageProvider implements ImageProvider {
     }
 
     const imagePart = data.candidates?.[0]?.content?.parts?.find(
-      (p: any) => p.inlineData
+      (p: { inlineData?: { data?: string } }) => p.inlineData
     );
 
     if (!imagePart) throw new Error("No image returned from Gemini");

@@ -6,9 +6,9 @@ import { requireWorkspaceRole } from "@/lib/workspace/authorization";
 import { disconnectSocialAccount, getSocialAccounts, publishToSocialAccount } from "@/lib/social/service";
 import type { Platform } from "@/types/database";
 
-export async function listSocialAccounts() {
-  const { workspaceId } = await getActiveWorkspace();
-  return getSocialAccounts(workspaceId);
+export async function listSocialAccounts(workspaceId?: string) {
+  const targetWorkspaceId = workspaceId ?? (await getActiveWorkspace()).workspaceId;
+  return getSocialAccounts(targetWorkspaceId);
 }
 
 export async function disconnectAccount(accountId: string) {

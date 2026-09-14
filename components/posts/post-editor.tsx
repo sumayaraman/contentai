@@ -90,7 +90,7 @@ export function PostEditor({ post, categories, media, initialScheduledAt, initia
           <section className="card" style={{ padding: 24, textAlign: "center", borderStyle: "dashed" }}>
             <ImagePlus style={{ margin: "0 auto", color: "var(--text-muted)" }} size={22} />
             <p className="mt-3" style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>No image attached</p>
-            <p className="mt-2" style={{ fontSize: 12, color: "var(--text-muted)" }}>Upload an image in the Media Library when you're ready.</p>
+            <p className="mt-2" style={{ fontSize: 12, color: "var(--text-muted)" }}>Upload an image in the Media Library when you&apos;re ready.</p>
           </section>
         )}
       </aside>

@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   const supabase = createAdminClient();
   const now = new Date().toISOString();
   const { data: posts, error } = await supabase.from("posts")
-    .select("id,workspace_id,title,caption,image_url,platform,scheduled_at,status")
+    .select("id,workspace_id,created_by,title,caption,image_url,platform,scheduled_at,status")
     .eq("status","SCHEDULED").lte("scheduled_at",now).order("scheduled_at",{ascending:true}).limit(50);
   if (error) return NextResponse.json({ error: "Could not load scheduled posts." }, { status: 500 });
 
@@ -89,7 +89,7 @@ export async function GET(request: Request) {
           await supabase.from("post_publications").update({status:"FAILED",external_post_id:result.externalPostId,error_message:result.message}).eq("id",publicationId);
           await supabase.from("publishing_events").insert({workspace_id:post.workspace_id,post_id:post.id,user_id:post.created_by,platform:post.platform,action:"PUBLISH",status:"FAILED",external_post_id:result.externalPostId,message:result.message,error_code:result.errorCode});
         }
-      } catch (err) {
+      } catch {
         failed++;
         await supabase.from("post_publications").update({status:"FAILED",error_message:"Publishing job failed."}).eq("id",publicationId);
       }
