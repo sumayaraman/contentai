@@ -1,12 +1,10 @@
 import { getCurrentUser } from "@/lib/auth/get-current-user";
-import { ProfileForm } from "@/components/ui/profile-form";
 import { getActiveWorkspace } from "@/lib/content/workspace";
-import { WorkspaceSettings } from "@/components/workspace/workspace-settings";
 import type { TeamMember } from "@/lib/workspace/types";
 import { listSocialAccounts } from "@/lib/social/actions";
-import { SocialAccounts } from "@/components/workspace/social-accounts";
 import type { UserProfile, UserRole } from "@/types/database";
 import type { SocialAccount } from "@/lib/social/types";
+import { SettingsContainer } from "@/components/settings/settings-container";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +54,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="page animate-fade-up">
-      <div className="mx-auto max-w-4xl space-y-12 pb-24">
+      <div className="mx-auto max-w-4xl space-y-10 pb-24">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3.5 py-1 text-xs font-semibold text-violet-300">
             Workspace Settings
@@ -67,19 +65,13 @@ export default async function SettingsPage() {
           </p>
         </div>
 
-        {/* Profile */}
-        <div className="rounded-3xl border border-white/[0.08] bg-[#101020]/80 p-8 sm:p-10 backdrop-blur-2xl shadow-2xl shadow-black/40 space-y-8">
-          <div className="pb-6 border-b border-white/[0.08]">
-            <h2 className="text-lg font-semibold text-white">Personal Profile</h2>
-            <p className="mt-1 text-xs text-white/50">
-              Your name and avatar appear across post revisions, marketing campaigns, and workspace activities.
-            </p>
-          </div>
-          <ProfileForm profile={profile} />
-        </div>
-
-        <WorkspaceSettings workspace={workspace} role={role} members={members} />
-        <SocialAccounts accounts={socialAccounts} role={role} />
+        <SettingsContainer
+          profile={profile}
+          workspace={workspace}
+          role={role}
+          members={members}
+          socialAccounts={socialAccounts}
+        />
       </div>
     </div>
   );
