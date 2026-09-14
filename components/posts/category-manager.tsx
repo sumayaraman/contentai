@@ -28,17 +28,21 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
     setEditColor(cat.color || "#8b5cf6");
   }
 
+  const activePreset = PRESET_COLORS.find(
+    (p) => p.hex.toLowerCase() === selectedColor.toLowerCase()
+  );
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Create New Category Card */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-6 backdrop-blur-xl shadow-xl">
-        <div className="flex items-center gap-2.5 pb-4 border-b border-white/[0.06]">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-400">
-            <FolderPlus size={16} />
+      <div className="rounded-2xl border border-white/10 bg-[#0f0f1a]/90 p-7 sm:p-8 backdrop-blur-xl shadow-xl">
+        <div className="flex items-center gap-3 pb-5 border-b border-white/[0.08]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400 border border-violet-500/20">
+            <FolderPlus size={18} />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-white">Create New Category</h2>
-            <p className="text-[11px] text-white/50">Add a tag and custom color theme to classify your posts.</p>
+            <h2 className="text-base font-semibold text-white">Create New Category</h2>
+            <p className="text-xs text-white/50">Add a tag name and custom color theme to classify your posts.</p>
           </div>
         </div>
 
@@ -57,10 +61,10 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             });
           }}
           id="new-category-form"
-          className="mt-5 space-y-5"
+          className="mt-6 space-y-6"
         >
           <div>
-            <label htmlFor="cat-name" className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/60">
+            <label htmlFor="cat-name" className="mb-2.5 block text-xs font-semibold uppercase tracking-wider text-white/70">
               Category Name
             </label>
             <input
@@ -68,20 +72,25 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
               name="name"
               maxLength={80}
               placeholder="e.g. Product Updates, Behind the Scenes, Tips & Guides"
-              className="h-11 w-full rounded-xl border border-white/10 bg-[#16162a] px-4 text-xs text-white placeholder:text-white/40 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+              className="h-12 w-full rounded-xl border border-white/10 bg-[#141428] px-4 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
               required
             />
           </div>
 
           <div>
-            <div className="mb-2.5 flex items-center justify-between">
-              <label className="text-xs font-semibold uppercase tracking-wider text-white/60 flex items-center gap-1.5">
-                <Palette size={13} className="text-violet-400" /> Color Accent
+            <div className="mb-3 flex items-center justify-between">
+              <label className="text-xs font-semibold uppercase tracking-wider text-white/70 flex items-center gap-1.5">
+                <Palette size={14} className="text-violet-400" /> Color Accent
               </label>
-              <span className="text-[11px] font-mono text-white/40">{selectedColor}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-white/50">{activePreset ? activePreset.name : "Custom"}</span>
+                <span className="font-mono text-xs text-violet-300 bg-violet-500/10 px-2 py-0.5 rounded-md border border-violet-500/20">
+                  {selectedColor}
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-3">
               {PRESET_COLORS.map((preset) => {
                 const isSelected = selectedColor.toLowerCase() === preset.hex.toLowerCase();
                 return (
@@ -91,12 +100,14 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                     onClick={() => setSelectedColor(preset.hex)}
                     title={preset.name}
                     aria-label={`Select color ${preset.name}`}
-                    className={`relative flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-110 ${
-                      isSelected ? "ring-2 ring-white ring-offset-2 ring-offset-[#0f0f1a] scale-110" : "opacity-80 hover:opacity-100"
+                    className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-110 ${
+                      isSelected
+                        ? "ring-2 ring-white ring-offset-2 ring-offset-[#0f0f1a] scale-110 shadow-lg"
+                        : "opacity-80 hover:opacity-100"
                     }`}
-                    style={{ backgroundColor: preset.hex }}
+                    style={{ backgroundColor: preset.hex, boxShadow: isSelected ? `0 0 16px ${preset.hex}88` : undefined }}
                   >
-                    {isSelected && <Check size={14} className="text-white drop-shadow-md" />}
+                    {isSelected && <Check size={16} className="text-white drop-shadow-md stroke-[3]" />}
                   </button>
                 );
               })}
@@ -105,13 +116,13 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
               <div className="relative flex items-center">
                 <label
                   htmlFor="custom-color-picker"
-                  className="flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 text-[11px] font-medium text-white/70 hover:bg-white/[0.08] cursor-pointer transition"
+                  className="flex h-9 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 text-xs font-medium text-white/80 hover:bg-white/[0.08] hover:text-white cursor-pointer transition"
                 >
                   <span
-                    className="h-3.5 w-3.5 rounded-full border border-white/20 shadow-sm"
+                    className="h-4 w-4 rounded-full border border-white/20 shadow-sm"
                     style={{ backgroundColor: selectedColor }}
                   />
-                  Custom
+                  Custom Pick
                 </label>
                 <input
                   id="custom-color-picker"
@@ -125,13 +136,16 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             <input type="hidden" name="color" value={selectedColor} />
           </div>
 
-          <div className="flex items-center justify-end pt-2">
+          <div className="flex items-center justify-between pt-5 border-t border-white/[0.08]">
+            <div className="text-xs text-white/40">
+              Posts categorized with this tag will inherit this visual theme.
+            </div>
             <button
               type="submit"
               disabled={isPending}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 text-xs font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50"
             >
-              <Plus size={15} /> Add Category
+              <Plus size={16} /> Add Category
             </button>
           </div>
         </form>
@@ -140,7 +154,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
       {/* Message Banner */}
       {message && (
         <div
-          className={`flex items-center justify-between rounded-xl border px-4 py-3 text-xs font-medium ${
+          className={`flex items-center justify-between rounded-xl border px-5 py-3.5 text-xs font-medium ${
             message.type === "success"
               ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
               : "border-rose-500/30 bg-rose-500/10 text-rose-300"
@@ -152,26 +166,26 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             onClick={() => setMessage(null)}
             className="text-white/40 hover:text-white transition"
           >
-            <X size={14} />
+            <X size={15} />
           </button>
         </div>
       )}
 
       {/* Category List */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-6 backdrop-blur-xl shadow-xl space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-          <div className="flex items-center gap-2">
-            <Tag size={15} className="text-violet-400" />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/70">
-              Categories List
+      <div className="rounded-2xl border border-white/10 bg-[#0f0f1a]/90 p-7 sm:p-8 backdrop-blur-xl shadow-xl space-y-5">
+        <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
+          <div className="flex items-center gap-2.5">
+            <Tag size={16} className="text-violet-400" />
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white/80">
+              Active Categories
             </h3>
           </div>
-          <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-medium text-white/50">
+          <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-white/60">
             {categories.length} {categories.length === 1 ? "category" : "categories"}
           </span>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="grid gap-3.5">
           {categories.map((category) =>
             editing === category.id ? (
               <form
@@ -188,24 +202,25 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                     }
                   });
                 }}
-                className="flex flex-col gap-3 rounded-xl border border-violet-500/30 bg-violet-500/[0.04] p-4 sm:flex-row sm:items-center"
+                className="flex flex-col gap-3 rounded-2xl border border-violet-500/40 bg-violet-500/[0.06] p-5 sm:flex-row sm:items-center shadow-lg"
               >
                 <input type="hidden" name="category_id" value={category.id} />
                 <input
                   name="name"
                   defaultValue={category.name}
                   maxLength={80}
-                  className="h-10 flex-1 rounded-xl border border-white/10 bg-[#16162a] px-3.5 text-xs text-white outline-none focus:border-violet-500"
+                  className="h-11 flex-1 rounded-xl border border-white/10 bg-[#16162a] px-4 text-sm text-white outline-none focus:border-violet-500"
                   required
                 />
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <div className="relative">
                     <label
                       htmlFor={`edit-color-${category.id}`}
-                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-[#16162a] cursor-pointer"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-[#16162a] cursor-pointer hover:border-white/20 transition"
+                      title="Pick new color"
                     >
                       <span
-                        className="h-4 w-4 rounded-full border border-white/20"
+                        className="h-5 w-5 rounded-full border border-white/20 shadow-sm"
                         style={{ backgroundColor: editColor }}
                       />
                     </label>
@@ -221,42 +236,60 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                   <button
                     disabled={isPending}
                     type="submit"
-                    className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white hover:bg-violet-500 transition"
+                    className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl bg-violet-600 px-5 text-xs font-semibold text-white hover:bg-violet-500 transition shadow-md"
                   >
-                    <Check size={14} /> Save
+                    <Check size={15} /> Save
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditing(null)}
-                    className="inline-flex h-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-3 text-xs text-white/60 hover:bg-white/[0.08] hover:text-white transition"
+                    className="inline-flex h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-medium text-white/60 hover:bg-white/[0.08] hover:text-white transition"
                   >
-                    <X size={14} />
+                    <X size={15} /> Cancel
                   </button>
                 </div>
               </form>
             ) : (
               <div
                 key={category.id}
-                className="group flex items-center justify-between gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all hover:border-white/15 hover:bg-white/[0.04]"
+                className="group flex items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-[#121226]/90 p-4 sm:p-5 transition-all duration-200 hover:border-violet-500/30 hover:bg-[#15152c] shadow-sm"
               >
-                <div className="flex min-w-0 items-center gap-3.5">
-                  <span
-                    className="h-4 w-4 shrink-0 rounded-full ring-2 ring-white/10 shadow-sm transition-transform group-hover:scale-110"
-                    style={{ backgroundColor: category.color, boxShadow: `0 0 10px ${category.color}44` }}
-                  />
+                <div className="flex min-w-0 items-center gap-4">
+                  <div
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform group-hover:scale-105"
+                    style={{
+                      backgroundColor: `${category.color}1a`,
+                      border: `1px solid ${category.color}40`,
+                    }}
+                  >
+                    <span
+                      className="h-4 w-4 rounded-full shadow-sm"
+                      style={{
+                        backgroundColor: category.color,
+                        boxShadow: `0 0 10px ${category.color}`,
+                      }}
+                    />
+                  </div>
                   <div>
-                    <div className="truncate text-xs font-semibold text-white">{category.name}</div>
-                    <div className="text-[10px] font-mono text-white/40">{category.color}</div>
+                    <div className="truncate text-sm font-semibold text-white">{category.name}</div>
+                    <div className="mt-0.5 flex items-center gap-2">
+                      <span className="font-mono text-[11px] text-white/40 bg-white/[0.03] px-2 py-0.5 rounded border border-white/[0.06]">
+                        {category.color}
+                      </span>
+                      <span className="text-[11px] text-white/40">Workspace category</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
+
+                <div className="flex items-center gap-2">
                   <button
                     aria-label={`Edit ${category.name}`}
                     onClick={() => startEditingCategory(category)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:bg-white/[0.08] hover:text-white transition"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-medium text-white/70 hover:bg-white/[0.08] hover:text-white transition"
                     title="Edit category"
                   >
                     <Pencil size={13} />
+                    <span className="hidden sm:inline">Edit</span>
                   </button>
                   <form
                     action={async (formData: FormData) => {
@@ -271,10 +304,11 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                     <input type="hidden" name="category_id" value={category.id} />
                     <button
                       aria-label={`Delete ${category.name}`}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:bg-rose-500/10 hover:text-rose-400 transition"
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3.5 py-2 text-xs font-medium text-rose-300 hover:bg-rose-500/20 transition"
                       title="Delete category"
                     >
                       <Trash2 size={13} />
+                      <span className="hidden sm:inline">Delete</span>
                     </button>
                   </form>
                 </div>
@@ -283,10 +317,14 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
           )}
 
           {categories.length === 0 && (
-            <div className="py-12 text-center">
-              <Tag size={28} className="mx-auto text-white/20" />
-              <p className="mt-3 text-xs font-semibold text-white/60">No categories created yet</p>
-              <p className="mt-1 text-[11px] text-white/40">Use the form above to add your first post classification.</p>
+            <div className="py-14 text-center">
+              <div className="flex h-12 w-12 mx-auto items-center justify-center rounded-2xl bg-white/[0.03] border border-white/[0.08] text-white/30">
+                <Tag size={22} />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-white/70">No categories created yet</p>
+              <p className="mt-1 text-xs text-white/40 max-w-sm mx-auto">
+                Use the form above to add your first post classification tag.
+              </p>
             </div>
           )}
         </div>

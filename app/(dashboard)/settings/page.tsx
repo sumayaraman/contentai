@@ -55,31 +55,30 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="page animate-fade-up max-w-4xl mx-auto space-y-6">
-      <div className="page-header">
+    <div className="page animate-fade-up">
+      <div className="mx-auto max-w-4xl space-y-10 pb-16">
         <div>
-          <span className="inline-flex items-center gap-1 rounded-full border border-violet-500/20 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-violet-300">
-            Workspace settings
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-0.5 text-[11px] font-semibold text-violet-300">
+            Workspace Settings
           </span>
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Settings</h1>
           <p className="mt-1 text-xs text-white/50">Manage your personal profile, workspace details, team access, and AI preferences.</p>
         </div>
-      </div>
 
-      {/* Profile */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-6 backdrop-blur-xl shadow-xl">
-        <div className="mb-5 pb-4 border-b border-white/[0.06]">
-          <h2 className="text-sm font-semibold text-white">Personal Profile</h2>
-          <p className="mt-0.5 text-[11px] text-white/50">
-            Your name and avatar appear across post revisions and workspace activity.
-          </p>
+        {/* Profile */}
+        <div className="rounded-2xl border border-white/10 bg-[#0f0f1a]/90 p-7 sm:p-8 backdrop-blur-xl shadow-xl">
+          <div className="mb-6 pb-5 border-b border-white/[0.08]">
+            <h2 className="text-base font-semibold text-white">Personal Profile</h2>
+            <p className="mt-1 text-xs text-white/50">
+              Your name and avatar appear across post revisions, campaigns, and workspace activity.
+            </p>
+          </div>
+          <ProfileForm profile={profile} />
         </div>
-        <ProfileForm profile={profile} />
-      </div>
 
-      <WorkspaceSettings workspace={workspace} role={role} members={members} />
-      <SocialAccounts accounts={socialAccounts} role={role} />
+        <WorkspaceSettings workspace={workspace} role={role} members={members} />
+        <SocialAccounts accounts={socialAccounts} role={role} />
+      </div>
     </div>
   );
 }
-
