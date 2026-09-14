@@ -1,13 +1,46 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, Clipboard, ImageIcon, Loader2, RefreshCw, Save, Sparkles, Upload } from "lucide-react";
+import {
+  Check,
+  Clipboard,
+  Download,
+  Film,
+  ImageIcon,
+  Loader2,
+  RefreshCw,
+  Save,
+  Sparkles,
+  Upload,
+  WandSparkles,
+  X,
+} from "lucide-react";
 import { attachGeneratedImageToPost, saveGeneratedImage } from "@/lib/image/actions";
 import type { Post } from "@/types/database";
 
-export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pick<Post, "id" | "title" | "platform">[], initialPrompt?: string }) {
+const PROMPT_SUGGESTIONS = [
+  "A sleek, glossy black sports car parked on a scenic coastal road at sunset, vibrant warm lighting, cinematic 8k",
+  "Specialty espresso pour in a minimalist ceramic cup, golden morning sunlight, rich crema, cafe aesthetic",
+  "Organic coffee beans in a handcrafted wooden scoop, rustic cafe table background, shallow depth of field",
+  "Modern glass office with plants, warm cozy lighting, professional laptop workstation, minimalist aesthetic",
+];
+
+const ASPECT_RATIOS = [
+  { id: "1024x1024", label: "1:1 Square", sub: "Instagram, Feed", ratio: "aspect-square" },
+  { id: "1536x1024", label: "16:9 Wide", sub: "Twitter, Web banner", ratio: "aspect-[16/9]" },
+  { id: "1024x1536", label: "9:16 Tall", sub: "Stories, Reels", ratio: "aspect-[9/16]" },
+] as const;
+
+export function ImageGenerator({
+  posts = [],
+  initialPrompt = "",
+}: {
+  posts?: Pick<Post, "id" | "title" | "platform">[];
+  initialPrompt?: string;
+}) {
   const [prompt, setPrompt] = useState(initialPrompt);
   const [size, setSize] = useState<"1024x1024" | "1536x1024" | "1024x1536">("1024x1024");
+  const [activeTab, setActiveTab] = useState<"image" | "video">("image");
   const [image, setImage] = useState<{ url: string; provider: string; model: string } | null>(null);
   const [savedMediaId, setSavedMediaId] = useState("");
   const [selectedPost, setSelectedPost] = useState("");
@@ -19,20 +52,27 @@ export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pic
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
 
   function runGeneration() {
-    setError(""); setNotice("");
+    if (!prompt.trim()) return;
+    setError("");
+    setNotice("");
     startTransition(async () => {
       try {
         const seed = Math.floor(Math.random() * 999999);
-        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&width=1024&height=1024&nologo=true`;
+        const [w, h] = size.split("x").map(Number);
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&width=${w}&height=${h}&nologo=true`;
+
+        // Preload image in background
         await new Promise((resolve, reject) => {
           const img = new window.Image();
           img.onload = resolve;
           img.onerror = reject;
           img.src = url;
         });
+
         setImage({ url, provider: "pollinations", model: "flux" });
-        setSavedMediaId(""); setVideoUrl("");
-        setNotice("Generated with Pollinations (free).");
+        setSavedMediaId("");
+        setVideoUrl("");
+        setNotice("Image generated successfully!");
       } catch {
         setError("Image generation failed. Please try again.");
       }
@@ -49,8 +89,12 @@ export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pic
     setError("");
     startTransition(async () => {
       const result = await saveGeneratedImage(form);
-      if (!result.ok) setError(result.error || "Could not save image.");
-      else { setSavedMediaId(result.media?.id ?? ""); setNotice("Image saved to Media Library."); }
+      if (!result.ok) {
+        setError(result.error || "Could not save image.");
+      } else {
+        setSavedMediaId(result.media?.id ?? "");
+        setNotice("Image saved to Media Library.");
+      }
     });
   }
 
@@ -61,23 +105,41 @@ export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pic
     form.set("post_id", selectedPost);
     startTransition(async () => {
       const result = await attachGeneratedImageToPost(form);
-      if (!result.ok) setError(result.error || "Could not attach image.");
-      else setNotice("Image attached to post.");
+      if (!result.ok) {
+        setError(result.error || "Could not attach image.");
+      } else {
+        setNotice("Image attached to post.");
+      }
     });
   }
 
   async function copyPrompt() {
-    try { await navigator.clipboard.writeText(prompt); setNotice("Copied!"); }
-    catch { setNotice("Clipboard unavailable."); }
+    try {
+      await navigator.clipboard.writeText(prompt);
+      setNotice("Prompt copied to clipboard!");
+    } catch {
+      setNotice("Clipboard unavailable.");
+    }
+  }
+
+  function downloadImage() {
+    if (!image) return;
+    const link = document.createElement("a");
+    link.href = image.url;
+    link.download = `contentai-${Date.now()}.jpg`;
+    link.target = "_blank";
+    link.click();
   }
 
   async function generateVideo() {
-    if (!prompt) return;
-    setIsGeneratingVideo(true); setVideoError(""); setVideoUrl("");
+    if (!prompt.trim()) return;
+    setIsGeneratingVideo(true);
+    setVideoError("");
+    setVideoUrl("");
     try {
       const token = process.env.NEXT_PUBLIC_HUGGINGFACE_API_TOKEN;
       if (!token) {
-        setVideoError("Video provider is not configured. Set NEXT_PUBLIC_HUGGINGFACE_API_TOKEN.");
+        setVideoError("Video provider requires NEXT_PUBLIC_HUGGINGFACE_API_TOKEN in environment variables.");
         return;
       }
       const response = await fetch(
@@ -104,125 +166,636 @@ export function ImageGenerator({ posts = [], initialPrompt = "" }: { posts?: Pic
       const base64 = btoa(binary);
       setVideoUrl(`data:video/mp4;base64,${base64}`);
     } catch {
-      setVideoError("Video generation failed. Try again.");
+      setVideoError("Video generation failed. Please try again.");
     } finally {
       setIsGeneratingVideo(false);
     }
   }
 
   return (
-    <div className="space-y-6 pb-40">
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-3 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600"><ImageIcon size={19} /></span>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-violet-600">Phase 6</p>
-              <h2 className="mt-1 font-semibold text-slate-950">AI Image Studio</h2>
-              <p className="mt-1 text-xs text-slate-500">Turn a prompt into media you can reuse in posts.</p>
+    <div className="studio-container">
+      <style>{`
+        .studio-container {
+          max-width: 1360px;
+          margin: 0 auto;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .studio-header-nav {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: var(--bg-surface);
+          border: 1px solid var(--border);
+          border-radius: var(--r-lg);
+          padding: 8px 14px;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .studio-tabs {
+          display: flex;
+          gap: 6px;
+        }
+
+        .studio-tab-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          border-radius: var(--r-md);
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--text-secondary);
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .studio-tab-btn.active {
+          background: var(--accent-soft);
+          color: #b0a0ff;
+        }
+
+        .studio-grid {
+          display: grid;
+          grid-template-columns: 440px minmax(0, 1fr);
+          gap: 24px;
+          align-items: start;
+        }
+
+        .studio-panel {
+          background: var(--bg-surface);
+          border: 1px solid var(--border);
+          border-radius: var(--r-xl);
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        .studio-label {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--text-primary);
+          letter-spacing: 0.03em;
+        }
+
+        .studio-textarea {
+          width: 100%;
+          min-height: 120px;
+          border-radius: var(--r-md);
+          background: var(--bg-elevated);
+          border: 1px solid var(--border);
+          padding: 12px 14px;
+          font-size: 13px;
+          line-height: 1.6;
+          color: var(--text-primary);
+          outline: none;
+          resize: vertical;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .studio-textarea:focus {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 3px rgba(109,92,255,0.18);
+        }
+
+        .studio-chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .studio-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid var(--border);
+          border-radius: 99px;
+          padding: 4px 10px;
+          font-size: 11px;
+          color: var(--text-secondary);
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .studio-chip:hover {
+          background: var(--accent-soft);
+          color: #a89dff;
+          border-color: var(--border-accent);
+        }
+
+        .studio-ratio-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
+
+        .studio-ratio-card {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 12px 8px;
+          background: var(--bg-elevated);
+          border: 1px solid var(--border);
+          border-radius: var(--r-md);
+          cursor: pointer;
+          transition: all 0.15s ease;
+          text-align: center;
+        }
+
+        .studio-ratio-card:hover {
+          border-color: rgba(109,92,255,0.3);
+          background: rgba(109,92,255,0.06);
+        }
+
+        .studio-ratio-card.active {
+          border-color: var(--accent);
+          background: var(--accent-soft);
+          color: #b0a0ff;
+        }
+
+        .studio-stage {
+          background: var(--bg-surface);
+          border: 1px solid var(--border);
+          border-radius: var(--r-xl);
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          min-height: 520px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        .studio-stage-empty {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          flex: 1;
+          border: 1px dashed rgba(255,255,255,0.12);
+          border-radius: var(--r-lg);
+          padding: 40px;
+          text-align: center;
+          background: rgba(255,255,255,0.01);
+        }
+
+        .studio-stage-preview {
+          position: relative;
+          width: 100%;
+          border-radius: var(--r-lg);
+          overflow: hidden;
+          background: #000;
+          border: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .studio-action-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        @media (max-width: 1024px) {
+          .studio-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
+
+      {/* Top Header Navigation bar */}
+      <div className="studio-header-nav">
+        <div className="studio-tabs">
+          <button
+            type="button"
+            className={`studio-tab-btn ${activeTab === "image" ? "active" : ""}`}
+            onClick={() => setActiveTab("image")}
+          >
+            <ImageIcon size={16} /> Image Studio
+          </button>
+          <button
+            type="button"
+            className={`studio-tab-btn ${activeTab === "video" ? "active" : ""}`}
+            onClick={() => setActiveTab("video")}
+          >
+            <Film size={16} /> Video Studio
+          </button>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span className="badge badge-ai" style={{ fontSize: 11 }}>
+            <span className="ai-dot" style={{ width: 6, height: 6 }} />
+            Free · Pollinations Flux
+          </span>
+        </div>
+      </div>
+
+      {/* Notifications */}
+      {notice && (
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 18px",
+          background: "rgba(34,197,94,0.1)",
+          border: "1px solid rgba(34,197,94,0.25)",
+          borderRadius: "var(--r-md)",
+          color: "#4ade80",
+          fontSize: 13,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Check size={16} />
+            <span>{notice}</span>
+          </div>
+          <button type="button" onClick={() => setNotice("")} style={{ background: "transparent", border: "none", color: "#4ade80", cursor: "pointer" }}>
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {error && (
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 18px",
+          background: "rgba(239,68,68,0.1)",
+          border: "1px solid rgba(239,68,68,0.25)",
+          borderRadius: "var(--r-md)",
+          color: "#f87171",
+          fontSize: 13,
+        }}>
+          <span>{error}</span>
+          <button type="button" onClick={() => setError("")} style={{ background: "transparent", border: "none", color: "#f87171", cursor: "pointer" }}>
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* Main Studio Grid */}
+      <div className="studio-grid">
+        {/* LEFT COLUMN: Controls */}
+        <div className="studio-panel">
+          {/* Prompt Section */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div className="studio-label">
+              <span>{activeTab === "image" ? "Image Prompt" : "Video Scene Prompt"}</span>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={copyPrompt}
+                  disabled={!prompt.trim()}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "transparent", border: "none", color: "var(--text-muted)", fontSize: 11, cursor: "pointer" }}
+                  title="Copy prompt"
+                >
+                  <Clipboard size={12} /> Copy
+                </button>
+                {prompt && (
+                  <button
+                    type="button"
+                    onClick={() => setPrompt("")}
+                    style={{ background: "transparent", border: "none", color: "var(--text-muted)", fontSize: 11, cursor: "pointer" }}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe what you want to create in vivid detail (subject, lighting, mood, colors)…"
+              className="studio-textarea"
+              rows={4}
+            />
+
+            {/* Quick Inspiration Chips */}
+            <div style={{ marginTop: 2 }}>
+              <span style={{ fontSize: 11, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>
+                Inspiration shortcuts:
+              </span>
+              <div className="studio-chips">
+                {PROMPT_SUGGESTIONS.map((text, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="studio-chip"
+                    onClick={() => setPrompt(text)}
+                  >
+                    <Sparkles size={10} style={{ color: "var(--accent)" }} />
+                    {i === 0 ? "🏎️ Coastal Car" : i === 1 ? "☕ Ceramic Espresso" : i === 2 ? "🌿 Coffee Beans" : "💼 Workspace"}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-          {image && (
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700">
-              Free · Pollinations
-            </span>
+
+          {/* Format / Aspect Ratio (Image Mode) */}
+          {activeTab === "image" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div className="studio-label">
+                <span>Aspect Ratio &amp; Size</span>
+              </div>
+              <div className="studio-ratio-grid">
+                {ASPECT_RATIOS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`studio-ratio-card ${size === item.id ? "active" : ""}`}
+                    onClick={() => setSize(item.id as typeof size)}
+                  >
+                    <span style={{ fontSize: 12, fontWeight: 700 }}>{item.label}</span>
+                    <span style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>{item.sub}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Primary Action Button */}
+          {activeTab === "image" ? (
+            <button
+              type="button"
+              onClick={runGeneration}
+              disabled={isPending || !prompt.trim()}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                borderRadius: "var(--r-md)",
+                background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+                padding: "14px 20px",
+                fontSize: 14,
+                fontWeight: 700,
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+                boxShadow: "0 4px 20px rgba(109,92,255,0.35)",
+                opacity: isPending || !prompt.trim() ? 0.5 : 1,
+              }}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" /> Generating Image…
+                </>
+              ) : image ? (
+                <>
+                  <RefreshCw size={16} /> Regenerate Image
+                </>
+              ) : (
+                <>
+                  <Sparkles size={16} /> Generate Free Image
+                </>
+              )}
+            </button>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <button
+                type="button"
+                onClick={generateVideo}
+                disabled={isGeneratingVideo || !prompt.trim()}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  borderRadius: "var(--r-md)",
+                  background: "linear-gradient(135deg, #a855f7 0%, #ec4899 100%)",
+                  padding: "14px 20px",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: "#ffffff",
+                  border: "none",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 20px rgba(168,85,247,0.35)",
+                  opacity: isGeneratingVideo || !prompt.trim() ? 0.5 : 1,
+                }}
+              >
+                {isGeneratingVideo ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" /> Rendering Video (30-60s)…
+                  </>
+                ) : (
+                  <>
+                    <Film size={16} /> Generate Video from Prompt
+                  </>
+                )}
+              </button>
+              {videoError && (
+                <p style={{ fontSize: 11.5, color: "#f87171", background: "rgba(239,68,68,0.08)", padding: "10px 12px", borderRadius: 8 }}>
+                  {videoError}
+                </p>
+              )}
+            </div>
           )}
         </div>
-        <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
-          <div className="space-y-4">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Image prompt</label>
-              <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} maxLength={4000} rows={10}
-                placeholder="A bright editorial photo of a coffee collection on a sunny cafe table, premium photography, no text."
-                className="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm leading-6 text-slate-900 outline-none placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100" />
-              <div className="mt-2 flex justify-end">
-                <button type="button" onClick={copyPrompt} disabled={!prompt} className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 disabled:opacity-40">
-                  <Clipboard size={13} /> Copy prompt
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Image size</label>
-              <select value={size} onChange={(e) => setSize(e.target.value as typeof size)} className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-violet-400">
-                <option value="1024x1024">Square 1024x1024</option>
-                <option value="1536x1024">Landscape 1536x1024</option>
-                <option value="1024x1536">Portrait 1024x1536</option>
-              </select>
-            </div>
-            <button type="button" onClick={runGeneration} disabled={isPending || !prompt.trim()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50">
-              {isPending ? <Loader2 size={17} className="animate-spin" /> : image ? <RefreshCw size={17} /> : <Sparkles size={17} />}
-              {isPending ? "Generating..." : image ? "Regenerate Image" : "Generate Image"}
-            </button>
-            {notice && <div className="flex items-start gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700"><Check size={16} className="mt-0.5 shrink-0" />{notice}</div>}
-            {error && <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div>}
-          </div>
-          <div className="min-w-0">
-            {!image ? (
-              <div className="flex min-h-[430px] flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
-                <ImageIcon size={28} className="text-slate-400" />
-                <h3 className="mt-4 text-sm font-semibold text-slate-800">Image preview appears here</h3>
-                <p className="mt-2 max-w-sm text-xs text-slate-500">Describe a visual and click Generate.</p>
+
+        {/* RIGHT COLUMN: Stage & Output */}
+        <div className="studio-stage">
+          {activeTab === "image" ? (
+            !image ? (
+              <div className="studio-stage-empty">
+                <div style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 20,
+                  background: "rgba(109,92,255,0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 16,
+                  color: "#a89dff",
+                }}>
+                  <WandSparkles size={28} />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
+                  Ready to Create
+                </h3>
+                <p style={{ fontSize: 12.5, color: "var(--text-secondary)", maxWidth: 360, marginTop: 6, lineHeight: 1.6 }}>
+                  Type a visual description or select an inspiration tag on the left, then click Generate. Your high-resolution image will render here.
+                </p>
               </div>
             ) : (
-              <div className="space-y-4">
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
-                  <img src={image.url} alt="Generated" className="max-h-[600px] w-full object-contain" />
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div className="studio-stage-preview">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.url}
+                    alt={prompt}
+                    style={{ maxHeight: "540px", width: "100%", objectFit: "contain" }}
+                  />
                 </div>
-                <div className="flex gap-2">
-                  <button type="button" onClick={save} disabled={isPending || Boolean(savedMediaId)} className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50">
-                    <Save size={16} />{savedMediaId ? "Saved" : "Save to Media Library"}
+
+                {/* Actions Toolbar */}
+                <div className="studio-action-row">
+                  <button
+                    type="button"
+                    onClick={save}
+                    disabled={isPending || Boolean(savedMediaId)}
+                    className="btn btn-primary btn-sm"
+                    style={{ gap: 6 }}
+                  >
+                    <Save size={14} />
+                    {savedMediaId ? "Saved to Library" : "Save to Media Library"}
                   </button>
-                  <button type="button" onClick={runGeneration} disabled={isPending} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">
-                    <RefreshCw size={16} /> Regenerate
+
+                  <button
+                    type="button"
+                    onClick={downloadImage}
+                    className="btn btn-ghost btn-sm"
+                    style={{ gap: 6 }}
+                  >
+                    <Download size={14} /> Download
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={runGeneration}
+                    disabled={isPending}
+                    className="btn btn-ghost btn-sm"
+                    style={{ gap: 6 }}
+                  >
+                    <RefreshCw size={14} /> Regenerate
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("video")}
+                    className="btn btn-ghost btn-sm"
+                    style={{ gap: 6, color: "#c084fc" }}
+                  >
+                    <Film size={14} /> Turn to Video
                   </button>
                 </div>
-                {savedMediaId && posts.length > 0 && (
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-800"><Upload size={16} /> Attach to post</div>
-                    <div className="flex gap-2">
-                      <select value={selectedPost} onChange={(e) => setSelectedPost(e.target.value)} className="h-10 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm">
-                        <option value="">Choose a post</option>
-                        {posts.map((p) => <option key={p.id} value={p.id}>{p.title} - {p.platform}</option>)}
+
+                {/* Attach to post option */}
+                {posts.length > 0 && (
+                  <div style={{
+                    marginTop: 8,
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--r-md)",
+                    padding: 14,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                  }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 }}>
+                      <Upload size={14} style={{ color: "var(--accent)" }} /> Attach this picture to a planned social post
+                    </span>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <select
+                        value={selectedPost}
+                        onChange={(e) => setSelectedPost(e.target.value)}
+                        style={{
+                          flex: 1,
+                          height: 38,
+                          borderRadius: "var(--r-md)",
+                          background: "var(--bg-surface)",
+                          border: "1px solid var(--border)",
+                          color: "var(--text-primary)",
+                          padding: "0 12px",
+                          fontSize: 12.5,
+                          outline: "none",
+                        }}
+                      >
+                        <option value="">Select a planned post…</option>
+                        {posts.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.title} ({p.platform})
+                          </option>
+                        ))}
                       </select>
-                      <button type="button" onClick={attach} disabled={isPending || !selectedPost} className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50">
-                        <Upload size={15} /> Attach
+                      <button
+                        type="button"
+                        onClick={attach}
+                        disabled={isPending || !selectedPost || !savedMediaId}
+                        title={!savedMediaId ? "Save the image to Media Library first" : undefined}
+                        className="btn btn-primary btn-sm"
+                      >
+                        Attach
                       </button>
                     </div>
                   </div>
                 )}
               </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {image && (
-        <section className="rounded-2xl border border-purple-200 bg-white p-5 shadow-sm mb-10">
-          <div className="flex items-center gap-3 mb-5 border-b border-slate-100 pb-5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
-              <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-            </span>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-purple-600">New Feature</p>
-              <h2 className="mt-1 font-semibold text-slate-950">AI Video Studio</h2>
-              <p className="mt-1 text-xs text-slate-500">Turn your prompt into a short video — free.</p>
-            </div>
-          </div>
-          {videoError && <div className="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{videoError}</div>}
-          {videoUrl ? (
-            <div className="space-y-3">
-              <video src={videoUrl} controls autoPlay loop muted className="w-full rounded-xl border border-slate-200" />
-              <button type="button" onClick={() => { setVideoUrl(""); setVideoError(""); }} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                Generate Again
-              </button>
-            </div>
+            )
           ) : (
-            <button type="button" onClick={generateVideo} disabled={isGeneratingVideo} className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50">
-              {isGeneratingVideo ? <><Loader2 size={17} className="animate-spin" /> Generating video — please wait 30-60 seconds...</> : "Generate Video from this prompt"}
-            </button>
+            // VIDEO TAB
+            <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 16 }}>
+              {videoUrl ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  <div className="studio-stage-preview">
+                    <video
+                      src={videoUrl}
+                      controls
+                      autoPlay
+                      loop
+                      muted
+                      style={{ maxHeight: "540px", width: "100%", borderRadius: "var(--r-lg)" }}
+                    />
+                  </div>
+                  <div className="studio-action-row">
+                    <a
+                      href={videoUrl}
+                      download="contentai-video.mp4"
+                      className="btn btn-primary btn-sm"
+                      style={{ gap: 6 }}
+                    >
+                      <Download size={14} /> Download Video
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => { setVideoUrl(""); setVideoError(""); }}
+                      className="btn btn-ghost btn-sm"
+                    >
+                      Generate Again
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="studio-stage-empty">
+                  <div style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: 20,
+                    background: "rgba(168,85,247,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 16,
+                    color: "#c084fc",
+                  }}>
+                    <Film size={28} />
+                  </div>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
+                    AI Video Studio
+                  </h3>
+                  <p style={{ fontSize: 12.5, color: "var(--text-secondary)", maxWidth: 380, marginTop: 6, lineHeight: 1.6 }}>
+                    Convert your prompt into a dynamic short video using Stable Video Diffusion.
+                  </p>
+                </div>
+              )}
+            </div>
           )}
-        </section>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
