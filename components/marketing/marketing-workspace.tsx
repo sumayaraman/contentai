@@ -99,8 +99,11 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
     startTransition(async () => {
       const result = await generateMarketingPlan({ businessName: brandName, description, audience, platform, tone, goal, startDate, duration, postsPerDay, brandVoice: voice });
       if (!result.ok) { setError(result.error); return; }
-      setItems(result.items.map((item) => ({ ...item, status: "pending", imageUrl: null })));
-      setMessage(`Plan ready — ${result.items.length} content pieces across ${duration} days.`);
+      const newItems: MarketingItem[] = result.items.map((item) => ({ ...item, status: "pending", imageUrl: null }));
+      setItems(newItems);
+      setMessage(`Plan ready! Generating branded pictures for all ${newItems.length} days with your logo…`);
+      // Automatically generate the pictures with logo
+      void generateImages(newItems);
     });
   }
 
@@ -230,31 +233,71 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
     }
   }
 
-  async function generateImages() {
-    if (!items.length) return;
-    setError(""); setMessage(""); setProgress(0);
-    for (let index = 0; index < items.length; index += 1) {
-      const item = items[index];
+  async function generateSingleImage(index: number) {
+    const item = items[index];
+    if (!item) return;
+    setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "generating" } : candidate));
+    try {
+      const variation = item.slot > 1 ? ` Daily variation ${item.slot}: use a distinctly different composition, camera angle and supporting scene.` : "";
+      const posName = logoPosition.replace("-", " ");
+      const prompt = `Day ${item.day}. ${item.imagePrompt} Brand: ${brandName}. Brand colors ${primary} and ${secondary}. Leave clean negative space in the ${posName} for the brand mark; do not generate text or a logo.${variation}`;
+      const result = await generateMarketingImage(prompt, imageSize);
+      if (!result.ok || !result.image) throw new Error(result.error || "Image generation failed.");
+      const branded = await composeLogo(result.image.url);
+
+      setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "ready", imageUrl: branded } : candidate));
+
+      // Attempt background save without blocking
+      try {
+        const saveForm = new FormData();
+        saveForm.set("image_url", branded);
+        saveForm.set("prompt", prompt);
+        saveForm.set("provider", result.image.provider);
+        saveForm.set("model", result.image.model);
+        void saveGeneratedImage(saveForm).catch(() => {});
+      } catch {}
+    } catch (e) {
+      console.warn("Single image error:", e);
+      setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "error" } : candidate));
+      setError(`Picture generation failed: ${e instanceof Error ? e.message : "Unknown error"}`);
+    }
+  }
+
+  async function generateImages(customList?: MarketingItem[]) {
+    const targetItems = customList && customList.length ? customList : items;
+    if (!targetItems.length) return;
+    setError(""); setMessage("Generating pictures with your brand mark…"); setProgress(0);
+
+    for (let index = 0; index < targetItems.length; index += 1) {
+      const item = targetItems[index];
       setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "generating" } : candidate));
       try {
         const variation = item.slot > 1 ? ` Daily variation ${item.slot}: use a distinctly different composition, camera angle and supporting scene.` : "";
         const posName = logoPosition.replace("-", " ");
-        const prompt = `${item.imagePrompt} Brand: ${brandName}. Brand colors ${primary} and ${secondary}. Leave clean negative space in the ${posName} for the brand mark; do not generate text or a logo.${variation}`;
+        const prompt = `Day ${item.day}. ${item.imagePrompt} Brand: ${brandName}. Brand colors ${primary} and ${secondary}. Leave clean negative space in the ${posName} for the brand mark; do not generate text or a logo.${variation}`;
         const result = await generateMarketingImage(prompt, imageSize);
         if (!result.ok || !result.image) throw new Error(result.error || "Image generation failed.");
         const branded = await composeLogo(result.image.url);
-        const saveForm = new FormData();
-        saveForm.set("image_url", branded); saveForm.set("prompt", prompt); saveForm.set("provider", result.image.provider); saveForm.set("model", result.image.model);
-        const saved = await saveGeneratedImage(saveForm);
-        if (!saved.ok) throw new Error(saved.error || "Could not save image.");
-        setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "ready", imageUrl: saved.media?.url || branded } : candidate));
+
+        // Immediately show the image on the card!
+        setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "ready", imageUrl: branded } : candidate));
+
+        // Background save to media catalog (non-blocking)
+        try {
+          const saveForm = new FormData();
+          saveForm.set("image_url", branded);
+          saveForm.set("prompt", prompt);
+          saveForm.set("provider", result.image.provider);
+          saveForm.set("model", result.image.model);
+          void saveGeneratedImage(saveForm).catch(() => {});
+        } catch {}
       } catch (e) {
+        console.warn(`Image ${index + 1} generation error:`, e);
         setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "error" } : candidate));
-        setError(`Image ${index + 1} failed: ${e instanceof Error ? e.message : "Unknown error"}`);
       }
-      setProgress(Math.round(((index + 1) / items.length) * 100));
+      setProgress(Math.round(((index + 1) / targetItems.length) * 100));
     }
-    setMessage("Images ready. Review the grid, then send the batch to your calendar.");
+    setMessage("All pictures generated with your brand mark! Review the batch, then click 'Add to calendar'.");
   }
 
   function scheduleBatch() {
@@ -611,36 +654,132 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
               <div className="mw-toolbar">
                 <div>
                   <div style={{ fontWeight: 700, color: "#f0f0ff", fontSize: 15 }}>Content batch</div>
-                  <div style={{ fontSize: 12, color: "#50507a", marginTop: 4 }}>{ready}/{items.length} images ready · {duration} days · {postsPerDay}/day</div>
+                  <div style={{ fontSize: 12, color: "#a89dff", marginTop: 4 }}>
+                    {ready}/{items.length} images generated with logo · {duration} days · {postsPerDay}/day
+                  </div>
                 </div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <button onClick={() => void generateImages()} disabled={isPending || items.some(i => i.status === "generating")}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", padding: "10px 14px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1 }}>
-                    <ImageIcon size={14} />{ready ? "Regenerate" : "Generate images"}
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                  <button
+                    onClick={() => void generateImages()}
+                    disabled={isPending || items.some((i) => i.status === "generating")}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 7,
+                      borderRadius: 10,
+                      background: ready < items.length ? "linear-gradient(135deg, #6d5cff, #a855f7)" : "rgba(255,255,255,0.08)",
+                      border: ready < items.length ? "none" : "1px solid rgba(255,255,255,0.12)",
+                      padding: "10px 16px",
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: "#ffffff",
+                      cursor: "pointer",
+                      opacity: isPending ? 0.5 : 1,
+                      boxShadow: ready < items.length ? "0 4px 14px rgba(109,92,255,0.3)" : "none",
+                    }}
+                  >
+                    {items.some((i) => i.status === "generating") ? (
+                      <>
+                        <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> Generating pictures…
+                      </>
+                    ) : (
+                      <>
+                        <WandSparkles size={14} /> {ready === 0 ? `Generate All ${items.length} Pictures` : ready < items.length ? `Generate Remaining (${items.length - ready})` : "Regenerate All Pictures"}
+                      </>
+                    )}
                   </button>
-                  <button onClick={scheduleBatch} disabled={isPending || ready !== items.length}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 10, background: "linear-gradient(135deg, #6d5cff, #a855f7)", padding: "10px 14px", fontSize: 13, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || ready !== items.length) ? 0.4 : 1, boxShadow: "0 4px 16px rgba(109,92,255,0.25)" }}>
-                    <CalendarDays size={14} />Add to calendar
+
+                  <button
+                    onClick={scheduleBatch}
+                    disabled={isPending || ready === 0}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      borderRadius: 10,
+                      background: ready > 0 ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      padding: "10px 14px",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: ready > 0 ? "#f0f0ff" : "#6d6d95",
+                      cursor: ready > 0 ? "pointer" : "not-allowed",
+                      opacity: isPending ? 0.4 : 1,
+                    }}
+                  >
+                    <CalendarDays size={14} /> Add to calendar
                   </button>
                 </div>
               </div>
 
               {progress > 0 && progress < 100 && (
-                <div style={{ height: 4, borderRadius: 99, background: "rgba(255,255,255,0.08)", marginBottom: 18, overflow: "hidden" }}>
+                <div style={{ height: 5, borderRadius: 99, background: "rgba(255,255,255,0.08)", marginBottom: 18, overflow: "hidden" }}>
                   <div style={{ height: "100%", borderRadius: 99, background: "linear-gradient(90deg, #6d5cff, #a855f7)", width: `${progress}%`, transition: "width 0.3s" }} />
                 </div>
               )}
 
               <div className="mw-content-grid">
-                {items.map((item) => (
+                {items.map((item, index) => (
                   <article key={`${item.day}-${item.slot}`} style={{ borderRadius: 16, border: "1px solid rgba(255,255,255,0.08)", background: "var(--bg-surface)", overflow: "hidden" }}>
-                    <div style={{ aspectRatio: "1", background: "var(--bg-elevated)" }}>
+                    <div style={{ aspectRatio: "1", background: "var(--bg-elevated)", position: "relative" }}>
                       {item.imageUrl ? (
-                        <img src={item.imageUrl} alt={item.contentIdea} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        <>
+                          <img src={item.imageUrl} alt={item.contentIdea} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <button
+                            type="button"
+                            onClick={() => void generateSingleImage(index)}
+                            style={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              padding: "4px 8px",
+                              borderRadius: 6,
+                              background: "rgba(10,10,20,0.7)",
+                              color: "#e2e8f0",
+                              fontSize: 10,
+                              fontWeight: 600,
+                              border: "1px solid rgba(255,255,255,0.2)",
+                              cursor: "pointer",
+                              backdropFilter: "blur(4px)",
+                            }}
+                            title="Regenerate this picture"
+                          >
+                            ↻ Regenerate
+                          </button>
+                        </>
                       ) : (
-                        <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#50507a" }}>
-                          {item.status === "generating" ? <Loader2 size={22} style={{ animation: "spin 1s linear infinite", color: "#6d5cff" }} /> : <ImageIcon size={22} />}
-                          <span style={{ marginTop: 8, fontSize: 11, fontWeight: 600 }}>Day {item.day}{postsPerDay > 1 ? ` · ${item.slot}` : ""}</span>
+                        <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 14, textAlign: "center", color: "#6d6d95", gap: 8 }}>
+                          {item.status === "generating" ? (
+                            <>
+                              <Loader2 size={24} style={{ animation: "spin 1s linear infinite", color: "#a855f7" }} />
+                              <span style={{ fontSize: 11, fontWeight: 600, color: "#a89dff" }}>Creating with logo…</span>
+                            </>
+                          ) : (
+                            <>
+                              <ImageIcon size={22} style={{ color: "#50507a" }} />
+                              <span style={{ fontSize: 11, fontWeight: 600 }}>Day {item.day}{postsPerDay > 1 ? ` · ${item.slot}` : ""}</span>
+                              <button
+                                type="button"
+                                onClick={() => void generateSingleImage(index)}
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 5,
+                                  borderRadius: 8,
+                                  background: "linear-gradient(135deg, #6d5cff, #a855f7)",
+                                  color: "#ffffff",
+                                  padding: "5px 11px",
+                                  fontSize: 11,
+                                  fontWeight: 700,
+                                  border: "none",
+                                  cursor: "pointer",
+                                  boxShadow: "0 2px 8px rgba(109,92,255,0.3)",
+                                }}
+                              >
+                                <Sparkles size={11} /> Generate picture
+                              </button>
+                            </>
+                          )}
                         </div>
                       )}
                     </div>

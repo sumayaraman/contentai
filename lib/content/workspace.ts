@@ -23,20 +23,21 @@ interface WorkspaceRecord {
   updated_at: string;
 }
 
-function normalizeWorkspace(raw: Partial<WorkspaceRecord> | null | undefined, fallbackOwnerId: string): WorkspaceRecord {
+function normalizeWorkspace(raw: Partial<WorkspaceRecord> | Partial<WorkspaceRecord>[] | null | undefined, fallbackOwnerId: string): WorkspaceRecord {
+  const item = Array.isArray(raw) ? raw[0] : raw;
   return {
-    id: raw?.id || DEFAULT_FALLBACK_WORKSPACE_ID,
-    name: raw?.name || "Coffee Studio",
-    owner_id: raw?.owner_id || fallbackOwnerId,
-    ai_provider: raw?.ai_provider || "auto",
-    brand_name: raw?.brand_name ?? raw?.name ?? "Coffee Studio",
-    brand_description: raw?.brand_description ?? null,
-    brand_logo_url: raw?.brand_logo_url ?? null,
-    brand_primary_color: raw?.brand_primary_color ?? "#111827",
-    brand_secondary_color: raw?.brand_secondary_color ?? "#f59e0b",
-    brand_voice: raw?.brand_voice ?? "Friendly and professional",
-    created_at: raw?.created_at || new Date().toISOString(),
-    updated_at: raw?.updated_at || new Date().toISOString(),
+    id: item?.id || DEFAULT_FALLBACK_WORKSPACE_ID,
+    name: item?.name || "Coffee Studio",
+    owner_id: item?.owner_id || fallbackOwnerId,
+    ai_provider: item?.ai_provider || "auto",
+    brand_name: item?.brand_name ?? item?.name ?? "Coffee Studio",
+    brand_description: item?.brand_description ?? null,
+    brand_logo_url: item?.brand_logo_url ?? null,
+    brand_primary_color: item?.brand_primary_color ?? "#111827",
+    brand_secondary_color: item?.brand_secondary_color ?? "#f59e0b",
+    brand_voice: item?.brand_voice ?? "Friendly and professional",
+    created_at: item?.created_at || new Date().toISOString(),
+    updated_at: item?.updated_at || new Date().toISOString(),
   };
 }
 
