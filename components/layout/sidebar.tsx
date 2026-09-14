@@ -85,8 +85,11 @@ export function Sidebar() {
         })}
 
         <div className="sb-divider" />
-        <Link href="/help" className="sb-link">
-          <HelpCircle size={14} strokeWidth={1.8} style={{ flexShrink: 0 }} />
+        <Link
+          href="/help"
+          className={`sb-link${isActive("/help") ? " active" : ""}`}
+        >
+          <HelpCircle size={14} strokeWidth={isActive("/help") ? 2.2 : 1.8} style={{ flexShrink: 0 }} />
           Help & docs
         </Link>
       </nav>

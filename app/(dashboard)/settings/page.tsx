@@ -55,33 +55,31 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="page animate-fade-up max-w-5xl mx-auto space-y-6">
+    <div className="page animate-fade-up max-w-4xl mx-auto space-y-6">
       <div className="page-header">
         <div>
-          <p className="ai-tag" style={{ marginBottom: 6 }}>Workspace settings</p>
-          <h1 className="page-title">Settings</h1>
-          <p className="page-subtitle">Manage your profile, workspace, team access, AI preferences and simulated social connections.</p>
+          <span className="inline-flex items-center gap-1 rounded-full border border-violet-500/20 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-violet-300">
+            Workspace settings
+          </span>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Settings</h1>
+          <p className="mt-1 text-xs text-white/50">Manage your personal profile, workspace details, team access, and AI preferences.</p>
         </div>
       </div>
 
       {/* Profile */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/80 p-6 backdrop-blur-xl shadow-lg">
-        <div className="mb-5">
-          <h2 className="font-semibold text-white">Profile</h2>
-          <p className="mt-1 text-xs text-white/50">
-            Your profile information is stored in the ContentAI database.
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-6 backdrop-blur-xl shadow-xl">
+        <div className="mb-5 pb-4 border-b border-white/[0.06]">
+          <h2 className="text-sm font-semibold text-white">Personal Profile</h2>
+          <p className="mt-0.5 text-[11px] text-white/50">
+            Your name and avatar appear across post revisions and workspace activity.
           </p>
         </div>
-        <ProfileSection profile={profile} />
+        <ProfileForm profile={profile} />
       </div>
 
       <WorkspaceSettings workspace={workspace} role={role} members={members} />
       <SocialAccounts accounts={socialAccounts} role={role} />
     </div>
   );
-}
-
-function ProfileSection({ profile }: { profile: UserProfile | null }) {
-  return <ProfileForm profile={profile} />;
 }
 
