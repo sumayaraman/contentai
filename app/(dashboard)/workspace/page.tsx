@@ -27,14 +27,20 @@ export default async function WorkspacePage() {
 
   return (
     <div className="page animate-fade-up">
-      <div className="page-header">
+      <div className="mx-auto max-w-6xl space-y-10 pb-24">
         <div>
-          <p className="ai-tag" style={{ marginBottom: 6 }}>✦ Marketing Workspace</p>
-          <h1 className="page-title">Your brand → a month of content</h1>
-          <p className="page-subtitle">Create a reusable brand identity, generate daily content, add your logo to every image, and send the finished batch to your calendar.</p>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3.5 py-1 text-xs font-semibold text-violet-300">
+            ✦ Content Workspace
+          </span>
+          <h1 className="mt-2.5 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            Brand Identity &amp; Content Engine
+          </h1>
+          <p className="mt-1.5 text-sm text-white/50 leading-relaxed max-w-2xl">
+            Create a reusable brand identity, generate automated multi-day content, add your logo to every image, and send the finished batch to your calendar.
+          </p>
         </div>
+        <MarketingWorkspace workspace={workspace} canEdit={role === "OWNER" || role === "ADMIN"} />
       </div>
-      <MarketingWorkspace workspace={workspace} canEdit={role === "OWNER" || role === "ADMIN"} />
     </div>
   );
 }

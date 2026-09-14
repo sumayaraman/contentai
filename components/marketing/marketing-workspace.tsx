@@ -29,8 +29,8 @@ const goals: Array<[AIObjective, string]> = [["AWARENESS", "Brand awareness"], [
 
 const tomorrow = () => { const date = new Date(); date.setDate(date.getDate() + 1); return date.toISOString().slice(0, 10); };
 
-const inputClass = "ai-input mw-input";
-const labelClass = "label mw-label";
+const inputClass = "h-13 w-full rounded-2xl border border-white/10 bg-[#16162a] px-4 sm:px-5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15 disabled:opacity-40";
+const labelClass = "block text-xs font-semibold text-white/70 mb-2";
 
 export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [activeTab, setActiveTab] = useState<"brand" | "plan">("brand");
@@ -320,316 +320,347 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const canGenerate = brandName.trim() && description.trim() && audience.trim();
 
   return (
-    <div className="mw-page">
-      <style>{`
-        .mw-page {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          padding: 32px 36px 90px;
-          max-width: 1440px;
-          margin: 0 auto;
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        /* Stats bar — fixed to never clip text, stacks on narrow width */
-        .mw-stats-bar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          background: rgba(109,92,255,0.08);
-          border: 1px solid rgba(109,92,255,0.2);
-          border-radius: 16px;
-          padding: 16px 24px;
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-        .mw-stats-label { display: flex; align-items: center; gap: 8px; color: #a89dff; font-size: 13px; font-weight: 600; white-space: nowrap; }
-        .mw-stats-value { font-size: 20px; font-weight: 800; color: #f0f0ff; white-space: nowrap; }
-        .mw-stats-value span { font-size: 12.5px; font-weight: 400; color: #9090c0; }
-
-        .mw-grid {
-          display: grid;
-          grid-template-columns: 380px minmax(0, 1fr);
-          gap: 20px;
-          align-items: start;
-          width: 100%;
-        }
-
-        .mw-card {
-          background: var(--bg-surface);
-          border: 1px solid var(--border);
-          border-radius: 20px;
-          box-sizing: border-box;
-          overflow: hidden;
-        }
-
-        /* Tabs */
-        .mw-tabs {
-          display: flex;
-          gap: 4px;
-          padding: 6px;
-          background: rgba(0,0,0,0.2);
-          border-bottom: 1px solid var(--border);
-        }
-        .mw-tab {
-          flex: 1;
-          text-align: center;
-          padding: 10px 12px;
-          border-radius: 10px;
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--text-secondary, #9090c0);
-          cursor: pointer;
-          transition: all 0.15s;
-          border: none;
-          background: transparent;
-        }
-        .mw-tab.active {
-          background: rgba(109,92,255,0.18);
-          color: #b0a0ff;
-        }
-        .mw-tab-body {
-          padding: 26px;
-        }
-        .mw-tab-intro {
-          font-size: 12.5px;
-          color: #6d6d95;
-          line-height: 1.6;
-          margin-bottom: 22px;
-        }
-
-        .mw-fields { display: flex; flex-direction: column; gap: 20px; }
-        .mw-field { display: flex; flex-direction: column; }
-        .mw-label { margin-bottom: 9px !important; font-size: 10.5px !important; letter-spacing: 0.08em !important; }
-        .mw-input { padding: 12px 14px !important; font-size: 13.5px !important; }
-        .mw-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-        .mw-content-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-          gap: 18px;
-        }
-        .mw-toolbar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 18px;
-          flex-wrap: wrap;
-          gap: 12px;
-        }
-
-        @media (max-width: 1100px) {
-          .mw-page { padding: 22px 20px 90px; }
-          .mw-grid { grid-template-columns: 330px minmax(0, 1fr); gap: 16px; }
-        }
-
-        @media (max-width: 767px) {
-          .mw-page { padding: 16px 14px 100px; gap: 14px; }
-          .mw-grid { grid-template-columns: 1fr; gap: 14px; }
-          .mw-tab-body { padding: 20px; }
-          .mw-fields { gap: 16px; }
-          .mw-row-2 { grid-template-columns: 1fr; gap: 12px; }
-          .mw-stats-bar { padding: 14px 16px; }
-          .mw-stats-value { font-size: 17px; }
-          .mw-content-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-        }
-      `}</style>
-
+    <div className="space-y-10">
       {/* Stats bar */}
-      <div className="mw-stats-bar">
-        <div className="mw-stats-label"><WandSparkles size={15} /> Planned output</div>
-        <div className="mw-stats-value">{total} <span>posts · {duration} days · {postsPerDay}/day</span></div>
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-violet-500/20 bg-gradient-to-r from-violet-500/10 via-[#14142a]/80 to-indigo-500/10 p-6 backdrop-blur-2xl shadow-xl shadow-black/30">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/20 text-violet-300 border border-violet-500/30 shadow-md shadow-violet-500/20">
+            <WandSparkles size={18} />
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-white">Planned Content Output</div>
+            <div className="text-xs text-violet-300/70 mt-0.5">Automated brand campaigns &amp; watermarked visuals</div>
+          </div>
+        </div>
+        <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          {total} <span className="text-xs sm:text-sm font-normal text-white/50">posts &middot; {duration} days &middot; {postsPerDay}/day</span>
+        </div>
       </div>
 
       {/* Alert */}
       {(message || error) && (
-        <div style={{ borderRadius: 12, padding: "14px 18px", fontSize: 13, fontWeight: 500, border: error ? "1px solid rgba(239,68,68,0.2)" : "1px solid rgba(109,92,255,0.3)", background: error ? "rgba(239,68,68,0.08)" : "rgba(109,92,255,0.08)", color: error ? "#f87171" : "#a89dff" }}>
+        <div
+          className={`rounded-2xl border px-5 py-4 text-xs sm:text-sm font-medium backdrop-blur-xl transition-all ${
+            error
+              ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
+              : "border-violet-500/30 bg-violet-500/10 text-violet-200"
+          }`}
+        >
           {error || message}
         </div>
       )}
 
       {/* Main grid */}
-      <div className="mw-grid">
-
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* LEFT — tabbed card: Brand / Plan */}
-        <div className="mw-card">
-          <div className="mw-tabs">
-            <button className={`mw-tab ${activeTab === "brand" ? "active" : ""}`} onClick={() => setActiveTab("brand")}>
-              <Palette size={13} style={{ marginRight: 6, verticalAlign: -2 }} />
-              Brand
+        <div className="lg:col-span-5 rounded-3xl border border-white/[0.08] bg-[#101020]/80 backdrop-blur-2xl shadow-2xl shadow-black/40 overflow-hidden">
+          <div className="flex items-center gap-2 p-3 border-b border-white/[0.08] bg-white/[0.02]">
+            <button
+              type="button"
+              className={`flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs sm:text-sm font-medium transition-all ${
+                activeTab === "brand"
+                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 scale-[1.01]"
+                  : "text-white/60 hover:text-white hover:bg-white/[0.05]"
+              }`}
+              onClick={() => setActiveTab("brand")}
+            >
+              <Palette size={15} />
+              <span>Brand Identity</span>
             </button>
-            <button className={`mw-tab ${activeTab === "plan" ? "active" : ""}`} onClick={() => setActiveTab("plan")}>
-              <CalendarDays size={13} style={{ marginRight: 6, verticalAlign: -2 }} />
-              Content plan
+            <button
+              type="button"
+              className={`flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs sm:text-sm font-medium transition-all ${
+                activeTab === "plan"
+                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 scale-[1.01]"
+                  : "text-white/60 hover:text-white hover:bg-white/[0.05]"
+              }`}
+              onClick={() => setActiveTab("plan")}
+            >
+              <CalendarDays size={15} />
+              <span>Content Plan</span>
             </button>
           </div>
 
           {activeTab === "brand" ? (
-            <div className="mw-tab-body">
-              <p className="mw-tab-intro">Set this up once — it&apos;s reused every time you generate a content plan.</p>
-              <div className="mw-fields">
-                <div className="mw-field">
-                  <div className={labelClass}>Brand name</div>
-                  <input disabled={!canEdit} value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="Your business name" className={inputClass} />
+            <div className="p-6 sm:p-8 space-y-6">
+              <p className="text-xs sm:text-sm text-white/50 leading-relaxed">
+                Set this up once &mdash; it&apos;s reused every time you generate a multi-day marketing campaign.
+              </p>
+              <div className="space-y-5">
+                <div>
+                  <label className={labelClass}>Brand Name</label>
+                  <input
+                    disabled={!canEdit}
+                    value={brandName}
+                    onChange={(e) => setBrandName(e.target.value)}
+                    placeholder="Your business name"
+                    className={inputClass}
+                  />
                 </div>
-                <div className="mw-field">
-                  <div className={labelClass}>What do you sell?</div>
-                  <textarea disabled={!canEdit} value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Specialty coffee, pastries and cozy cafe experiences." className={inputClass} style={{ resize: "vertical" }} />
+
+                <div>
+                  <label className={labelClass}>What do you sell?</label>
+                  <textarea
+                    disabled={!canEdit}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={3}
+                    placeholder="Specialty coffee, pastries and cozy cafe experiences."
+                    className="w-full rounded-2xl border border-white/10 bg-[#16162a] p-4 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15 disabled:opacity-40 resize-y"
+                  />
                 </div>
-                <div className="mw-field">
-                  <div className={labelClass}>Brand voice</div>
-                  <input disabled={!canEdit} value={voice} onChange={e => setVoice(e.target.value)} placeholder="Warm, witty, premium…" className={inputClass} />
+
+                <div>
+                  <label className={labelClass}>Brand Voice &amp; Tone</label>
+                  <input
+                    disabled={!canEdit}
+                    value={voice}
+                    onChange={(e) => setVoice(e.target.value)}
+                    placeholder="Warm, witty, premium…"
+                    className={inputClass}
+                  />
                 </div>
-                <div className="mw-row-2">
-                  <div className="mw-field">
-                    <div className={labelClass}>Primary color</div>
-                    <input disabled={!canEdit} type="color" value={primary} onChange={e => setPrimary(e.target.value)} style={{ width: "100%", height: 46, borderRadius: 12, border: "1px solid rgba(255,255,255,0.12)", background: primary, padding: 4, cursor: "pointer" }} />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Primary Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        disabled={!canEdit}
+                        type="color"
+                        value={primary}
+                        onChange={(e) => setPrimary(e.target.value)}
+                        className="h-13 w-full rounded-2xl border border-white/10 bg-[#16162a] p-2 cursor-pointer transition focus:border-violet-500"
+                      />
+                    </div>
                   </div>
-                  <div className="mw-field">
-                    <div className={labelClass}>Accent color</div>
-                    <input disabled={!canEdit} type="color" value={secondary} onChange={e => setSecondary(e.target.value)} style={{ width: "100%", height: 46, borderRadius: 12, border: "1px solid rgba(255,255,255,0.12)", background: secondary, padding: 4, cursor: "pointer" }} />
+                  <div>
+                    <label className={labelClass}>Accent Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        disabled={!canEdit}
+                        type="color"
+                        value={secondary}
+                        onChange={(e) => setSecondary(e.target.value)}
+                        className="h-13 w-full rounded-2xl border border-white/10 bg-[#16162a] p-2 cursor-pointer transition focus:border-violet-500"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: 10 }}>
-                  <label style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px dashed rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.03)", padding: "13px 16px", fontSize: 13, fontWeight: 500, color: "#9090c0", cursor: canEdit ? "pointer" : "default" }}>
-                    <Upload size={14} />
-                    {logoUrl ? "Replace logo" : "Upload brand logo"}
-                    <input disabled={!canEdit} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style={{ display: "none" }} onChange={e => void handleLogo(e.target.files?.[0])} />
-                  </label>
-                  {logoUrl && canEdit && (
-                    <button type="button" onClick={() => setLogoUrl("")} style={{ display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", padding: "0 14px", color: "#f87171", cursor: "pointer" }} title="Remove logo">
-                      <X size={15} />
-                    </button>
-                  )}
+                <div>
+                  <label className={labelClass}>Brand Logo Watermark</label>
+                  <div className="flex gap-3">
+                    <label className="flex-1 flex items-center justify-center gap-2.5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] hover:bg-white/[0.06] py-3.5 px-4 text-xs sm:text-sm font-medium text-white/70 hover:text-white transition cursor-pointer">
+                      <Upload size={16} className="text-violet-400" />
+                      <span>{logoUrl ? "Replace brand logo" : "Upload brand logo"}</span>
+                      <input
+                        disabled={!canEdit}
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                        className="hidden"
+                        onChange={(e) => void handleLogo(e.target.files?.[0])}
+                      />
+                    </label>
+                    {logoUrl && canEdit && (
+                      <button
+                        type="button"
+                        onClick={() => setLogoUrl("")}
+                        className="flex items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/10 hover:bg-rose-500/20 px-4 text-rose-300 transition cursor-pointer"
+                        title="Remove logo"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {logoUrl && (
-                  <>
-                    <div className="mw-field">
-                      <div className={labelClass}>Watermark position on photos</div>
-                      <select disabled={!canEdit} value={logoPosition} onChange={e => setLogoPosition(e.target.value as typeof logoPosition)} className={inputClass}>
-                        <option value="bottom-right">Bottom-Right (Recommended)</option>
-                        <option value="top-right">Top-Right</option>
-                        <option value="bottom-left">Bottom-Left</option>
-                        <option value="top-left">Top-Left</option>
+                  <div className="space-y-4 pt-2">
+                    <div>
+                      <label className={labelClass}>Watermark Position on Photos</label>
+                      <select
+                        disabled={!canEdit}
+                        value={logoPosition}
+                        onChange={(e) => setLogoPosition(e.target.value as typeof logoPosition)}
+                        className={`${inputClass} cursor-pointer`}
+                      >
+                        <option value="bottom-right" className="bg-[#16162a] text-white">Bottom-Right (Recommended)</option>
+                        <option value="top-right" className="bg-[#16162a] text-white">Top-Right</option>
+                        <option value="bottom-left" className="bg-[#16162a] text-white">Bottom-Left</option>
+                        <option value="top-left" className="bg-[#16162a] text-white">Top-Left</option>
                       </select>
                     </div>
 
                     {/* Live Watermark Preview Mockup */}
-                    <div style={{ borderRadius: 14, border: "1px solid rgba(109,92,255,0.25)", background: "#0a0a14", padding: 14 }}>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#a89dff" }}>✦ Live Watermark Preview</span>
-                        <span style={{ fontSize: 10.5, color: "#9090c0" }}>Position: {logoPosition}</span>
+                    <div className="rounded-2xl border border-violet-500/25 bg-[#0a0a14] p-4 space-y-3">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-semibold text-violet-300">✦ Live Watermark Preview</span>
+                        <span className="text-white/40 text-[11px] capitalize">{logoPosition.replace("-", " ")}</span>
                       </div>
-                      <div style={{ position: "relative", width: "100%", height: 160, borderRadius: 10, overflow: "hidden", background: "radial-gradient(circle at 60% 40%, #3d2b26 0%, #171110 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <div style={{ opacity: 0.55, textAlign: "center" }}>
-                          <Coffee size={38} color="#f59e0b" style={{ margin: "0 auto" }} />
-                          <p style={{ fontSize: 11, color: "#e2e8f0", marginTop: 4, fontWeight: 500 }}>Sample Coffee Post</p>
+                      <div className="relative w-full h-40 rounded-xl overflow-hidden bg-radial from-[#3d2b26] to-[#171110] flex items-center justify-center border border-white/[0.06]">
+                        <div className="opacity-60 text-center">
+                          <Coffee size={36} className="text-amber-500 mx-auto" />
+                          <p className="text-[11px] text-white/80 mt-1.5 font-medium">Sample Coffee Post</p>
                         </div>
-                        <div style={{
-                          position: "absolute",
-                          ...(logoPosition === "bottom-right" ? { bottom: 12, right: 12 } :
-                              logoPosition === "top-right" ? { top: 12, right: 12 } :
-                              logoPosition === "bottom-left" ? { bottom: 12, left: 12 } :
-                              { top: 12, left: 12 }),
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 6,
-                          padding: "5px 10px",
-                          borderRadius: 8,
-                          background: "rgba(12, 12, 22, 0.72)",
-                          border: "1px solid rgba(255, 255, 255, 0.22)",
-                          boxShadow: "0 4px 14px rgba(0,0,0,0.45)",
-                          backdropFilter: "blur(6px)",
-                        }}>
-                          <img src={logoUrl} alt="Logo preview" style={{ height: 22, maxWidth: 65, objectFit: "contain" }} />
-                          <span style={{ fontSize: 11, fontWeight: 700, color: "#f0f0ff" }}>{brandName}</span>
+                        <div
+                          className="absolute flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0c0c16]/80 border border-white/20 shadow-xl backdrop-blur-md"
+                          style={{
+                            ...(logoPosition === "bottom-right" ? { bottom: 12, right: 12 } :
+                                logoPosition === "top-right" ? { top: 12, right: 12 } :
+                                logoPosition === "bottom-left" ? { bottom: 12, left: 12 } :
+                                { top: 12, left: 12 })
+                          }}
+                        >
+                          <img src={logoUrl} alt="Logo preview" className="h-5 max-w-[65px] object-contain" />
+                          <span className="text-[11px] font-bold text-white">{brandName}</span>
                         </div>
                       </div>
-                      <p style={{ fontSize: 11, color: "#6d6d95", marginTop: 8, textAlign: "center" }}>
+                      <p className="text-[11px] text-white/40 text-center">
                         This frosted watermark badge will be composited on every generated picture.
                       </p>
                     </div>
-                  </>
+                  </div>
                 )}
 
                 {canEdit && (
-                  <button onClick={saveBrand} disabled={isPending} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", padding: "13px 16px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", opacity: isPending ? 0.5 : 1, marginTop: 4 }}>
-                    {isPending ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Check size={14} />}
-                    Save brand
+                  <button
+                    type="button"
+                    onClick={saveBrand}
+                    disabled={isPending}
+                    className="h-13 w-full rounded-2xl border border-white/10 bg-white/[0.08] hover:bg-white/[0.14] text-sm font-semibold text-white transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer pt-1"
+                  >
+                    {isPending ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                    Save Brand Identity
                   </button>
                 )}
               </div>
             </div>
           ) : (
-            <div className="mw-tab-body">
-              <p className="mw-tab-intro">Tell us who you&apos;re talking to and how you want to show up — we&apos;ll build the full calendar from this.</p>
-              <div className="mw-fields">
-                <div className="mw-field">
-                  <div className={labelClass}>Target audience</div>
-                  <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="Coffee lovers, students, young professionals" className={inputClass} />
+            <div className="p-6 sm:p-8 space-y-6">
+              <p className="text-xs sm:text-sm text-white/50 leading-relaxed">
+                Tell us who you&apos;re talking to and how you want to show up &mdash; we&apos;ll build the full calendar from this.
+              </p>
+              <div className="space-y-5">
+                <div>
+                  <label className={labelClass}>Target Audience</label>
+                  <input
+                    value={audience}
+                    onChange={(e) => setAudience(e.target.value)}
+                    placeholder="Coffee lovers, students, young professionals"
+                    className={inputClass}
+                  />
                 </div>
-                <div className="mw-row-2">
-                  <div className="mw-field">
-                    <div className={labelClass}>Platform</div>
-                    <select value={platform} onChange={e => setPlatform(e.target.value as AIPlatform)} className={inputClass}>
-                      {platforms.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Platform</label>
+                    <select
+                      value={platform}
+                      onChange={(e) => setPlatform(e.target.value as AIPlatform)}
+                      className={`${inputClass} cursor-pointer`}
+                    >
+                      {platforms.map(([v, l]) => (
+                        <option key={v} value={v} className="bg-[#16162a] text-white">{l}</option>
+                      ))}
                     </select>
                   </div>
-                  <div className="mw-field">
-                    <div className={labelClass}>Posts / day</div>
-                    <select value={postsPerDay} onChange={e => setPostsPerDay(Number(e.target.value))} className={inputClass}>
-                      {[1, 2, 3].map(n => <option key={n} value={n}>{n} post{n > 1 ? "s" : ""}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="mw-row-2">
-                  <div className="mw-field">
-                    <div className={labelClass}>Days</div>
-                    <select value={duration} onChange={e => setDuration(Number(e.target.value))} className={inputClass}>
-                      {Array.from({ length: 30 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1} days</option>)}
-                    </select>
-                  </div>
-                  <div className="mw-field">
-                    <div className={labelClass}>Start date</div>
-                    <input type="date" min={tomorrow()} value={startDate} onChange={e => setStartDate(e.target.value)} className={inputClass} />
-                  </div>
-                </div>
-                <div className="mw-row-2">
-                  <div className="mw-field">
-                    <div className={labelClass}>Tone</div>
-                    <select value={tone} onChange={e => setTone(e.target.value as AITone)} className={inputClass}>
-                      {tones.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                    </select>
-                  </div>
-                  <div className="mw-field">
-                    <div className={labelClass}>Goal</div>
-                    <select value={goal} onChange={e => setGoal(e.target.value as AIObjective)} className={inputClass}>
-                      {goals.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                  <div>
+                    <label className={labelClass}>Posts / Day</label>
+                    <select
+                      value={postsPerDay}
+                      onChange={(e) => setPostsPerDay(Number(e.target.value))}
+                      className={`${inputClass} cursor-pointer`}
+                    >
+                      {[1, 2, 3].map((n) => (
+                        <option key={n} value={n} className="bg-[#16162a] text-white">
+                          {n} post{n > 1 ? "s" : ""}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
-                <div className="mw-field">
-                  <div className={labelClass}>Image format</div>
-                  <select value={imageSize} onChange={e => setImageSize(e.target.value as typeof imageSize)} className={inputClass}>
-                    <option value="1024x1024">Square — Instagram post</option>
-                    <option value="1536x1024">Landscape</option>
-                    <option value="1024x1536">Portrait</option>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Duration (Days)</label>
+                    <select
+                      value={duration}
+                      onChange={(e) => setDuration(Number(e.target.value))}
+                      className={`${inputClass} cursor-pointer`}
+                    >
+                      {Array.from({ length: 30 }, (_, i) => (
+                        <option key={i + 1} value={i + 1} className="bg-[#16162a] text-white">
+                          {i + 1} day{i > 0 ? "s" : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Start Date</label>
+                    <input
+                      type="date"
+                      min={tomorrow()}
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className={`${inputClass} cursor-pointer`}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Tone of Voice</label>
+                    <select
+                      value={tone}
+                      onChange={(e) => setTone(e.target.value as AITone)}
+                      className={`${inputClass} cursor-pointer`}
+                    >
+                      {tones.map(([v, l]) => (
+                        <option key={v} value={v} className="bg-[#16162a] text-white">{l}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Campaign Goal</label>
+                    <select
+                      value={goal}
+                      onChange={(e) => setGoal(e.target.value as AIObjective)}
+                      className={`${inputClass} cursor-pointer`}
+                    >
+                      {goals.map(([v, l]) => (
+                        <option key={v} value={v} className="bg-[#16162a] text-white">{l}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelClass}>Image Aspect Ratio</label>
+                  <select
+                    value={imageSize}
+                    onChange={(e) => setImageSize(e.target.value as typeof imageSize)}
+                    className={`${inputClass} cursor-pointer`}
+                  >
+                    <option value="1024x1024" className="bg-[#16162a] text-white">Square (1:1) — Instagram &amp; Feed</option>
+                    <option value="1536x1024" className="bg-[#16162a] text-white">Landscape (3:2) — Facebook &amp; LinkedIn</option>
+                    <option value="1024x1536" className="bg-[#16162a] text-white">Portrait (2:3) — Stories &amp; Pins</option>
                   </select>
                 </div>
 
-                <button onClick={generatePlan} disabled={isPending || !canGenerate}
+                <button
+                  type="button"
+                  onClick={generatePlan}
+                  disabled={isPending || !canGenerate}
                   title={!canGenerate ? "Fill in brand name, description (Brand tab) and target audience first" : undefined}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 12, background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)", padding: "14px 16px", fontSize: 14, fontWeight: 700, color: "white", cursor: "pointer", border: "none", opacity: (isPending || !canGenerate) ? 0.5 : 1, boxShadow: "0 4px 20px rgba(109,92,255,0.25)", marginTop: 4 }}>
-                  {isPending ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Sparkles size={16} />}
-                  Generate {total} content pieces
+                  className="h-13 w-full rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-sm font-semibold text-white transition flex items-center justify-center gap-2.5 shadow-xl shadow-violet-500/25 disabled:opacity-40 cursor-pointer pt-1"
+                >
+                  {isPending ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                  Generate {total} Content Pieces
                 </button>
                 {!canGenerate && (
-                  <p style={{ fontSize: 11.5, color: "#6d6d95", textAlign: "center", marginTop: -8 }}>
-                    Fill in your brand name & description on the <b style={{ color: "#9090c0" }}>Brand</b> tab first.
+                  <p className="text-xs text-white/40 text-center">
+                    Fill in your brand name &amp; description on the <b className="text-white/70">Brand Identity</b> tab first.
                   </p>
                 )}
               </div>
@@ -637,163 +668,152 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
           )}
         </div>
 
-        {/* RIGHT — Content grid */}
-        <div style={{ minWidth: 0 }}>
+        {/* RIGHT — Content Calendar & Batch Area */}
+        <div className="lg:col-span-7 min-w-0 space-y-6">
           {!items.length ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 500, borderRadius: 20, border: "1px dashed rgba(255,255,255,0.1)", background: "var(--bg-surface)", padding: 40, textAlign: "center", boxSizing: "border-box" }}>
-              <div style={{ width: 64, height: 64, borderRadius: 18, background: "linear-gradient(135deg, rgba(109,92,255,0.2), rgba(168,85,247,0.2))", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 22 }}>
-                <Sparkles size={28} color="#a89dff" />
+            <div className="flex flex-col items-center justify-center min-h-[480px] rounded-3xl border border-dashed border-white/15 bg-[#101020]/60 p-10 sm:p-14 text-center backdrop-blur-xl">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 border border-violet-500/30 text-violet-300 shadow-xl shadow-violet-500/10 mb-5">
+                <Sparkles size={28} />
               </div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#f0f0ff", margin: 0 }}>Your content calendar will appear here</h3>
-              <p style={{ fontSize: 13, color: "#50507a", marginTop: 12, lineHeight: 1.7, maxWidth: 420 }}>
-                For a coffee business, the AI mixes product shots, education, customer moments, offers, behind-the-scenes and engagement posts. Your logo is composited after generation so it stays pixel-perfect.
+              <h3 className="text-lg sm:text-xl font-bold text-white">Your content calendar will appear here</h3>
+              <p className="text-xs sm:text-sm text-white/50 mt-3 leading-relaxed max-w-md">
+                The AI crafts an engaging mix of product highlights, lifestyle moments, educational tips, and offers. Your logo is automatically stamped on every visual.
               </p>
             </div>
           ) : (
-            <div>
-              <div className="mw-toolbar">
+            <div className="space-y-6">
+              {/* Batch Toolbar */}
+              <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-white/[0.08] bg-[#101020]/80 backdrop-blur-2xl shadow-xl shadow-black/30">
                 <div>
-                  <div style={{ fontWeight: 700, color: "#f0f0ff", fontSize: 15 }}>Content batch</div>
-                  <div style={{ fontSize: 12, color: "#a89dff", marginTop: 4 }}>
-                    {ready}/{items.length} images generated with logo · {duration} days · {postsPerDay}/day
+                  <div className="text-sm sm:text-base font-bold text-white">Content Batch</div>
+                  <div className="text-xs text-violet-300/80 mt-1">
+                    {ready}/{items.length} images generated with logo &middot; {duration} days &middot; {postsPerDay}/day
                   </div>
                 </div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                <div className="flex flex-wrap items-center gap-3">
                   <button
+                    type="button"
                     onClick={() => void generateImages()}
                     disabled={isPending || items.some((i) => i.status === "generating")}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 7,
-                      borderRadius: 10,
-                      background: ready < items.length ? "linear-gradient(135deg, #6d5cff, #a855f7)" : "rgba(255,255,255,0.08)",
-                      border: ready < items.length ? "none" : "1px solid rgba(255,255,255,0.12)",
-                      padding: "10px 16px",
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: "#ffffff",
-                      cursor: "pointer",
-                      opacity: isPending ? 0.5 : 1,
-                      boxShadow: ready < items.length ? "0 4px 14px rgba(109,92,255,0.3)" : "none",
-                    }}
+                    className={`inline-flex items-center gap-2 h-11 px-5 rounded-2xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
+                      ready < items.length
+                        ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:from-violet-500 hover:to-indigo-500"
+                        : "border border-white/10 bg-white/[0.08] text-white hover:bg-white/[0.14]"
+                    }`}
                   >
                     {items.some((i) => i.status === "generating") ? (
                       <>
-                        <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> Generating pictures…
+                        <Loader2 size={15} className="animate-spin" /> Generating visuals…
                       </>
                     ) : (
                       <>
-                        <WandSparkles size={14} /> {ready === 0 ? `Generate All ${items.length} Pictures` : ready < items.length ? `Generate Remaining (${items.length - ready})` : "Regenerate All Pictures"}
+                        <WandSparkles size={15} />
+                        {ready === 0
+                          ? `Generate All ${items.length} Pictures`
+                          : ready < items.length
+                          ? `Generate Remaining (${items.length - ready})`
+                          : "Regenerate All Pictures"}
                       </>
                     )}
                   </button>
 
                   <button
+                    type="button"
                     onClick={scheduleBatch}
                     disabled={isPending || ready === 0}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      borderRadius: 10,
-                      background: ready > 0 ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.04)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                      padding: "10px 14px",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: ready > 0 ? "#f0f0ff" : "#6d6d95",
-                      cursor: ready > 0 ? "pointer" : "not-allowed",
-                      opacity: isPending ? 0.4 : 1,
-                    }}
+                    className="inline-flex items-center gap-2 h-11 px-5 rounded-2xl border border-white/10 bg-white/[0.08] hover:bg-white/[0.14] text-xs sm:text-sm font-semibold text-white transition disabled:opacity-40 cursor-pointer"
                   >
-                    <CalendarDays size={14} /> Add to calendar
+                    <CalendarDays size={15} />
+                    <span>Add to Calendar</span>
                   </button>
                 </div>
               </div>
 
+              {/* Progress bar */}
               {progress > 0 && progress < 100 && (
-                <div style={{ height: 5, borderRadius: 99, background: "rgba(255,255,255,0.08)", marginBottom: 18, overflow: "hidden" }}>
-                  <div style={{ height: "100%", borderRadius: 99, background: "linear-gradient(90deg, #6d5cff, #a855f7)", width: `${progress}%`, transition: "width 0.3s" }} />
+                <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
                 </div>
               )}
 
-              <div className="mw-content-grid">
+              {/* Items Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
                 {items.map((item, index) => (
-                  <article key={`${item.day}-${item.slot}`} style={{ borderRadius: 16, border: "1px solid rgba(255,255,255,0.08)", background: "var(--bg-surface)", overflow: "hidden" }}>
-                    <div style={{ aspectRatio: "1", background: "var(--bg-elevated)", position: "relative" }}>
+                  <article
+                    key={`${item.day}-${item.slot}`}
+                    className="flex flex-col justify-between rounded-3xl border border-white/[0.08] bg-[#101020]/80 backdrop-blur-xl overflow-hidden shadow-xl hover:border-violet-500/30 transition-all duration-200"
+                  >
+                    <div className="aspect-square bg-[#0a0a14] relative overflow-hidden flex items-center justify-center">
                       {item.imageUrl ? (
                         <>
-                          <img src={item.imageUrl} alt={item.contentIdea} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img
+                            src={item.imageUrl}
+                            alt={item.contentIdea}
+                            className="w-full h-full object-cover"
+                          />
                           <button
                             type="button"
                             onClick={() => void generateSingleImage(index)}
-                            style={{
-                              position: "absolute",
-                              top: 8,
-                              right: 8,
-                              padding: "4px 8px",
-                              borderRadius: 6,
-                              background: "rgba(10,10,20,0.7)",
-                              color: "#e2e8f0",
-                              fontSize: 10,
-                              fontWeight: 600,
-                              border: "1px solid rgba(255,255,255,0.2)",
-                              cursor: "pointer",
-                              backdropFilter: "blur(4px)",
-                            }}
+                            className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md text-white/90 hover:text-white hover:bg-black/90 text-xs font-medium border border-white/20 shadow-lg transition cursor-pointer"
                             title="Regenerate this picture"
                           >
                             ↻ Regenerate
                           </button>
                         </>
                       ) : (
-                        <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 14, textAlign: "center", color: "#6d6d95", gap: 8 }}>
+                        <div className="h-full flex flex-col items-center justify-center p-6 text-center text-white/40 gap-3">
                           {item.status === "generating" ? (
                             <>
-                              <Loader2 size={24} style={{ animation: "spin 1s linear infinite", color: "#a855f7" }} />
-                              <span style={{ fontSize: 11, fontWeight: 600, color: "#a89dff" }}>Creating with logo…</span>
+                              <Loader2 size={26} className="animate-spin text-violet-400" />
+                              <span className="text-xs font-semibold text-violet-300">Creating with logo…</span>
                             </>
                           ) : (
                             <>
-                              <ImageIcon size={22} style={{ color: "#50507a" }} />
-                              <span style={{ fontSize: 11, fontWeight: 600 }}>Day {item.day}{postsPerDay > 1 ? ` · ${item.slot}` : ""}</span>
+                              <ImageIcon size={26} className="text-white/20" />
+                              <span className="text-xs font-semibold text-white/60">
+                                Day {item.day}{postsPerDay > 1 ? ` · Post ${item.slot}` : ""}
+                              </span>
                               <button
                                 type="button"
                                 onClick={() => void generateSingleImage(index)}
-                                style={{
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  gap: 5,
-                                  borderRadius: 8,
-                                  background: "linear-gradient(135deg, #6d5cff, #a855f7)",
-                                  color: "#ffffff",
-                                  padding: "5px 11px",
-                                  fontSize: 11,
-                                  fontWeight: 700,
-                                  border: "none",
-                                  cursor: "pointer",
-                                  boxShadow: "0 2px 8px rgba(109,92,255,0.3)",
-                                }}
+                                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-3.5 py-1.5 text-xs font-semibold shadow-md shadow-violet-500/25 transition cursor-pointer"
                               >
-                                <Sparkles size={11} /> Generate picture
+                                <Sparkles size={12} /> Generate picture
                               </button>
                             </>
                           )}
                         </div>
                       )}
                     </div>
-                    <div style={{ padding: 16 }}>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6d5cff" }}>Day {item.day}{postsPerDay > 1 ? ` · ${item.slot}` : ""}</span>
-                        <span style={{ fontSize: 10, color: "#50507a" }}>{new Date(`${item.suggestedDate}T12:00:00`).toLocaleDateString()}</span>
+                    <div className="p-5 sm:p-6 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-violet-300 bg-violet-500/10 border border-violet-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                          Day {item.day}{postsPerDay > 1 ? ` · Post ${item.slot}` : ""}
+                        </span>
+                        <span className="text-xs text-white/40">
+                          {new Date(`${item.suggestedDate}T12:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                        </span>
                       </div>
-                      <h4 style={{ fontSize: 13, fontWeight: 700, color: "#f0f0ff", margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{item.hook}</h4>
-                      <p style={{ fontSize: 11, color: "#9090c0", marginTop: 8, lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{item.caption}</p>
-                      <p style={{ fontSize: 11, fontWeight: 600, color: "#6d5cff", marginTop: 8 }}>→ {item.cta}</p>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: 12 }}>
-                        {item.hashtags.slice(0, 4).map(tag => (
-                          <span key={tag} style={{ borderRadius: 99, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)", padding: "3px 9px", fontSize: 10, color: "#9090c0" }}>{tag}</span>
+                      <h4 className="text-sm font-semibold text-white leading-snug line-clamp-2">
+                        {item.hook}
+                      </h4>
+                      <p className="text-xs text-white/60 line-clamp-3 leading-relaxed">
+                        {item.caption}
+                      </p>
+                      <p className="text-xs font-semibold text-violet-400">
+                        &rarr; {item.cta}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {item.hashtags.slice(0, 4).map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-0.5 text-[11px] text-white/50"
+                          >
+                            {tag}
+                          </span>
                         ))}
                       </div>
                     </div>

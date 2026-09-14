@@ -22,6 +22,7 @@ const navMain = [
 const navWorkspace = [
   { href: "/posts/categories", label: "Categories", icon: FolderKanban },
   { href: "/settings",         label: "Settings",   icon: Settings },
+  { href: "/help",             label: "Help & docs", icon: HelpCircle },
 ];
 
 export function Sidebar() {
@@ -83,15 +84,6 @@ export function Sidebar() {
             </Link>
           );
         })}
-
-        <div className="sb-divider" />
-        <Link
-          href="/help"
-          className={`sb-link${isActive("/help") ? " active" : ""}`}
-        >
-          <HelpCircle size={14} strokeWidth={isActive("/help") ? 2.2 : 1.8} style={{ flexShrink: 0 }} />
-          Help & docs
-        </Link>
       </nav>
 
       {/* User */}
