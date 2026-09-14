@@ -2,18 +2,34 @@ import { AIStudio } from "@/components/ai/ai-studio";
 import { getActiveWorkspace } from "@/lib/content/workspace";
 import type { Category } from "@/types/database";
 
+export const dynamic = "force-dynamic";
+
+function isNextRouterSignal(err: unknown): boolean {
+  if (typeof err === "object" && err !== null && "digest" in err) {
+    const digest = String((err as { digest: unknown }).digest);
+    return digest.startsWith("NEXT_REDIRECT") || digest.includes("DYNAMIC_SERVER_USAGE");
+  }
+  return false;
+}
+
 export default async function AIStudioPage() {
-  const { supabase, workspaceId } = await getActiveWorkspace();
+  let categories: Category[] = [];
+  let history: Array<{ id: string; workspace_id: string; user_id: string; generation_type: string; input: string | null; output: string | null; provider: string; created_at: string }> = [];
 
-  const [{ data: categories, error: categoriesError }, { data: history, error: historyError }, { data: posts, error: postsError }] = await Promise.all([
-    supabase.from("categories").select("id, workspace_id, name, color, created_at").eq("workspace_id", workspaceId).order("name"),
-    supabase.from("ai_generations").select("id, workspace_id, user_id, generation_type, input, output, provider, created_at").eq("workspace_id", workspaceId).order("created_at", { ascending: false }).limit(12),
-    supabase.from("posts").select("id, title, platform").eq("workspace_id", workspaceId).order("created_at", { ascending: false }).limit(50),
-  ]);
+  try {
+    const { supabase, workspaceId } = await getActiveWorkspace();
 
-  if (categoriesError) throw new Error(categoriesError.message);
-  if (historyError) throw new Error(historyError.message);
-  if (postsError) throw new Error(postsError.message);
+    const [{ data: cats }, { data: historyData }] = await Promise.all([
+      supabase.from("categories").select("id, workspace_id, name, color, created_at").eq("workspace_id", workspaceId).order("name"),
+      supabase.from("ai_generations").select("id, workspace_id, user_id, generation_type, input, output, provider, created_at").eq("workspace_id", workspaceId).order("created_at", { ascending: false }).limit(12),
+    ]);
+    if (cats) categories = cats as Category[];
+    if (historyData) history = historyData as typeof history;
+  } catch (err) {
+    if (isNextRouterSignal(err)) throw err;
+    console.warn("Non-fatal error in AIStudioPage:", err);
+  }
+
 
   return (
     <div className="page animate-fade-up">

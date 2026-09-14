@@ -4,27 +4,43 @@ import { ContentCalendar } from "@/components/calendar/content-calendar";
 import { getActiveWorkspace } from "@/lib/content/workspace";
 import type { Category, Post } from "@/types/database";
 
-export default async function CalendarPage() {
-  const { supabase, workspaceId } = await getActiveWorkspace();
-  const [{ data: posts, error: postsError }, { data: categories, error: categoriesError }] = await Promise.all([
-    supabase
-      .from("posts")
-      .select("id, workspace_id, created_by, title, caption, platform, status, category_id, cta, hashtags, image_url, image_prompt, scheduled_at, published_at, created_at, updated_at, categories!posts_category_id_fkey(name, color)")
-      .eq("workspace_id", workspaceId)
-      .not("scheduled_at", "is", null)
-      .order("scheduled_at", { ascending: true })
-      .limit(500),
-    supabase
-      .from("categories")
-      .select("id, workspace_id, name, color, created_at")
-      .eq("workspace_id", workspaceId)
-      .order("name", { ascending: true }),
-  ]);
-  if (postsError) throw new Error(postsError.message);
-  if (categoriesError) throw new Error(categoriesError.message);
+export const dynamic = "force-dynamic";
 
-  const calendarPosts = (posts ?? []) as unknown as (Post & { categories: { name: string; color: string } | null })[];
-  const categoryList = (categories ?? []) as Category[];
+function isNextRouterSignal(err: unknown): boolean {
+  if (typeof err === "object" && err !== null && "digest" in err) {
+    const digest = String((err as { digest: unknown }).digest);
+    return digest.startsWith("NEXT_REDIRECT") || digest.includes("DYNAMIC_SERVER_USAGE");
+  }
+  return false;
+}
+
+export default async function CalendarPage() {
+  let calendarPosts: (Post & { categories: { name: string; color: string } | null })[] = [];
+  let categoryList: Category[] = [];
+
+  try {
+    const { supabase, workspaceId } = await getActiveWorkspace();
+    const [{ data: posts }, { data: categories }] = await Promise.all([
+      supabase
+        .from("posts")
+        .select("id, workspace_id, created_by, title, caption, platform, status, category_id, cta, hashtags, image_url, image_prompt, scheduled_at, published_at, created_at, updated_at, categories!posts_category_id_fkey(name, color)")
+        .eq("workspace_id", workspaceId)
+        .not("scheduled_at", "is", null)
+        .order("scheduled_at", { ascending: true })
+        .limit(500),
+      supabase
+        .from("categories")
+        .select("id, workspace_id, name, color, created_at")
+        .eq("workspace_id", workspaceId)
+        .order("name", { ascending: true }),
+    ]);
+
+    if (posts) calendarPosts = posts as unknown as typeof calendarPosts;
+    if (categories) categoryList = categories as Category[];
+  } catch (err) {
+    if (isNextRouterSignal(err)) throw err;
+    console.warn("Non-fatal error in CalendarPage:", err);
+  }
 
   return (
     <div className="page animate-fade-up">
@@ -44,3 +60,4 @@ export default async function CalendarPage() {
     </div>
   );
 }
+

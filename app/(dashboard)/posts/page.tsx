@@ -8,6 +8,16 @@ import { PostStatusBadge } from "@/components/posts/post-status";
 import { PlatformBadge } from "@/components/posts/platform-badge";
 import type { Category, Post } from "@/types/database";
 
+export const dynamic = "force-dynamic";
+
+function isNextRouterSignal(err: unknown): boolean {
+  if (typeof err === "object" && err !== null && "digest" in err) {
+    const digest = String((err as { digest: unknown }).digest);
+    return digest.startsWith("NEXT_REDIRECT") || digest.includes("DYNAMIC_SERVER_USAGE");
+  }
+  return false;
+}
+
 function getParam(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 export default async function PostsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -18,33 +28,41 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
   const category = getParam(params.category) || "";
   const sort = getParam(params.sort) || "newest";
   const saved = getParam(params.saved) || "";
-  const { supabase, workspaceId } = await getActiveWorkspace();
 
-  let query = supabase.from("posts").select("id, workspace_id, created_by, title, caption, platform, status, category_id, cta, hashtags, image_url, image_prompt, scheduled_at, published_at, created_at, updated_at, categories!posts_category_id_fkey(name, color)").eq("workspace_id", workspaceId);
-  if (platform) query = query.eq("platform", platform);
-  if (status) query = query.eq("status", status);
-  if (category) query = query.eq("category_id", category);
-  if (search) query = query.or(`title.ilike.%${search.replace(/[%,()]/g, "").replace(/'/g, "''")}%,caption.ilike.%${search.replace(/[%,()]/g, "").replace(/'/g, "''")}%`);
-  if (sort === "oldest") query = query.order("created_at", { ascending: true });
-  else if (sort === "scheduled") query = query.order("scheduled_at", { ascending: true, nullsFirst: false });
-  else if (sort === "title") query = query.order("title", { ascending: true });
-  else query = query.order("created_at", { ascending: false });
+  let list: Post[] = [];
+  let categoryList: Category[] = [];
 
-  const [{ data: posts, error: postsError }, { data: categories, error: categoriesError }] = await Promise.all([
-    query.limit(100),
-    supabase.from("categories").select("id, workspace_id, name, color, created_at").eq("workspace_id", workspaceId).order("name", { ascending: true }),
-  ]);
-  if (postsError) throw new Error(postsError.message);
-  if (categoriesError) throw new Error(categoriesError.message);
+  try {
+    const { supabase, workspaceId } = await getActiveWorkspace();
 
-  const list = (posts ?? []) as unknown as Post[];
-  const categoryList = (categories ?? []) as Category[];
+    let query = supabase.from("posts").select("id, workspace_id, created_by, title, caption, platform, status, category_id, cta, hashtags, image_url, image_prompt, scheduled_at, published_at, created_at, updated_at, categories!posts_category_id_fkey(name, color)").eq("workspace_id", workspaceId);
+    if (platform) query = query.eq("platform", platform);
+    if (status) query = query.eq("status", status);
+    if (category) query = query.eq("category_id", category);
+    if (search) query = query.or(`title.ilike.%${search.replace(/[%,()]/g, "").replace(/'/g, "''")}%,caption.ilike.%${search.replace(/[%,()]/g, "").replace(/'/g, "''")}%`);
+    if (sort === "oldest") query = query.order("created_at", { ascending: true });
+    else if (sort === "scheduled") query = query.order("scheduled_at", { ascending: true, nullsFirst: false });
+    else if (sort === "title") query = query.order("title", { ascending: true });
+    else query = query.order("created_at", { ascending: false });
+
+    const [{ data: posts }, { data: categories }] = await Promise.all([
+      query.limit(100),
+      supabase.from("categories").select("id, workspace_id, name, color, created_at").eq("workspace_id", workspaceId).order("name", { ascending: true }),
+    ]);
+    if (posts) list = posts as unknown as Post[];
+    if (categories) categoryList = categories as Category[];
+  } catch (err) {
+    if (isNextRouterSignal(err)) throw err;
+    console.warn("Non-fatal error in PostsPage:", err);
+  }
+
   const savedMessages: Record<string, string> = {
     created: "Post created successfully.",
     updated: "Post updated successfully.",
     deleted: "Post deleted successfully.",
     duplicated: "Post duplicated as a draft.",
   };
+
 
   return (
     <div className="page animate-fade-up">

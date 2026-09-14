@@ -29,8 +29,8 @@ function PlatformIcon({ platform, size = 16 }: { platform: Platform; size?: numb
 
 export function PlatformBadge({ platform }: { platform: Platform }) {
   return (
-    <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
-      <span className="text-slate-500"><PlatformIcon platform={platform} size={16} /></span>
+    <span className="inline-flex items-center gap-2 text-xs font-medium text-white/90">
+      <span className="text-violet-400"><PlatformIcon platform={platform} size={15} /></span>
       {labels[platform]}
     </span>
   );
