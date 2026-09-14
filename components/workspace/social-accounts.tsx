@@ -7,10 +7,10 @@ import type { SocialAccount } from "@/lib/social/types";
 import { disconnectAccount } from "@/lib/social/actions";
 
 const platforms: { key: Platform; name: string; connect: string; note: string }[] = [
-  { key: "INSTAGRAM", name: "Instagram", connect: "/api/social/meta/connect", note: "Meta professional account required for API publishing." },
-  { key: "FACEBOOK", name: "Facebook", connect: "/api/social/meta/connect", note: "Connect a Facebook Page through Meta." },
-  { key: "LINKEDIN", name: "LinkedIn", connect: "/api/social/linkedin/connect", note: "Member publishing uses LinkedIn OAuth." },
-  { key: "X", name: "X", connect: "/api/social/x/connect", note: "Uses X OAuth 2.0 with PKCE." },
+  { key: "INSTAGRAM", name: "Instagram", connect: "/api/social/meta/connect", note: "Connect a Meta professional account for feed and story publishing." },
+  { key: "FACEBOOK", name: "Facebook", connect: "/api/social/meta/connect", note: "Publish directly to company Pages and brand channels." },
+  { key: "LINKEDIN", name: "LinkedIn", connect: "/api/social/linkedin/connect", note: "Publish articles and updates using official LinkedIn OAuth." },
+  { key: "X", name: "X", connect: "/api/social/x/connect", note: "Post status updates, threads, and media via X OAuth 2.0." },
 ];
 
 export function SocialAccounts({ accounts, role, notice }: { accounts: SocialAccount[]; role: "OWNER" | "ADMIN" | "MEMBER"; notice?: string | null }) {
@@ -25,55 +25,55 @@ export function SocialAccounts({ accounts, role, notice }: { accounts: SocialAcc
   }
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-[#0f0f1a]/90 p-7 sm:p-8 backdrop-blur-xl shadow-xl space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/[0.08]">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400 border border-violet-500/20">
-            <Globe size={18} />
+    <section className="rounded-3xl border border-white/[0.08] bg-[#101020]/80 p-8 sm:p-10 backdrop-blur-2xl shadow-2xl shadow-black/40 space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-400 border border-violet-500/20">
+            <Globe size={20} />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-white">Connected Social Accounts</h2>
-            <p className="text-xs text-white/50">Authorize official social channels to enable automated and scheduled publishing.</p>
+            <h2 className="text-lg font-semibold text-white">Connected Social Accounts</h2>
+            <p className="text-xs text-white/50 mt-0.5">Authorize real social platforms for one-click publishing and scheduled delivery.</p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 self-start sm:self-auto">
-          <ShieldAlert size={14} /> Demo simulation active
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3.5 py-1 text-xs font-medium text-amber-300 self-start sm:self-auto">
+          <ShieldAlert size={14} /> Demo Simulation Available
         </span>
       </div>
 
       {notice && (
-        <div className="rounded-xl border border-violet-500/30 bg-violet-500/10 px-5 py-3 text-xs font-medium text-violet-300">
+        <div className="rounded-2xl border border-violet-500/30 bg-violet-500/10 px-6 py-4 text-xs font-medium text-violet-300">
           {notice}
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2">
         {platforms.map((platform) => {
           const account = accounts.find((item) => item.platform === platform.key);
           return (
             <div
               key={platform.key}
-              className="flex flex-col justify-between rounded-2xl border border-white/[0.08] bg-[#121226]/80 p-5 transition-all duration-200 hover:border-violet-500/30 hover:bg-[#15152c] shadow-sm"
+              className="flex flex-col justify-between rounded-2xl border border-white/[0.08] bg-[#14142a]/70 p-6 transition-all duration-200 hover:border-violet-500/35 hover:bg-[#181836] shadow-sm"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-sm font-semibold text-white">{platform.name}</div>
-                  <p className="mt-1 text-xs text-white/50 leading-relaxed">
+                  <div className="text-base font-semibold text-white">{platform.name}</div>
+                  <p className="mt-1.5 text-xs text-white/50 leading-relaxed">
                     {account ? `${account.account_name}${account.username ? ` · @${account.username}` : ""}` : platform.note}
                   </p>
                 </div>
                 {account ? (
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
-                    <CheckCircle2 size={16} />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                    <CheckCircle2 size={18} />
                   </span>
                 ) : (
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.04] text-white/30 border border-white/[0.08] shrink-0">
-                    <Link2 size={15} />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/[0.04] text-white/30 border border-white/[0.08] shrink-0">
+                    <Link2 size={16} />
                   </span>
                 )}
               </div>
 
-              <div className="mt-5 pt-4 border-t border-white/[0.06]">
+              <div className="mt-6 pt-5 border-t border-white/[0.06]">
                 {account ? (
                   <button
                     type="button"

@@ -27,10 +27,10 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
   const initialLetter = (name || profile?.email || "U").charAt(0).toUpperCase();
 
   return (
-    <form onSubmit={submit} className="space-y-6">
+    <form onSubmit={submit} className="space-y-8">
       {/* Profile Header Avatar preview */}
-      <div className="flex items-center gap-5 pb-2">
-        <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-600 to-indigo-600 font-bold text-white shadow-lg text-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-6 pb-2">
+        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-600 to-indigo-600 font-bold text-white shadow-xl text-2xl">
           {avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -46,18 +46,20 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
           )}
         </div>
         <div>
-          <div className="text-base font-semibold text-white">{name || "Your Name"}</div>
-          <div className="text-xs text-white/50">{profile?.email || "No email"}</div>
-          <span className="mt-1.5 inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
-            Active Account
-          </span>
+          <div className="text-lg font-semibold text-white">{name || "Your Name"}</div>
+          <div className="text-sm text-white/50 mt-0.5">{profile?.email || "No email linked"}</div>
+          <div className="mt-2.5 flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Active Account
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* 2-column input fields */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      {/* 2-column input fields with generous spacing */}
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/70">
+          <label htmlFor="name" className="mb-2.5 block text-sm font-medium text-white/80">
             Display Name
           </label>
           <input
@@ -66,29 +68,29 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
             onChange={(e) => setName(e.target.value)}
             maxLength={80}
             placeholder="Enter your display name"
-            className="h-12 w-full rounded-xl border border-white/10 bg-[#141428] px-4 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+            className="h-13 w-full rounded-2xl border border-white/10 bg-[#16162e] px-4 sm:px-5 text-sm text-white placeholder:text-white/35 outline-none transition duration-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15"
           />
         </div>
 
         <div>
-          <div className="mb-2 flex items-center justify-between">
-            <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-white/70">
+          <div className="mb-2.5 flex items-center justify-between">
+            <label htmlFor="email" className="block text-sm font-medium text-white/80">
               Email Address
             </label>
-            <span className="text-[11px] text-white/40">Verified via Auth</span>
+            <span className="text-xs text-white/40">Linked to Supabase</span>
           </div>
           <input
             id="email"
             value={profile?.email ?? ""}
             disabled
-            className="h-12 w-full rounded-xl border border-white/10 bg-white/[0.02] px-4 text-sm text-white/40 cursor-not-allowed"
+            className="h-13 w-full rounded-2xl border border-white/10 bg-white/[0.02] px-4 sm:px-5 text-sm text-white/40 cursor-not-allowed"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="avatar" className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/70">
-          Avatar URL <span className="font-normal text-white/40 lowercase">(optional public image URL)</span>
+        <label htmlFor="avatar" className="mb-2.5 block text-sm font-medium text-white/80">
+          Avatar URL <span className="font-normal text-white/40">(optional image URL)</span>
         </label>
         <input
           id="avatar"
@@ -96,25 +98,25 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
           value={avatarUrl}
           onChange={(e) => setAvatarUrl(e.target.value)}
           placeholder="https://example.com/avatar.png"
-          className="h-12 w-full rounded-xl border border-white/10 bg-[#141428] px-4 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+          className="h-13 w-full rounded-2xl border border-white/10 bg-[#16162e] px-4 sm:px-5 text-sm text-white placeholder:text-white/35 outline-none transition duration-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15"
         />
-        <p className="mt-1.5 text-xs text-white/40">
-          Provide a link to an image (JPG, PNG, or WebP) to display as your custom user avatar.
+        <p className="mt-2 text-xs text-white/40 leading-relaxed">
+          Paste a direct link to a public image (PNG, JPG, or WebP) to use as your customized user avatar.
         </p>
       </div>
 
-      <div className="flex items-center gap-4 pt-4 border-t border-white/[0.08]">
+      <div className="flex items-center gap-5 pt-6 border-t border-white/[0.08]">
         <button
           disabled={saving}
           type="submit"
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition duration-200 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50"
         >
           {saving && <Loader2 size={16} className="animate-spin" />}
           {saving ? "Saving changes..." : "Save changes"}
         </button>
         {status && (
           <span
-            className={`text-xs font-medium ${
+            className={`text-sm font-medium ${
               status.type === "success" ? "text-emerald-400" : "text-rose-400"
             }`}
           >
