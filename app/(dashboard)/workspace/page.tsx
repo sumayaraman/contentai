@@ -1,5 +1,5 @@
-import { MarketingWorkspace } from "@/components/marketing/marketing-workspace";
 import { getActiveWorkspace } from "@/lib/content/workspace";
+import { MarketingWorkspace } from "@/components/marketing/marketing-workspace";
 
 export default async function WorkspacePage() {
   const { workspace, role } = await getActiveWorkspace();

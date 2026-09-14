@@ -1,5 +1,16 @@
 "use client";
 
-export default function DashboardError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  return <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-xl items-center justify-center"><div className="w-full rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">!</div><h1 className="mt-4 text-xl font-bold text-slate-950">Something went wrong</h1><p className="mt-2 text-sm text-slate-500">We could not load this workspace. Check your connection and try again.</p><button onClick={reset} className="mt-5 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800">Try again</button></div></div>;
+export default function DashboardError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return (
+    <div style={{ display: "flex", minHeight: "calc(100vh - 8rem)", alignItems: "center", justifyContent: "center", padding: 40 }}>
+      <div style={{ width: "100%", maxWidth: 600, borderRadius: 16, border: "1px solid rgba(255,0,0,0.3)", background: "rgba(255,0,0,0.05)", padding: 32 }}>
+        <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,0,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "red", fontWeight: 700, fontSize: 20, marginBottom: 16 }}>!</div>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: "#f0f0ff", margin: "0 0 8px" }}>Something went wrong</h1>
+        <pre style={{ fontSize: 12, color: "#f87171", whiteSpace: "pre-wrap", wordBreak: "break-all", background: "rgba(0,0,0,0.3)", padding: 16, borderRadius: 8, marginBottom: 16 }}>
+          {error?.message || "Unknown error"}{"\n\n"}{error?.stack || ""}
+        </pre>
+        <button onClick={reset} style={{ borderRadius: 8, background: "#1e1e2e", padding: "10px 20px", fontSize: 13, fontWeight: 600, color: "#f0f0ff", cursor: "pointer", border: "1px solid rgba(255,255,255,0.1)" }}>Try again</button>
+      </div>
+    </div>
+  );
 }
