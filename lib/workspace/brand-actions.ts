@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireWorkspaceRole } from "@/lib/workspace/authorization";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { getAdminClientOrNull } from "@/lib/supabase/admin";
 
 const MAX_LOGO_BYTES = 5 * 1024 * 1024;
 const ALLOWED_LOGO_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif", "image/svg+xml"]);
@@ -48,7 +48,7 @@ export async function updateBrandSettings(workspaceId: string, input: {
 }
 
 export async function uploadBrandLogo(workspaceId: string, dataUrl: string) {
-  const { userId } = await requireWorkspaceRole(workspaceId, ["OWNER", "ADMIN"]);
+  const { supabase, userId } = await requireWorkspaceRole(workspaceId, ["OWNER", "ADMIN"]);
   const match = dataUrl.match(/^data:(image\/(?:png|jpeg|webp|gif|svg\+xml));base64,([A-Za-z0-9+/=]+)$/);
   if (!match) return { ok: false as const, error: "Please choose a PNG, JPG, WEBP, GIF or SVG logo." };
   const mimeType = match[1];
@@ -56,7 +56,7 @@ export async function uploadBrandLogo(workspaceId: string, dataUrl: string) {
   const bytes = Buffer.from(match[2], "base64");
   if (!bytes.length || bytes.length > MAX_LOGO_BYTES) return { ok: false as const, error: "Logo must be smaller than 5 MB." };
 
-  const admin = createAdminClient();
+  const admin = getAdminClientOrNull() ?? supabase;
   const id = crypto.randomUUID();
   const ext = mimeType === "image/svg+xml" ? "svg" : mimeType.split("/")[1];
   const storagePath = `${workspaceId}/brand/logo-${id}.${ext}`;

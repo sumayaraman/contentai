@@ -1,14 +1,19 @@
-const requiredPublicEnv = [
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
-] as const;
-
 export function requirePublicEnv() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    "";
+  const supabasePublishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY ||
+    "";
 
   if (!supabaseUrl || !supabasePublishableKey) {
-    console.error("Missing Supabase env vars");
+    if (typeof window === "undefined") {
+      console.warn("Missing Supabase URL or Publishable/Anon Key in environment variables.");
+    }
     return {
       supabaseUrl: supabaseUrl || "",
       supabasePublishableKey: supabasePublishableKey || "",

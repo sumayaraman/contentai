@@ -7,3 +7,10 @@ export function createAdminClient() {
   if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for server-side publishing jobs.");
   return createClient(supabaseUrl, key, { auth: { autoRefreshToken: false, persistSession: false } });
 }
+
+export function getAdminClientOrNull() {
+  const { supabaseUrl } = requirePublicEnv();
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key || !supabaseUrl) return null;
+  return createClient(supabaseUrl, key, { auth: { autoRefreshToken: false, persistSession: false } });
+}
