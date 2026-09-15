@@ -53,32 +53,32 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="page animate-fade-up">
-      <div className="mx-auto max-w-5xl space-y-8 pb-20">
-        {/* Page Header */}
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-violet-400">
-              Preferences
-            </span>
+    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
+            ✦ Workspace Preferences
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-            Settings
-          </h1>
-          <p className="text-xs sm:text-sm text-white/50 max-w-2xl leading-relaxed">
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Settings</h1>
+          <p className="mt-1 text-sm text-white/50">
             Manage your personal profile, workspace details, team access, and AI generation preferences.
           </p>
         </div>
-
-        {/* Tab Navigation & Settings Panels */}
-        <SettingsContainer
-          profile={profile}
-          workspace={workspace}
-          role={role}
-          members={members}
-          socialAccounts={socialAccounts}
-        />
+        <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 self-start sm:self-auto">
+          <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
+          Configuration Hub
+        </div>
       </div>
+
+      {/* Tab Navigation & Settings Panels */}
+      <SettingsContainer
+        profile={profile}
+        workspace={workspace}
+        role={role}
+        members={members}
+        socialAccounts={socialAccounts}
+      />
     </div>
   );
 }

@@ -27,18 +27,44 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
   const initialLetter = (name || profile?.email || "U").charAt(0).toUpperCase();
 
   return (
-    <form onSubmit={submit} className="flex flex-col">
+    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column" }}>
       {/* Form Content */}
-      <div className="p-6 sm:p-8 space-y-6">
+      <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
         {/* Avatar + Identity Summary Row */}
-        <div className="flex items-center gap-4 sm:gap-5 pb-6 border-b border-white/[0.06]">
-          <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-violet-600 to-indigo-600 font-bold text-white text-lg shadow-sm">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            paddingBottom: 20,
+            borderBottom: "1px solid var(--border-subtle)",
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              width: 56,
+              height: 56,
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+              borderRadius: "var(--r-md)",
+              border: "1px solid var(--border-accent)",
+              background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+              fontWeight: 800,
+              color: "#ffffff",
+              fontSize: 20,
+              boxShadow: "0 4px 16px rgba(109,92,255,0.3)",
+            }}
+          >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={avatarUrl}
                 alt="Avatar"
-                className="h-full w-full object-cover"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
@@ -47,91 +73,125 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
               <span>{initialLetter}</span>
             )}
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-3">
-              <span className="text-sm sm:text-base font-semibold text-white truncate">
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
                 {name || "Your Account"}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Active Account
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  borderRadius: 99,
+                  border: "1px solid rgba(16,185,129,0.25)",
+                  background: "rgba(16,185,129,0.1)",
+                  padding: "2px 10px",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#34d399",
+                }}
+              >
+                <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#34d399" }} /> Active Account
               </span>
             </div>
-            <p className="text-xs text-white/40 font-mono mt-0.5 truncate">
+            <p style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "monospace", margin: "4px 0 0" }}>
               {profile?.email || "No email linked"}
             </p>
           </div>
         </div>
 
         {/* 2-Column Inputs Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
           <div>
-            <label htmlFor="display-name" className="block text-xs font-medium text-white/70 mb-2">
-              Display Name
-            </label>
+            <div className="campaign-field-label">
+              <span>Display Name</span>
+            </div>
             <input
               id="display-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={80}
               placeholder="e.g. Alex Smith"
-              className="h-10 w-full rounded-lg border border-white/10 bg-[#121222] px-3.5 text-xs sm:text-sm text-white placeholder:text-white/25 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+              className="campaign-input"
+              style={{ height: 40 }}
             />
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label htmlFor="email" className="block text-xs font-medium text-white/70">
-                Email Address
-              </label>
-              <span className="text-[11px] text-white/35">Managed by Auth</span>
+            <div className="campaign-field-label">
+              <span>Email Address</span>
+              <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "none" }}>Managed by Auth</span>
             </div>
             <input
               id="email"
               value={profile?.email ?? ""}
               disabled
-              className="h-10 w-full rounded-lg border border-white/[0.06] bg-white/[0.02] px-3.5 text-xs sm:text-sm text-white/40 cursor-not-allowed font-mono"
+              className="campaign-input"
+              style={{ height: 40, opacity: 0.6, cursor: "not-allowed", fontFamily: "monospace" }}
             />
           </div>
         </div>
 
         {/* Avatar URL Field */}
         <div>
-          <label htmlFor="avatar-url" className="block text-xs font-medium text-white/70 mb-2">
-            Avatar Image URL <span className="font-normal text-white/40">(optional public image URL)</span>
-          </label>
+          <div className="campaign-field-label">
+            <span>Avatar Image URL</span>
+            <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "none" }}>(optional public URL)</span>
+          </div>
           <input
             id="avatar-url"
             type="url"
             value={avatarUrl}
             onChange={(e) => setAvatarUrl(e.target.value)}
             placeholder="https://images.unsplash.com/..."
-            className="h-10 w-full rounded-lg border border-white/10 bg-[#121222] px-3.5 text-xs sm:text-sm text-white placeholder:text-white/25 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+            className="campaign-input"
+            style={{ height: 40 }}
           />
-          <p className="mt-2 text-[11.5px] text-white/40 leading-relaxed">
+          <p style={{ fontSize: 11.5, color: "var(--text-muted)", margin: "6px 0 0", lineHeight: 1.5 }}>
             Provide a direct public link to a PNG, JPG, or WebP image to display as your user avatar across posts and comments.
           </p>
         </div>
       </div>
 
       {/* Card Footer */}
-      <div className="px-6 py-4 sm:px-8 sm:py-4.5 border-t border-white/[0.06] bg-white/[0.01] flex items-center justify-between">
-        <div className="text-xs">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px 24px",
+          borderTop: "1px solid var(--border-subtle)",
+          background: "var(--bg-elevated)",
+        }}
+      >
+        <div style={{ fontSize: 12 }}>
           {status ? (
-            <span
-              className={`font-medium ${
-                status.type === "success" ? "text-emerald-400" : "text-rose-400"
-              }`}
-            >
+            <span style={{ fontWeight: 600, color: status.type === "success" ? "#34d399" : "#f87171" }}>
               {status.text}
             </span>
           ) : (
-            <span className="text-white/40 text-xs">Profile updates sync across all workspaces.</span>
+            <span style={{ color: "var(--text-muted)" }}>Profile updates sync across all workspaces.</span>
           )}
         </div>
         <button
           disabled={saving}
           type="submit"
-          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 px-4 text-xs font-medium text-white shadow-sm transition disabled:opacity-40 cursor-pointer"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            borderRadius: "var(--r-md)",
+            background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+            padding: "9px 18px",
+            fontSize: 13,
+            fontWeight: 700,
+            color: "#ffffff",
+            border: "none",
+            cursor: "pointer",
+            boxShadow: "0 4px 16px rgba(109,92,255,0.3)",
+            opacity: saving ? 0.6 : 1,
+          }}
         >
           {saving ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
           <span>{saving ? "Saving..." : "Save changes"}</span>

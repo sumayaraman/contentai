@@ -25,72 +25,157 @@ export function SocialAccounts({ accounts, role, notice }: { accounts: SocialAcc
   }
 
   return (
-    <section className="rounded-2xl border border-white/[0.08] bg-[#0d0d1a] shadow-xl shadow-black/20 overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 sm:px-8 sm:py-6 border-b border-white/[0.06] bg-white/[0.015]">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
-            <Globe size={16} />
+    <section
+      style={{
+        background: "var(--bg-surface)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--r-xl)",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 12,
+          padding: "20px 24px",
+          borderBottom: "1px solid var(--border-subtle)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: "var(--r-md)",
+              background: "var(--accent-soft)",
+              border: "1px solid var(--border-accent)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#a89dff",
+              flexShrink: 0,
+            }}
+          >
+            <Globe size={18} />
           </div>
           <div>
-            <h2 className="text-sm sm:text-base font-semibold text-white">Connected Social Accounts</h2>
-            <p className="text-xs text-white/45 mt-0.5">Authorize real social platforms for one-click publishing</p>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+              Connected Social Accounts
+            </h2>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+              Authorize real social platforms for one-click publishing
+            </p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-medium text-amber-300">
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            borderRadius: 99,
+            border: "1px solid rgba(245,158,11,0.25)",
+            background: "rgba(245,158,11,0.1)",
+            padding: "2px 10px",
+            fontSize: 11,
+            fontWeight: 600,
+            color: "#fbbf24",
+          }}
+        >
           <ShieldAlert size={12} /> Demo Simulation Available
         </span>
       </div>
 
       {notice && (
-        <div className="mx-6 mt-6 sm:mx-8 sm:mt-6 rounded-xl border border-violet-500/30 bg-violet-500/10 px-4 py-3 text-xs font-medium text-violet-300">
+        <div style={{ margin: "20px 24px 0", padding: "12px 16px", borderRadius: "var(--r-md)", border: "1px solid var(--border-accent)", background: "var(--accent-soft)", fontSize: 12, color: "var(--text-primary)" }}>
           {notice}
         </div>
       )}
 
-      <div className="p-6 sm:p-8">
-        <div className="grid gap-5 sm:grid-cols-2">
+      <div style={{ padding: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
           {platforms.map((platform) => {
             const account = accounts.find((item) => item.platform === platform.key);
             return (
               <div
                 key={platform.key}
-                className="flex flex-col justify-between rounded-xl border border-white/[0.07] bg-[#121222] p-5 transition-all hover:border-white/15"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  borderRadius: "var(--r-lg)",
+                  border: "1px solid var(--border)",
+                  background: "var(--bg-elevated)",
+                  padding: 20,
+                  transition: "border-color 0.15s ease",
+                }}
+                className="hover:border-violet-500/30"
               >
-                <div className="flex items-start justify-between gap-3">
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
                   <div>
-                    <div className="text-sm font-semibold text-white">{platform.name}</div>
-                    <p className="mt-1 text-xs text-white/45 leading-relaxed">
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)" }}>
+                      {platform.name}
+                    </div>
+                    <p style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4, lineHeight: 1.5 }}>
                       {account ? `${account.account_name}${account.username ? ` · @${account.username}` : ""}` : platform.note}
                     </p>
                   </div>
                   {account ? (
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                    <span style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.25)", color: "#34d399", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <CheckCircle2 size={15} />
                     </span>
                   ) : (
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.04] text-white/30 border border-white/[0.08] shrink-0">
+                    <span style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.04)", border: "1px solid var(--border-subtle)", color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <Link2 size={14} />
                     </span>
                   )}
                 </div>
 
-                <div className="mt-5 pt-3.5 border-t border-white/[0.06] flex items-center justify-between">
+                <div style={{ marginTop: 20, paddingTop: 14, borderTop: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   {account ? (
                     <button
                       type="button"
                       disabled={role === "MEMBER" || busy === account.id}
                       onClick={() => void disconnect(account.id)}
-                      className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 text-xs font-medium text-rose-300 hover:bg-rose-500/20 transition disabled:opacity-50 cursor-pointer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        borderRadius: "var(--r-sm)",
+                        border: "1px solid rgba(239,68,68,0.25)",
+                        background: "rgba(239,68,68,0.1)",
+                        padding: "6px 12px",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: "#f87171",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
                     >
                       {busy === account.id ? <Loader2 className="animate-spin" size={12} /> : <LogOut size={12} />}
                       <span>Disconnect</span>
                     </button>
                   ) : role === "MEMBER" ? (
-                    <span className="text-[11px] text-white/40">Ask a workspace admin to connect.</span>
+                    <span style={{ fontSize: 11.5, color: "var(--text-muted)" }}>Ask a workspace admin to connect.</span>
                   ) : (
                     <a
                       href={platform.connect}
-                      className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 px-3 text-xs font-medium text-white shadow-sm transition"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        borderRadius: "var(--r-md)",
+                        background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+                        padding: "8px 14px",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: "#ffffff",
+                        textDecoration: "none",
+                        boxShadow: "0 4px 16px rgba(109,92,255,0.3)",
+                      }}
                     >
                       <Link2 size={13} />
                       <span>Connect {platform.name}</span>

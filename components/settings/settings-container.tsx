@@ -36,9 +36,21 @@ export function SettingsContainer({
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
 
   return (
-    <div className="space-y-8">
-      {/* Clean SaaS Underline Subnavigation */}
-      <div className="flex items-center gap-1 sm:gap-6 border-b border-white/[0.08] overflow-x-auto scrollbar-none -mt-2">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* Studio Tab Navigation */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          padding: 6,
+          overflowX: "auto",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+        }}
+      >
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -47,13 +59,15 @@ export function SettingsContainer({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 pb-3.5 pt-1 text-xs sm:text-sm font-medium transition-all whitespace-nowrap border-b-2 cursor-pointer ${
-                isActive
-                  ? "border-violet-500 text-white font-semibold"
-                  : "border-transparent text-white/50 hover:text-white/80 hover:border-white/20"
-              }`}
+              className={`studio-tab-btn ${isActive ? "active" : ""}`}
+              style={{
+                flexShrink: 0,
+                padding: "8px 16px",
+                fontSize: 13,
+                borderRadius: "var(--r-md)",
+              }}
             >
-              <Icon size={15} className={isActive ? "text-violet-400" : "text-white/40"} />
+              <Icon size={15} />
               <span>{tab.label}</span>
             </button>
           );
@@ -61,18 +75,49 @@ export function SettingsContainer({
       </div>
 
       {/* Tab Panels */}
-      <div className="space-y-8">
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         {/* Profile Tab */}
         {(activeTab === "profile" || activeTab === "all") && (
-          <div className="rounded-2xl border border-white/[0.08] bg-[#0d0d1a] shadow-xl shadow-black/20 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-5 sm:px-8 sm:py-6 border-b border-white/[0.06] bg-white/[0.015]">
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
-                  <User size={16} />
+          <div
+            style={{
+              background: "var(--bg-surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--r-xl)",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "20px 24px",
+                borderBottom: "1px solid var(--border-subtle)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: "var(--r-md)",
+                    background: "var(--accent-soft)",
+                    border: "1px solid var(--border-accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#a89dff",
+                    flexShrink: 0,
+                  }}
+                >
+                  <User size={18} />
                 </div>
                 <div>
-                  <h2 className="text-sm sm:text-base font-semibold text-white">Personal Profile</h2>
-                  <p className="text-xs text-white/45 mt-0.5">
+                  <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                    Personal Profile
+                  </h2>
+                  <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
                     Your avatar and display name across post revisions and activity feeds
                   </p>
                 </div>

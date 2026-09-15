@@ -66,15 +66,21 @@ export function WorkspaceSettings({
   }
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Toast Feedback */}
       {(message || error) && (
         <div
-          className={`flex items-center justify-between rounded-xl border px-4 py-3 text-xs font-medium backdrop-blur-xl ${
-            error
-              ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
-              : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-          }`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "12px 18px",
+            background: error ? "rgba(239,68,68,0.1)" : "rgba(34,197,94,0.1)",
+            border: `1px solid ${error ? "rgba(239,68,68,0.25)" : "rgba(34,197,94,0.25)"}`,
+            borderRadius: "var(--r-md)",
+            color: error ? "#f87171" : "#4ade80",
+            fontSize: 13,
+          }}
         >
           <span>{error || message}</span>
           <button
@@ -83,7 +89,7 @@ export function WorkspaceSettings({
               setMessage(null);
               setError(null);
             }}
-            className="text-white/40 hover:text-white transition cursor-pointer"
+            style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer" }}
           >
             &times;
           </button>
@@ -92,43 +98,98 @@ export function WorkspaceSettings({
 
       {/* 1. Workspace Details */}
       {(!filteredSection || filteredSection === "workspace") && (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#0d0d1a] shadow-xl shadow-black/20 overflow-hidden">
-          <div className="flex items-center gap-3.5 px-6 py-5 sm:px-8 sm:py-6 border-b border-white/[0.06] bg-white/[0.015]">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
-              <Building2 size={16} />
+        <section
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-xl)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "20px 24px",
+              borderBottom: "1px solid var(--border-subtle)",
+            }}
+          >
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+                flexShrink: 0,
+              }}
+            >
+              <Building2 size={18} />
             </div>
             <div>
-              <h2 className="text-sm sm:text-base font-semibold text-white">Workspace Details</h2>
-              <p className="text-xs text-white/45 mt-0.5">Customize your brand workspace identifier</p>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                Workspace Details
+              </h2>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                Customize your brand workspace identifier
+              </p>
             </div>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-4">
-            <div className="max-w-md">
-              <label htmlFor="workspace-name-input" className="block text-xs font-medium text-white/70 mb-2">
-                Workspace Name
-              </label>
-              <input
-                id="workspace-name-input"
-                value={name}
-                maxLength={120}
-                onChange={(e) => setName(e.target.value)}
-                disabled={role === "MEMBER"}
-                placeholder="e.g. Acme Studio"
-                className="h-10 w-full rounded-lg border border-white/10 bg-[#121222] px-3.5 text-xs sm:text-sm text-white placeholder:text-white/25 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 disabled:opacity-40"
-              />
+          <div style={{ padding: 24, maxWidth: 480 }}>
+            <div className="campaign-field-label">
+              <span>Workspace Name</span>
             </div>
+            <input
+              id="workspace-name-input"
+              value={name}
+              maxLength={120}
+              onChange={(e) => setName(e.target.value)}
+              disabled={role === "MEMBER"}
+              placeholder="e.g. Acme Studio"
+              className="campaign-input"
+              style={{ height: 40 }}
+            />
           </div>
 
-          <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-4.5 border-t border-white/[0.06] bg-white/[0.01]">
-            <span className="text-xs text-white/40">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "16px 24px",
+              borderTop: "1px solid var(--border-subtle)",
+              background: "var(--bg-elevated)",
+            }}
+          >
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
               {role === "MEMBER" ? "Only workspace admins can rename this workspace." : "Changes apply across all workspace members."}
             </span>
             <button
               type="button"
               onClick={() => void saveWorkspace()}
               disabled={role === "MEMBER" || busy === "workspace" || !name.trim()}
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 px-4 text-xs font-medium text-white shadow-sm transition disabled:opacity-40 cursor-pointer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                borderRadius: "var(--r-md)",
+                background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+                padding: "9px 18px",
+                fontSize: 13,
+                fontWeight: 700,
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+                boxShadow: "0 4px 16px rgba(109,92,255,0.3)",
+                opacity: role === "MEMBER" || busy === "workspace" || !name.trim() ? 0.5 : 1,
+              }}
             >
               {busy === "workspace" ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
               <span>Save Workspace</span>
@@ -139,51 +200,140 @@ export function WorkspaceSettings({
 
       {/* 2. Team Members & Permissions */}
       {(!filteredSection || filteredSection === "team") && (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#0d0d1a] shadow-xl shadow-black/20 overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-5 sm:px-8 sm:py-6 border-b border-white/[0.06] bg-white/[0.015]">
-            <div className="flex items-center gap-3.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
-                <Users size={16} />
+        <section
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-xl)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+              padding: "20px 24px",
+              borderBottom: "1px solid var(--border-subtle)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: "var(--r-md)",
+                  background: "var(--accent-soft)",
+                  border: "1px solid var(--border-accent)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#a89dff",
+                  flexShrink: 0,
+                }}
+              >
+                <Users size={18} />
               </div>
               <div>
-                <h2 className="text-sm sm:text-base font-semibold text-white">Team Members &amp; Permissions</h2>
-                <p className="text-xs text-white/45 mt-0.5">Control role assignments and collaborator privileges</p>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                  Team Members &amp; Permissions
+                </h2>
+                <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                  Control role assignments and collaborator privileges
+                </p>
               </div>
             </div>
-            <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-xs font-medium text-white/60">
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: "var(--text-muted)",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid var(--border-subtle)",
+                borderRadius: 99,
+                padding: "2px 8px",
+              }}
+            >
               {members.length} {members.length === 1 ? "member" : "members"}
             </span>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
               <thead>
-                <tr className="border-b border-white/[0.06] bg-white/[0.01] text-[10.5px] uppercase tracking-wider font-semibold text-white/40">
-                  <th className="px-6 py-3.5">Member</th>
-                  <th className="px-6 py-3.5">Role</th>
-                  <th className="px-6 py-3.5">Joined</th>
-                  <th className="px-6 py-3.5 text-right">Actions</th>
+                <tr
+                  style={{
+                    borderBottom: "1px solid var(--border-subtle)",
+                    background: "rgba(255,255,255,0.015)",
+                    fontSize: 11,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    fontWeight: 600,
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  <th style={{ padding: "12px 24px" }}>Member</th>
+                  <th style={{ padding: "12px 24px" }}>Role</th>
+                  <th style={{ padding: "12px 24px" }}>Joined</th>
+                  <th style={{ padding: "12px 24px", textAlign: "right" }}>Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04]">
+              <tbody>
                 {members.map((member) => (
-                  <tr key={member.membership_id} className="hover:bg-white/[0.02] transition">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300 border border-violet-500/25 text-xs font-semibold">
+                  <tr
+                    key={member.membership_id}
+                    style={{ borderBottom: "1px solid var(--border-subtle)", transition: "background 0.15s ease" }}
+                    className="hover:bg-white/[0.02]"
+                  >
+                    <td style={{ padding: "16px 24px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                        <div
+                          style={{
+                            width: 34,
+                            height: 34,
+                            borderRadius: "var(--r-md)",
+                            background: "var(--accent-soft)",
+                            border: "1px solid var(--border-accent)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#a89dff",
+                            fontSize: 13,
+                            fontWeight: 700,
+                            flexShrink: 0,
+                          }}
+                        >
                           {(member.profile.name || member.profile.email).slice(0, 1).toUpperCase()}
                         </div>
-                        <div className="min-w-0">
-                          <div className="truncate text-xs sm:text-sm font-medium text-white">
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>
                             {member.profile.name || "Unnamed member"}
                           </div>
-                          <div className="truncate text-[11px] text-white/40 font-mono mt-0.5">{member.profile.email}</div>
+                          <div style={{ fontSize: 11.5, color: "var(--text-muted)", fontFamily: "monospace", marginTop: 2 }}>
+                            {member.profile.email}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td style={{ padding: "16px 24px" }}>
                       {member.role === "OWNER" ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-violet-300">
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 6,
+                            borderRadius: 99,
+                            border: "1px solid var(--border-accent)",
+                            background: "var(--accent-soft)",
+                            padding: "2px 10px",
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: "#a89dff",
+                          }}
+                        >
                           <Shield size={11} /> OWNER
                         </span>
                       ) : role === "OWNER" ? (
@@ -192,31 +342,47 @@ export function WorkspaceSettings({
                           value={member.role}
                           disabled={busy === member.membership_id}
                           onChange={(e) => void changeRole(member, e.target.value as "ADMIN" | "MEMBER")}
-                          className="h-7 rounded-md border border-white/10 bg-[#121222] px-2 text-xs font-medium text-white outline-none cursor-pointer focus:border-violet-500"
+                          className="campaign-input"
+                          style={{ height: 32, fontSize: 12, padding: "2px 8px", width: "auto", cursor: "pointer" }}
                         >
-                          <option value="ADMIN" className="bg-[#121222] text-white">ADMIN</option>
-                          <option value="MEMBER" className="bg-[#121222] text-white">MEMBER</option>
+                          <option value="ADMIN">ADMIN</option>
+                          <option value="MEMBER">MEMBER</option>
                         </select>
                       ) : (
-                        <span className="text-xs font-medium text-white/70">{member.role}</span>
+                        <span style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                          {member.role}
+                        </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-xs text-white/40 font-mono">
+                    <td style={{ padding: "16px 24px", fontSize: 12, color: "var(--text-muted)", fontFamily: "monospace" }}>
                       {new Date(member.joined_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td style={{ padding: "16px 24px", textAlign: "right" }}>
                       {role === "OWNER" && member.role !== "OWNER" && (
                         <button
                           type="button"
                           onClick={() => void remove(member)}
                           disabled={busy === member.membership_id}
-                          className="inline-flex h-7 items-center gap-1 rounded-md border border-rose-500/20 bg-rose-500/10 px-2.5 text-xs font-medium text-rose-300 hover:bg-rose-500/20 transition disabled:opacity-50 cursor-pointer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 4,
+                            borderRadius: "var(--r-sm)",
+                            border: "1px solid rgba(239,68,68,0.25)",
+                            background: "rgba(239,68,68,0.1)",
+                            padding: "4px 10px",
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: "#f87171",
+                            cursor: "pointer",
+                            transition: "all 0.15s ease",
+                          }}
                         >
                           <Trash2 size={12} /> Remove
                         </button>
                       )}
                       {member.role === "OWNER" && (
-                        <span className="text-xs text-white/40 font-medium">Workspace Owner</span>
+                        <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Workspace Owner</span>
                       )}
                     </td>
                   </tr>
@@ -229,44 +395,85 @@ export function WorkspaceSettings({
 
       {/* 3. AI Settings */}
       {(!filteredSection || filteredSection === "ai") && (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#0d0d1a] shadow-xl shadow-black/20 overflow-hidden">
-          <div className="flex items-center gap-3.5 px-6 py-5 sm:px-8 sm:py-6 border-b border-white/[0.06] bg-white/[0.015]">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
-              <Bot size={16} />
+        <section
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-xl)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "20px 24px",
+              borderBottom: "1px solid var(--border-subtle)",
+            }}
+          >
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+                flexShrink: 0,
+              }}
+            >
+              <Bot size={18} />
             </div>
             <div>
-              <h2 className="text-sm sm:text-base font-semibold text-white">AI Generation Preferences</h2>
-              <p className="text-xs text-white/45 mt-0.5">Select the default intelligence engine used for drafting campaigns and posts</p>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                AI Generation Preferences
+              </h2>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                Select the default intelligence engine used for drafting campaigns and posts
+              </p>
             </div>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-4">
-            <div className="max-w-md">
-              <label htmlFor="ai-provider-select" className="block text-xs font-medium text-white/70 mb-2">
-                Preferred AI Provider
-              </label>
-              <select
-                id="ai-provider-select"
-                value={provider}
-                disabled={role === "MEMBER" || busy === "provider"}
-                onChange={(e) => void saveProvider(e.target.value)}
-                className="h-10 w-full rounded-lg border border-white/10 bg-[#121222] px-3.5 text-xs sm:text-sm text-white outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 disabled:opacity-40 cursor-pointer"
-              >
-                <option value="auto" className="bg-[#121222] text-white">Automatic (Best available model)</option>
-                <option value="mock" className="bg-[#121222] text-white">Demo Mode (Built-in mock response)</option>
-                <option value="openai" className="bg-[#121222] text-white">OpenAI (GPT-4o / GPT-4o-mini)</option>
-                <option value="anthropic" className="bg-[#121222] text-white">Anthropic (Claude 3.5 Sonnet)</option>
-                <option value="groq" className="bg-[#121222] text-white">Groq (Llama 3 70B Fast)</option>
-              </select>
+          <div style={{ padding: 24, maxWidth: 480 }}>
+            <div className="campaign-field-label">
+              <span>Preferred AI Provider</span>
             </div>
+            <select
+              id="ai-provider-select"
+              value={provider}
+              disabled={role === "MEMBER" || busy === "provider"}
+              onChange={(e) => void saveProvider(e.target.value)}
+              className="campaign-input"
+              style={{ height: 40, cursor: "pointer" }}
+            >
+              <option value="auto">Automatic (Best available model)</option>
+              <option value="mock">Demo Mode (Built-in mock response)</option>
+              <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
+              <option value="anthropic">Anthropic (Claude 3.5 Sonnet)</option>
+              <option value="groq">Groq (Llama 3 70B Fast)</option>
+            </select>
           </div>
 
-          <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-4.5 border-t border-white/[0.06] bg-white/[0.01]">
-            <span className="text-xs text-white/40">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "16px 24px",
+              borderTop: "1px solid var(--border-subtle)",
+              background: "var(--bg-elevated)",
+            }}
+          >
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
               {role === "MEMBER" ? "Only workspace admins can modify AI engine options." : "Auto mode falls back to available providers if rate limits occur."}
             </span>
             {busy === "provider" && (
-              <span className="inline-flex items-center gap-1.5 text-xs text-violet-300 font-medium">
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--accent)", fontWeight: 600 }}>
                 <Loader2 size={13} className="animate-spin" /> Saving...
               </span>
             )}
