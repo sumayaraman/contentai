@@ -43,7 +43,22 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
   }
 
   return (
-    <div className="page animate-fade-up">
+    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
+            ✦ Performance Intelligence
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Analytics &amp; Insights</h1>
+          <p className="mt-1 text-sm text-white/50">
+            Analyze reach, track engagement rates, and score post effectiveness.
+          </p>
+        </div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 self-start sm:self-auto">
+          <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
+          Multi-Platform Metrics
+        </div>
+      </div>
       <AnalyticsDashboard initialData={data} categories={categories} posts={posts} initialPlatform={platform} initialCategory={category} />
     </div>
   );

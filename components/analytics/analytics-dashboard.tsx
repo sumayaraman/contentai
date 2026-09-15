@@ -25,14 +25,16 @@ const platformLabels: Record<Platform, string> = {
   INSTAGRAM: "Instagram",
   FACEBOOK: "Facebook",
   LINKEDIN: "LinkedIn",
-  X: "X",
+  X: "X (Twitter)",
 };
+
 const platformShort: Record<Platform, string> = {
   INSTAGRAM: "IG",
   FACEBOOK: "FB",
   LINKEDIN: "IN",
   X: "X",
 };
+
 const platformOrder: Platform[] = ["INSTAGRAM", "FACEBOOK", "LINKEDIN", "X"];
 
 function formatNumber(value: number) {
@@ -59,27 +61,91 @@ function MetricCard({
   helper?: string;
   accent?: "violet" | "indigo" | "blue" | "emerald" | "amber";
 }) {
-  const accentStyles = {
-    violet: "border-violet-500/20 bg-violet-500/10 text-violet-400 group-hover:border-violet-500/40",
-    indigo: "border-indigo-500/20 bg-indigo-500/10 text-indigo-400 group-hover:border-indigo-500/40",
-    blue: "border-sky-500/20 bg-sky-500/10 text-sky-400 group-hover:border-sky-500/40",
-    emerald: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400 group-hover:border-emerald-500/40",
-    amber: "border-amber-500/20 bg-amber-500/10 text-amber-400 group-hover:border-amber-500/40",
+  const accentColor = {
+    violet: "#a89dff",
+    indigo: "#818cf8",
+    blue: "#60a5fa",
+    emerald: "#34d399",
+    amber: "#fbbf24",
+  }[accent];
+
+  const accentBg = {
+    violet: "rgba(109,92,255,0.12)",
+    indigo: "rgba(99,102,241,0.12)",
+    blue: "rgba(59,130,246,0.12)",
+    emerald: "rgba(16,185,129,0.12)",
+    amber: "rgba(245,158,11,0.12)",
+  }[accent];
+
+  const accentBorder = {
+    violet: "rgba(109,92,255,0.25)",
+    indigo: "rgba(99,102,241,0.25)",
+    blue: "rgba(59,130,246,0.25)",
+    emerald: "rgba(16,185,129,0.25)",
+    amber: "rgba(245,158,11,0.25)",
   }[accent];
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-5 backdrop-blur-xl shadow-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-[#131324]/90">
-      <div className="flex items-center justify-between">
-        <div className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-transform duration-200 group-hover:scale-105 ${accentStyles}`}>
+    <div
+      style={{
+        background: "var(--bg-surface)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--r-xl)",
+        padding: "20px 22px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+        transition: "border-color 0.15s ease, transform 0.15s ease",
+      }}
+      className="hover:-translate-y-0.5 hover:border-violet-500/30"
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: "var(--r-md)",
+            background: accentBg,
+            border: `1px solid ${accentBorder}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: accentColor,
+            flexShrink: 0,
+          }}
+        >
           <Icon size={18} />
         </div>
-        <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[10px] font-semibold tracking-wider text-white/50">
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color: "var(--text-muted)",
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: 99,
+            padding: "2px 8px",
+          }}
+        >
           LIVE
         </span>
       </div>
-      <div className="mt-4 text-2xl sm:text-3xl font-bold tracking-tight text-white">{value}</div>
-      <div className="mt-1 text-xs font-semibold text-white/70">{label}</div>
-      {helper && <div className="mt-1 text-[11px] text-white/40">{helper}</div>}
+      <div style={{ marginTop: 16 }}>
+        <div style={{ fontSize: 26, fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+          {value}
+        </div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginTop: 3 }}>
+          {label}
+        </div>
+        {helper && (
+          <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 2 }}>
+            {helper}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -96,28 +162,44 @@ function EmptyChart({
   actionText?: string;
 }) {
   return (
-    <div className="relative flex flex-col items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/[0.01] px-6 py-12 text-center overflow-hidden">
-      {/* Decorative subtle waveform */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none flex items-center justify-center">
-        <svg className="w-full h-32" viewBox="0 0 600 120" fill="none">
-          <path
-            d="M0,60 Q150,10 300,70 T600,40"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeDasharray="6 6"
-            className="text-violet-400"
-          />
-        </svg>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "var(--r-lg)",
+        border: "1px dashed var(--border)",
+        background: "rgba(255,255,255,0.01)",
+        padding: "40px 24px",
+        textAlign: "center",
+      }}
+    >
+      <div
+        style={{
+          width: 52,
+          height: 52,
+          borderRadius: "var(--r-md)",
+          background: "var(--accent-soft)",
+          border: "1px solid var(--border-accent)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#a89dff",
+          marginBottom: 14,
+        }}
+      >
+        <BarChart3 size={24} />
       </div>
-      <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-400 shadow-sm mb-3">
-        <BarChart3 size={22} />
-      </div>
-      <p className="relative z-10 text-sm font-semibold text-white/90">{title}</p>
-      <p className="relative z-10 mt-1 max-w-sm text-xs text-white/50">{message}</p>
+      <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>{title}</p>
+      <p style={{ fontSize: 12, color: "var(--text-secondary)", maxWidth: 360, margin: "6px 0 0", lineHeight: 1.5 }}>
+        {message}
+      </p>
       {actionHref && (
         <Link
           href={actionHref}
-          className="relative z-10 mt-4 inline-flex items-center gap-1.5 rounded-xl bg-violet-600/80 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-600 transition shadow-lg shadow-violet-600/20"
+          className="btn btn-primary btn-sm"
+          style={{ marginTop: 16, gap: 6 }}
         >
           <PenSquare size={13} /> {actionText || "Get Started"}
         </Link>
@@ -149,22 +231,35 @@ function LineChart({ points }: { points: AnalyticsDashboardData["engagementOverT
   });
 
   const polyline = coords.map((p) => `${p.x},${p.y}`).join(" ");
-  const areaPath = `M ${coords[0].x},${height - pad} ` +
+  const areaPath =
+    `M ${coords[0].x},${height - pad} ` +
     coords.map((p) => `L ${p.x},${p.y}`).join(" ") +
     ` L ${coords[coords.length - 1].x},${height - pad} Z`;
 
   return (
-    <div className="h-72 w-full overflow-hidden rounded-xl border border-white/[0.06] bg-black/40 p-4">
-      <svg viewBox={`0 0 ${width} ${height}`} className="h-full w-full" role="img" aria-label="Engagement rate over time">
+    <div
+      style={{
+        height: 280,
+        width: "100%",
+        borderRadius: "var(--r-md)",
+        border: "1px solid var(--border-subtle)",
+        background: "var(--bg-elevated)",
+        padding: 16,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
+      <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "100%" }} role="img" aria-label="Engagement rate over time">
         <defs>
           <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.3" />
+            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.35" />
             <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.0" />
           </linearGradient>
         </defs>
         <line x1={pad} y1={height - pad} x2={width - pad} y2={height - pad} stroke="rgba(255,255,255,0.08)" />
-        <line x1={pad} y1={pad} x2={width - pad} y2={pad} stroke="rgba(255,255,255,0.05)" strokeDasharray="4 5" />
-        <line x1={pad} y1={height / 2} x2={width - pad} y2={height / 2} stroke="rgba(255,255,255,0.05)" strokeDasharray="4 5" />
+        <line x1={pad} y1={pad} x2={width - pad} y2={pad} stroke="rgba(255,255,255,0.04)" strokeDasharray="4 5" />
+        <line x1={pad} y1={height / 2} x2={width - pad} y2={height / 2} stroke="rgba(255,255,255,0.04)" strokeDasharray="4 5" />
         <path d={areaPath} fill="url(#chartGrad)" />
         <polyline points={polyline} fill="none" stroke="#8b5cf6" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
         {coords.map(({ x, y, point }) => (
@@ -173,7 +268,7 @@ function LineChart({ points }: { points: AnalyticsDashboardData["engagementOverT
           </circle>
         ))}
       </svg>
-      <div className="flex justify-between px-2 text-[11px] text-white/40">
+      <div style={{ display: "flex", justifyContent: "space-between", padding: "0 8px", fontSize: 11, color: "var(--text-muted)" }}>
         <span>{points[0].date}</span>
         <span>{points[Math.floor(points.length / 2)]?.date}</span>
         <span>{points[points.length - 1].date}</span>
@@ -196,72 +291,31 @@ function HorizontalBars({
   }
   const max = Math.max(...rows.map((row) => row.value), 1);
   return (
-    <div className="space-y-5">
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {rows.map((row) => (
         <div key={row.name}>
-          <div className="mb-2 flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="truncate text-xs font-semibold text-white/90">{row.name}</div>
-              <div className="mt-0.5 text-[11px] text-white/40">{row.helper}</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {row.name}
+              </div>
+              <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>{row.helper}</div>
             </div>
-            <div className="text-xs font-bold text-violet-400">{value(row.value)}</div>
+            <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--accent)" }}>{value(row.value)}</div>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
+          <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
             <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-all duration-500"
-              style={{ width: `${Math.max(3, (row.value / max) * 100)}%` }}
+              style={{
+                height: "100%",
+                borderRadius: 99,
+                background: "linear-gradient(90deg, #6d5cff 0%, #a855f7 100%)",
+                width: `${Math.max(3, (row.value / max) * 100)}%`,
+                transition: "width 0.5s ease",
+              }}
             />
           </div>
         </div>
       ))}
-    </div>
-  );
-}
-
-function Filters({
-  platform,
-  setPlatform,
-  category,
-  setCategory,
-  categories,
-}: {
-  platform: Platform | "ALL";
-  setPlatform: (v: Platform | "ALL") => void;
-  category: string;
-  setCategory: (v: string) => void;
-  categories: Array<{ id: string; name: string }>;
-}) {
-  return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white/50">
-        <Filter size={14} className="text-violet-400" /> Filters:
-      </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <select
-          value={platform}
-          onChange={(e) => setPlatform(e.target.value as Platform | "ALL")}
-          className="h-9 rounded-xl border border-white/10 bg-[#16162a] px-3.5 text-xs font-medium text-white outline-none focus:border-violet-500 cursor-pointer"
-        >
-          <option value="ALL">All platforms</option>
-          {platformOrder.map((p) => (
-            <option key={p} value={p}>
-              {platformLabels[p]}
-            </option>
-          ))}
-        </select>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="h-9 rounded-xl border border-white/10 bg-[#16162a] px-3.5 text-xs font-medium text-white outline-none focus:border-violet-500 cursor-pointer"
-        >
-          <option value="ALL">All categories</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </div>
     </div>
   );
 }
@@ -329,46 +383,109 @@ export function AnalyticsDashboard({
   const scorePost = posts.find((p) => p.id === scorePostId);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-300">
-            <BarChart3 size={13} /> Performance intelligence
-          </span>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Analytics</h1>
-          <p className="mt-1 text-xs text-white/50">Analyze reach, track engagement rates, and score post effectiveness.</p>
+    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+      {/* Filter Bar with Campaign Panel styling */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 16,
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          padding: "16px 22px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "var(--r-md)",
+              background: "var(--accent-soft)",
+              border: "1px solid var(--border-accent)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#a89dff",
+            }}
+          >
+            <Filter size={16} />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>Filter Metrics</div>
+            <div style={{ fontSize: 11.5, color: "var(--text-secondary)" }}>Slice data by platform and content category</div>
+          </div>
         </div>
-        <div className="inline-flex items-center gap-2 self-start rounded-full border border-white/[0.08] bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/60 sm:self-auto">
-          <Sparkles size={13} className="text-violet-400" /> Multi-Platform Metrics
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <select
+            value={platform}
+            onChange={(e) => {
+              const nextVal = e.target.value as Platform | "ALL";
+              setPlatform(nextVal);
+              updateFilter(nextVal, category);
+            }}
+            className="campaign-input"
+            style={{ height: 38, width: "auto", minWidth: 140, cursor: "pointer" }}
+          >
+            <option value="ALL">All platforms</option>
+            {platformOrder.map((p) => (
+              <option key={p} value={p}>
+                {platformLabels[p]}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={category}
+            onChange={(e) => {
+              const nextVal = e.target.value;
+              setCategory(nextVal);
+              updateFilter(platform, nextVal);
+            }}
+            className="campaign-input"
+            style={{ height: 38, width: "auto", minWidth: 150, cursor: "pointer" }}
+          >
+            <option value="ALL">All categories</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <section className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-4 backdrop-blur-xl shadow-lg">
-        <Filters
-          platform={platform}
-          setPlatform={(value) => {
-            setPlatform(value);
-            updateFilter(value, category);
-          }}
-          category={category}
-          setCategory={(value) => {
-            setCategory(value);
-            updateFilter(platform, value);
-          }}
-          categories={categories}
-        />
-      </section>
-
       {/* Audience & Reach Overview */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-white/60">
-            Audience & Reach Overview
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "var(--accent)",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+            }}
+          >
+            Audience Overview
+          </span>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: "2px 0 0" }}>
+            Audience &amp; Reach Overview
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: 16,
+          }}
+        >
           <MetricCard
             label="Published Posts"
             value={formatNumber(initialData.summary.totalPublishedPosts)}
@@ -400,14 +517,32 @@ export function AnalyticsDashboard({
         </div>
       </div>
 
-      {/* Interaction Volume */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-white/60">
+      {/* Interaction Activity */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "var(--accent)",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+            }}
+          >
+            Engagement Breakdown
+          </span>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: "2px 0 0" }}>
             Interaction Activity
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: 16,
+          }}
+        >
           <MetricCard
             label="Total Likes"
             value={formatNumber(initialData.summary.likes)}
@@ -432,31 +567,94 @@ export function AnalyticsDashboard({
         </div>
       </div>
 
-      {/* Engagement Over Time */}
-      <section className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-6 backdrop-blur-xl shadow-xl space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-400">
-              <Activity size={16} />
+      {/* Engagement Over Time Card */}
+      <section
+        style={{
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          padding: 24,
+          boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 18,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 12,
+            paddingBottom: 14,
+            borderBottom: "1px solid var(--border-subtle)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+              }}
+            >
+              <Activity size={17} />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-white">Engagement Over Time</h2>
-              <p className="text-[11px] text-white/50">Historical engagement rate trajectory across published content.</p>
+              <h2 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
+                Engagement Over Time
+              </h2>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                Historical engagement rate trajectory across published content
+              </p>
             </div>
           </div>
-          <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-medium text-white/50">
-            {data.bestPosts.length ? "Filtered view" : "No matching posts"}
+          <span className="badge badge-ai" style={{ fontSize: 11 }}>
+            {data.bestPosts.length ? "Filtered View" : "No Matching Posts"}
           </span>
         </div>
         <LineChart points={data.engagementOverTime} />
       </section>
 
-      {/* Platform & Category Breakdown */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-6 backdrop-blur-xl shadow-xl space-y-4">
-          <div className="pb-3 border-b border-white/[0.06]">
-            <h2 className="text-sm font-semibold text-white">Platform Performance</h2>
-            <p className="mt-0.5 text-[11px] text-white/50">Compare engagement efficiency by social network.</p>
+      {/* Platform & Category Performance */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 20 }}>
+        <section
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-xl)",
+            padding: 24,
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+          }}
+        >
+          <div style={{ paddingBottom: 12, borderBottom: "1px solid var(--border-subtle)" }}>
+            <span
+              style={{
+                fontSize: 10.5,
+                fontWeight: 600,
+                color: "var(--accent)",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+              }}
+            >
+              Networks
+            </span>
+            <h2 style={{ fontSize: 15, fontWeight: 800, color: "var(--text-primary)", margin: "2px 0 0" }}>
+              Platform Performance
+            </h2>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+              Compare engagement efficiency by social network
+            </p>
           </div>
           <HorizontalBars
             label="platform"
@@ -469,10 +667,36 @@ export function AnalyticsDashboard({
           />
         </section>
 
-        <section className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-6 backdrop-blur-xl shadow-xl space-y-4">
-          <div className="pb-3 border-b border-white/[0.06]">
-            <h2 className="text-sm font-semibold text-white">Category Performance</h2>
-            <p className="mt-0.5 text-[11px] text-white/50">See which content themes resonate strongest with your audience.</p>
+        <section
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-xl)",
+            padding: 24,
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+          }}
+        >
+          <div style={{ paddingBottom: 12, borderBottom: "1px solid var(--border-subtle)" }}>
+            <span
+              style={{
+                fontSize: 10.5,
+                fontWeight: 600,
+                color: "var(--accent)",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+              }}
+            >
+              Topics
+            </span>
+            <h2 style={{ fontSize: 15, fontWeight: 800, color: "var(--text-primary)", margin: "2px 0 0" }}>
+              Category Performance
+            </h2>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+              See which content themes resonate strongest with your audience
+            </p>
           </div>
           <HorizontalBars
             label="category"
@@ -486,42 +710,107 @@ export function AnalyticsDashboard({
         </section>
       </div>
 
-      {/* Best Performing Content */}
-      <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 backdrop-blur-xl shadow-xl">
-        <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
+      {/* Top Performing Content */}
+      <section
+        style={{
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          overflow: "hidden",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "18px 24px",
+            borderBottom: "1px solid var(--border-subtle)",
+          }}
+        >
           <div>
-            <h2 className="text-sm font-semibold text-white">Top Performing Content</h2>
-            <p className="mt-0.5 text-[11px] text-white/50">Published posts ranked by highest engagement rate.</p>
+            <span
+              style={{
+                fontSize: 10.5,
+                fontWeight: 600,
+                color: "var(--accent)",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+              }}
+            >
+              Leaderboard
+            </span>
+            <h2 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: "2px 0 0" }}>
+              Top Performing Content
+            </h2>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+              Published posts ranked by highest engagement rate
+            </p>
           </div>
-          <TrendingUp size={18} className="text-violet-400" />
+          <TrendingUp size={18} style={{ color: "var(--accent)" }} />
         </div>
+
         {data.bestPosts.length === 0 ? (
-          <div className="px-6 py-12 text-center text-xs text-white/40">
+          <div style={{ padding: "48px 24px", textAlign: "center", fontSize: 13, color: "var(--text-muted)" }}>
             No published posts match these filters.
           </div>
         ) : (
-          <div className="divide-y divide-white/[0.04]">
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {data.bestPosts.map((post, index) => (
               <div
                 key={post.id}
-                className="grid gap-4 px-6 py-4 md:grid-cols-[36px_1fr_130px_140px] md:items-center hover:bg-white/[0.02] transition"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "36px 1fr 130px 140px",
+                  alignItems: "center",
+                  gap: 16,
+                  padding: "16px 24px",
+                  borderBottom: "1px solid var(--border-subtle)",
+                  transition: "background 0.15s ease",
+                }}
+                className="hover:bg-white/[0.02]"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/10 text-xs font-bold text-violet-300">
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: "var(--r-sm)",
+                    background: "var(--accent-soft)",
+                    border: "1px solid var(--border-accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: "#a89dff",
+                  }}
+                >
                   {index + 1}
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-violet-400">{platformShort[post.platform]}</span>
-                    <span className="text-xs text-white/40">· {post.categoryName}</span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--accent)" }}>
+                      {platformShort[post.platform]}
+                    </span>
+                    <span style={{ fontSize: 11, color: "var(--text-muted)" }}>· {post.categoryName}</span>
                   </div>
-                  <div className="mt-1 truncate text-xs font-semibold text-white/90">{post.title}</div>
-                  <div className="mt-0.5 truncate text-[11px] text-white/40">{post.caption || "No caption"}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {post.title}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {post.caption || "No caption"}
+                  </div>
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-emerald-400">{formatPercent(post.engagementRate)}</div>
-                  <div className="text-[10px] uppercase font-semibold text-white/40">engagement</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "#34d399" }}>
+                    {formatPercent(post.engagementRate)}
+                  </div>
+                  <div style={{ fontSize: 10, textTransform: "uppercase", fontWeight: 600, color: "var(--text-muted)", marginTop: 1 }}>
+                    engagement
+                  </div>
                 </div>
-                <div className="text-xs leading-relaxed text-white/60">
+                <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>
                   {formatNumber(post.likes)} likes<br />
                   {formatNumber(post.reach)} reach
                 </div>
@@ -532,35 +821,83 @@ export function AnalyticsDashboard({
       </section>
 
       {/* Content Intelligence Scoring */}
-      <section className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a]/85 p-6 backdrop-blur-xl shadow-xl">
-        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start pb-4 border-b border-white/[0.06]">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-400">
-              <Sparkles size={16} />
+      <section
+        style={{
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          padding: 24,
+          boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 12,
+            paddingBottom: 16,
+            borderBottom: "1px solid var(--border-subtle)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+                flexShrink: 0,
+              }}
+            >
+              <Sparkles size={18} />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-white">Content Intelligence & Scoring</h2>
-              <p className="text-[11px] text-white/50">Score a post from 0–100 using AI readability and engagement metrics.</p>
+              <span
+                style={{
+                  fontSize: 10.5,
+                  fontWeight: 600,
+                  color: "var(--accent)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                }}
+              >
+                AI Scoring Studio
+              </span>
+              <h2 style={{ fontSize: 17, fontWeight: 800, color: "var(--text-primary)", margin: "2px 0 0" }}>
+                Content Intelligence &amp; Scoring
+              </h2>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                Score a post from 0–100 using AI readability and engagement metrics
+              </p>
             </div>
           </div>
           {scoreResult && (
-            <div className="flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-300">
-              {scoreResult.provider.startsWith("mock") ? "Demo Mode" : `API · ${scoreResult.provider}`}
-            </div>
+            <span className="badge badge-ai" style={{ fontSize: 11 }}>
+              {scoreResult.provider.startsWith("mock") ? "Demo Mode" : `AI · ${scoreResult.provider}`}
+            </span>
           )}
         </div>
 
-        <div className="mt-6 grid gap-7 lg:grid-cols-[320px_1fr]">
-          <div className="space-y-4">
+        <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 24 }}>
+          {/* Left Form Controls */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
-              <label htmlFor="score-post" className="block text-xs font-semibold uppercase tracking-wider text-white/60">
-                Select Post
-              </label>
+              <div className="campaign-field-label">
+                <span>Select Post</span>
+              </div>
               <select
                 id="score-post"
                 value={scorePostId}
                 onChange={(e) => setScorePostId(e.target.value)}
-                className="mt-1.5 h-10 w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 text-xs text-white outline-none focus:border-violet-500 cursor-pointer"
+                className="campaign-input"
+                style={{ height: 40 }}
               >
                 <option value="">Choose a post to score</option>
                 {posts.map((post) => (
@@ -572,16 +909,17 @@ export function AnalyticsDashboard({
             </div>
 
             <div>
-              <label htmlFor="score-audience" className="block text-xs font-semibold uppercase tracking-wider text-white/60">
-                Target Audience
-              </label>
+              <div className="campaign-field-label">
+                <span>Target Audience</span>
+              </div>
               <input
                 id="score-audience"
                 value={audience}
                 onChange={(e) => setAudience(e.target.value)}
                 maxLength={300}
                 placeholder="Describe your ideal audience..."
-                className="mt-1.5 h-10 w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 text-xs text-white outline-none focus:border-violet-500"
+                className="campaign-input"
+                style={{ height: 40 }}
               />
             </div>
 
@@ -589,42 +927,102 @@ export function AnalyticsDashboard({
               type="button"
               onClick={handleScore}
               disabled={isPending || !scorePostId}
-              className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-xs font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                borderRadius: "var(--r-md)",
+                background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+                padding: "12px 20px",
+                fontSize: 13,
+                fontWeight: 700,
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+                boxShadow: "0 4px 20px rgba(109,92,255,0.35)",
+                opacity: isPending || !scorePostId ? 0.6 : 1,
+                marginTop: 4,
+              }}
             >
               {isPending ? (
                 <>
-                  <RefreshCw size={14} className="animate-spin" /> Scoring Content…
+                  <RefreshCw size={15} className="animate-spin" /> Scoring Content…
                 </>
               ) : (
                 <>
-                  <Sparkles size={14} /> Score Content
+                  <Sparkles size={15} /> Score Content
                 </>
               )}
             </button>
-            {scoreError && <p className="text-xs font-medium text-rose-400">{scoreError}</p>}
+            {scoreError && <p style={{ fontSize: 12, fontWeight: 600, color: "#f87171", margin: 0 }}>{scoreError}</p>}
           </div>
 
+          {/* Right Result Stage */}
           {!scoreResult ? (
-            <div className="flex min-h-[220px] items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/[0.01] px-6 py-8 text-center">
-              <div>
-                <Gauge size={26} className="mx-auto text-white/30" />
-                <p className="mt-2.5 text-xs font-semibold text-white/70">No score evaluated yet</p>
-                <p className="mt-1 max-w-xs text-[11px] text-white/40">
-                  Select a post from the dropdown and click Score Content to analyze hook strength, readability, and CTA quality.
-                </p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "var(--r-lg)",
+                border: "1px dashed var(--border)",
+                background: "rgba(255,255,255,0.01)",
+                padding: "36px 24px",
+                textAlign: "center",
+                minHeight: 220,
+              }}
+            >
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: "var(--r-md)",
+                  background: "var(--accent-soft)",
+                  border: "1px solid var(--border-accent)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#a89dff",
+                  marginBottom: 12,
+                }}
+              >
+                <Gauge size={22} />
               </div>
+              <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                No score evaluated yet
+              </p>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", maxWidth: 300, margin: "6px 0 0", lineHeight: 1.5 }}>
+                Select a post from the dropdown and click Score Content to analyze hook strength, readability, and CTA quality.
+              </p>
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-[160px_1fr]">
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-violet-500/20 bg-gradient-to-b from-violet-500/10 to-indigo-500/10 p-5 text-center shadow-lg">
-                <div className="text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-purple-300 to-indigo-300">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 20 }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "var(--r-lg)",
+                  border: "1px solid var(--border-accent)",
+                  background: "linear-gradient(180deg, rgba(109,92,255,0.12) 0%, rgba(168,85,247,0.08) 100%)",
+                  padding: 24,
+                  textAlign: "center",
+                }}
+              >
+                <div style={{ fontSize: 48, fontWeight: 900, color: "#ffffff", letterSpacing: "-0.03em" }}>
                   {scoreResult.score}
                 </div>
-                <div className="mt-1 text-xs font-medium text-white/50">/ 100</div>
-                <div className="mt-3 text-xs font-semibold text-violet-400">Content Score</div>
+                <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>/ 100</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--accent)", marginTop: 8 }}>
+                  Content Score
+                </div>
               </div>
-              <div className="space-y-5">
-                <div className="grid gap-3 sm:grid-cols-2">
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   <ScoreBar label="Hook strength" value={scoreResult.breakdown.hookStrength} />
                   <ScoreBar label="Readability" value={scoreResult.breakdown.readability} />
                   <ScoreBar label="CTA strength" value={scoreResult.breakdown.ctaStrength} />
@@ -632,13 +1030,23 @@ export function AnalyticsDashboard({
                   <ScoreBar label="Audience relevance" value={scoreResult.breakdown.audienceRelevance} />
                   <ScoreBar label="Hashtag quality" value={scoreResult.breakdown.hashtagQuality} />
                 </div>
-                <div className="rounded-xl border border-white/[0.08] bg-black/30 p-4">
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-white/50">Recommendations</div>
-                  <ul className="mt-2.5 space-y-2">
+
+                <div
+                  style={{
+                    borderRadius: "var(--r-md)",
+                    border: "1px solid var(--border-subtle)",
+                    background: "var(--bg-elevated)",
+                    padding: 14,
+                  }}
+                >
+                  <div style={{ fontSize: 10.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>
+                    Recommendations
+                  </div>
+                  <ul style={{ margin: "8px 0 0", padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
                     {scoreResult.recommendations.map((recommendation, i) => (
-                      <li key={`${recommendation}-${i}`} className="flex gap-2 text-xs text-white/70">
-                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400" />
-                        {recommendation}
+                      <li key={`${recommendation}-${i}`} style={{ display: "flex", gap: 6, fontSize: 11.5, color: "var(--text-secondary)", lineHeight: 1.4 }}>
+                        <span style={{ color: "var(--accent)", fontWeight: 700 }}>•</span>
+                        <span>{recommendation}</span>
                       </li>
                     ))}
                   </ul>
@@ -647,7 +1055,11 @@ export function AnalyticsDashboard({
             </div>
           )}
         </div>
-        {scorePost && <p className="mt-4 text-xs text-white/40">Scored post: {scorePost.title}</p>}
+        {scorePost && (
+          <p style={{ fontSize: 11.5, color: "var(--text-muted)", margin: "14px 0 0" }}>
+            Scored post: <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>{scorePost.title}</span>
+          </p>
+        )}
       </section>
     </div>
   );
@@ -656,14 +1068,18 @@ export function AnalyticsDashboard({
 function ScoreBar({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="mb-1.5 flex justify-between text-xs font-medium text-white/60">
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 4 }}>
         <span>{label}</span>
-        <span className="text-white/80">{Math.round(value)}</span>
+        <span style={{ color: "var(--text-primary)" }}>{Math.round(value)}</span>
       </div>
-      <div className="h-1.5 rounded-full bg-white/[0.06]">
+      <div style={{ height: 5, borderRadius: 99, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
         <div
-          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500"
-          style={{ width: `${Math.max(2, Math.min(100, value))}%` }}
+          style={{
+            height: "100%",
+            borderRadius: 99,
+            background: "linear-gradient(90deg, #6d5cff 0%, #a855f7 100%)",
+            width: `${Math.max(2, Math.min(100, value))}%`,
+          }}
         />
       </div>
     </div>
