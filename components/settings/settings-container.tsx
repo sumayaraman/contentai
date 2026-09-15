@@ -36,9 +36,9 @@ export function SettingsContainer({
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
 
   return (
-    <div className="space-y-6">
-      {/* Sleek Segmented Tab Navigation Bar */}
-      <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-white/[0.03] border border-white/[0.08] max-w-full overflow-x-auto">
+    <div className="space-y-8">
+      {/* Sleek Segmented Tab Navigation Bar with ample breathing room */}
+      <div className="inline-flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] max-w-full overflow-x-auto shadow-sm">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -47,9 +47,9 @@ export function SettingsContainer({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 whitespace-nowrap cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-150 whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? "bg-violet-600 text-white shadow-sm shadow-violet-500/25"
+                  ? "bg-violet-600 text-white shadow-md shadow-violet-500/25"
                   : "text-white/50 hover:text-white hover:bg-white/[0.04]"
               }`}
             >
@@ -61,17 +61,17 @@ export function SettingsContainer({
       </div>
 
       {/* Tab Content Panels */}
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Profile Tab */}
         {(activeTab === "profile" || activeTab === "all") && (
           <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-xl shadow-black/25 overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-4.5 border-b border-white/[0.06] bg-white/[0.015]">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
-                <User size={15} />
+            <div className="flex items-center gap-3.5 px-8 py-6 border-b border-white/[0.06] bg-white/[0.015]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
+                <User size={16} />
               </div>
               <div>
-                <h2 className="text-sm font-semibold text-white">Personal Profile</h2>
-                <p className="text-xs text-white/40 mt-0.5">
+                <h2 className="text-base font-semibold text-white">Personal Profile</h2>
+                <p className="text-xs text-white/50 mt-1">
                   Your avatar and display name visible across post revisions and activity logs
                 </p>
               </div>

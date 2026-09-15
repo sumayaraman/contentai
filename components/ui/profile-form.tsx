@@ -28,11 +28,11 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
 
   return (
     <form onSubmit={submit} className="flex flex-col">
-      {/* Body */}
-      <div className="p-6 sm:p-7 space-y-6">
+      {/* Spacious Card Body */}
+      <div className="p-8 sm:p-9 space-y-8">
         {/* Avatar and Identity Preview */}
-        <div className="flex items-center gap-4 pb-5 border-b border-white/[0.06]">
-          <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/15 bg-gradient-to-br from-violet-600 to-indigo-600 font-bold text-white shadow-md text-xl">
+        <div className="flex items-center gap-5 pb-8 border-b border-white/[0.06]">
+          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-violet-600 to-indigo-600 font-bold text-white shadow-lg text-2xl">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -48,20 +48,20 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
             )}
           </div>
           <div>
-            <div className="text-sm font-semibold text-white">{name || "Your Account"}</div>
-            <div className="text-xs text-white/40 mt-0.5 font-mono">{profile?.email || "No email linked"}</div>
-            <div className="mt-2 flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
+            <div className="text-base font-semibold text-white">{name || "Your Account"}</div>
+            <div className="text-xs text-white/45 mt-1 font-mono">{profile?.email || "No email linked"}</div>
+            <div className="mt-2.5 flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Active Account
               </span>
             </div>
           </div>
         </div>
 
-        {/* 2-column input fields */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {/* 2-column input fields with generous spacing */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
           <div>
-            <label htmlFor="display-name" className="block text-xs font-semibold text-white/70 mb-1.5">
+            <label htmlFor="display-name" className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-2.5">
               Display Name
             </label>
             <input
@@ -70,13 +70,13 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
               onChange={(e) => setName(e.target.value)}
               maxLength={80}
               placeholder="Enter your name"
-              className="h-10 w-full rounded-xl border border-white/10 bg-[#141426] px-3.5 text-xs sm:text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+              className="h-11 w-full rounded-xl border border-white/10 bg-[#151528] px-4 text-sm text-white placeholder:text-white/30 outline-none transition duration-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15"
             />
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label htmlFor="email" className="block text-xs font-semibold text-white/70">
+            <div className="flex items-center justify-between mb-2.5">
+              <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-white/60">
                 Email Address
               </label>
               <span className="text-[11px] text-white/35">Linked to Supabase</span>
@@ -85,15 +85,15 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
               id="email"
               value={profile?.email ?? ""}
               disabled
-              className="h-10 w-full rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5 text-xs sm:text-sm text-white/40 cursor-not-allowed font-mono"
+              className="h-11 w-full rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 text-sm text-white/40 cursor-not-allowed font-mono"
             />
           </div>
         </div>
 
         {/* Avatar URL */}
-        <div>
-          <label htmlFor="avatar-url" className="block text-xs font-semibold text-white/70 mb-1.5">
-            Avatar URL <span className="font-normal text-white/40">(optional image URL)</span>
+        <div className="space-y-1">
+          <label htmlFor="avatar-url" className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-2.5">
+            Avatar URL <span className="font-normal text-white/40 normal-case">(optional public image URL)</span>
           </label>
           <input
             id="avatar-url"
@@ -101,16 +101,16 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
             value={avatarUrl}
             onChange={(e) => setAvatarUrl(e.target.value)}
             placeholder="https://example.com/avatar.png"
-            className="h-10 w-full rounded-xl border border-white/10 bg-[#141426] px-3.5 text-xs sm:text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+            className="h-11 w-full rounded-xl border border-white/10 bg-[#151528] px-4 text-sm text-white placeholder:text-white/30 outline-none transition duration-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15"
           />
-          <p className="mt-1.5 text-[11px] text-white/40 leading-normal">
+          <p className="pt-1.5 text-xs text-white/45 leading-relaxed">
             Paste a direct link to a public image (PNG, JPG, or WebP) to use as your customized avatar.
           </p>
         </div>
       </div>
 
-      {/* Card Footer */}
-      <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.06] bg-white/[0.015]">
+      {/* Spacious Card Footer */}
+      <div className="flex items-center justify-between px-8 py-5 border-t border-white/[0.06] bg-white/[0.015]">
         <div className="text-xs">
           {status ? (
             <span
@@ -121,15 +121,15 @@ export function ProfileForm({ profile }: { profile: UserProfile | null }) {
               {status.text}
             </span>
           ) : (
-            <span className="text-white/40 text-[11px]">Changes will reflect immediately across workspaces.</span>
+            <span className="text-white/40 text-xs">Changes will reflect immediately across workspaces.</span>
           )}
         </div>
         <button
           disabled={saving}
           type="submit"
-          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl bg-violet-600 px-5 text-xs font-semibold text-white shadow-sm shadow-violet-500/25 hover:bg-violet-500 transition disabled:opacity-40 cursor-pointer"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 text-xs font-semibold text-white shadow-md shadow-violet-500/25 hover:from-violet-500 hover:to-indigo-500 transition disabled:opacity-40 cursor-pointer"
         >
-          {saving ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+          {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
           <span>{saving ? "Saving..." : "Save changes"}</span>
         </button>
       </div>

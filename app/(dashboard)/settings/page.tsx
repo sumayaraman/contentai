@@ -54,16 +54,18 @@ export default async function SettingsPage() {
 
   return (
     <div className="page animate-fade-up">
-      <div className="mx-auto max-w-4xl space-y-6">
-        {/* Header */}
-        <div className="page-header !mb-0">
-          <div>
-            <p className="ai-tag" style={{ marginBottom: 6 }}>✦ Preferences</p>
-            <h1 className="page-title">Settings</h1>
-            <p className="page-subtitle">
-              Manage your personal profile, workspace details, team access, and AI preferences.
-            </p>
-          </div>
+      <div className="mx-auto max-w-4xl space-y-8 pb-16">
+        {/* Header with generous spacing */}
+        <div className="space-y-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3.5 py-1 text-xs font-semibold text-violet-300">
+            ✦ Preferences
+          </span>
+          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl pt-1">
+            Settings
+          </h1>
+          <p className="text-sm text-white/50 leading-relaxed max-w-xl pt-0.5">
+            Manage your personal profile, workspace details, team access, and AI preferences.
+          </p>
         </div>
 
         <SettingsContainer
