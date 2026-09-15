@@ -31,33 +31,37 @@ export default async function CategoriesPage() {
   }
 
   return (
-    <div className="page animate-fade-up">
-      <div className="mx-auto max-w-5xl space-y-6">
-        {/* Navigation Breadcrumb */}
-        <div>
-          <Link
-            href="/posts"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white transition-colors group"
-          >
-            <ArrowLeft size={13} className="transition-transform group-hover:-translate-x-0.5" />
-            <span>Back to Posts</span>
-          </Link>
-        </div>
-
-        {/* Page Header */}
-        <div className="page-header !mb-2">
-          <div>
-            <p className="ai-tag" style={{ marginBottom: 6 }}>✦ Content Taxonomy</p>
-            <h1 className="page-title">Categories</h1>
-            <p className="page-subtitle">
-              Create and manage color-coded tags to organize your posts, streamline multi-channel campaigns, and filter analytics themes.
-            </p>
-          </div>
-        </div>
-
-        {/* Category Manager */}
-        <CategoryManager categories={categories} />
+    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
+      {/* Navigation Breadcrumb */}
+      <div>
+        <Link
+          href="/posts"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white transition-colors group"
+        >
+          <ArrowLeft size={13} className="transition-transform group-hover:-translate-x-0.5" />
+          <span>Back to Posts</span>
+        </Link>
       </div>
+
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
+            ✦ Content Taxonomy
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Categories</h1>
+          <p className="mt-1 text-sm text-white/50">
+            Create and manage color-coded tags to organize your posts, streamline multi-channel campaigns, and filter analytics themes.
+          </p>
+        </div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 self-start sm:self-auto">
+          <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
+          Workspace Tags
+        </div>
+      </div>
+
+      {/* Category Manager */}
+      <CategoryManager categories={categories} />
     </div>
   );
 }

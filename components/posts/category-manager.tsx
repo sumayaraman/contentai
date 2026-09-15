@@ -40,21 +40,30 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
   );
 
   return (
-    <div className="space-y-5">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Feedback Toast */}
       {message && (
         <div
-          className={`flex items-center justify-between rounded-xl border px-4 py-3 text-xs font-medium backdrop-blur-xl transition-all ${
-            message.type === "success"
-              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-              : "border-rose-500/30 bg-rose-500/10 text-rose-300"
-          }`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "12px 18px",
+            background: message.type === "success" ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)",
+            border: `1px solid ${message.type === "success" ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`,
+            borderRadius: "var(--r-md)",
+            color: message.type === "success" ? "#4ade80" : "#f87171",
+            fontSize: 13,
+          }}
         >
-          <span>{message.text}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {message.type === "success" ? <Check size={16} /> : <X size={16} />}
+            <span>{message.text}</span>
+          </div>
           <button
             type="button"
             onClick={() => setMessage(null)}
-            className="text-white/40 hover:text-white transition cursor-pointer"
+            style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer" }}
             aria-label="Dismiss message"
           >
             <X size={14} />
@@ -64,39 +73,95 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
 
       {/* Expandable Category Creator Panel */}
       {isCreating && (
-        <div className="rounded-2xl border border-white/10 bg-[#101022]/95 p-5 sm:p-6 backdrop-blur-2xl shadow-2xl shadow-black/40 space-y-4 animate-fade-in">
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300 border border-violet-500/25">
-                <FolderPlus size={15} />
+        <div
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-xl)",
+            padding: 24,
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+              paddingBottom: 16,
+              borderBottom: "1px solid var(--border-subtle)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: "var(--r-md)",
+                  background: "var(--accent-soft)",
+                  border: "1px solid var(--border-accent)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#a89dff",
+                  flexShrink: 0,
+                }}
+              >
+                <FolderPlus size={18} />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-white">Create New Category</h3>
-                <p className="text-[11px] text-white/40">Define a topic tag and choose an accent color</p>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                  Create New Category
+                </h3>
+                <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                  Define a topic tag and choose an accent color
+                </p>
               </div>
             </div>
 
             {/* Live Badge Preview */}
-            <div className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 py-1.5">
-              <span className="text-[10.5px] font-semibold uppercase tracking-wider text-white/40">
-                Preview
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                background: "var(--bg-elevated)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--r-md)",
+                padding: "6px 14px",
+              }}
+            >
+              <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-muted)" }}>
+                Preview:
               </span>
               <span
-                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium transition-all shadow-sm"
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  borderRadius: 99,
+                  padding: "3px 10px",
+                  fontSize: 12,
+                  fontWeight: 600,
                   backgroundColor: `${selectedColor}18`,
                   border: `1px solid ${selectedColor}40`,
                   color: "#ffffff",
                 }}
               >
                 <span
-                  className="h-1.5 w-1.5 rounded-full"
                   style={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: "50%",
                     backgroundColor: selectedColor,
                     boxShadow: `0 0 6px ${selectedColor}`,
                   }}
                 />
-                <span className="max-w-[130px] truncate">
+                <span style={{ maxWidth: 140, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {newCatName.trim() || "Preview Tag"}
                 </span>
               </span>
@@ -118,17 +183,14 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                 }
               });
             }}
-            className="space-y-4"
+            style={{ display: "flex", flexDirection: "column", gap: 16 }}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
               {/* Category Name */}
-              <div className="sm:col-span-6 space-y-1.5">
-                <label
-                  htmlFor="new-category-name"
-                  className="block text-xs font-semibold text-white/70"
-                >
-                  Category Name
-                </label>
+              <div>
+                <div className="campaign-field-label">
+                  <span>Category Name</span>
+                </div>
                 <input
                   id="new-category-name"
                   name="name"
@@ -136,24 +198,23 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                   onChange={(e) => setNewCatName(e.target.value)}
                   maxLength={80}
                   placeholder="e.g. Product Updates, Behind the Scenes"
-                  className="h-10 w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 text-xs sm:text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                  className="campaign-input"
+                  style={{ height: 40 }}
                   required
                   autoFocus
                 />
               </div>
 
               {/* Color Swatches */}
-              <div className="sm:col-span-6 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-white/70">
-                    Accent Color
-                  </label>
-                  <span className="font-mono text-[11px] text-white/40">
+              <div>
+                <div className="campaign-field-label">
+                  <span>Accent Color</span>
+                  <span style={{ fontFamily: "monospace", fontSize: 11, color: "var(--text-muted)" }}>
                     {selectedColor.toUpperCase()}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 pt-0.5">
-                  <div className="flex items-center gap-1.5 flex-wrap">
+                <div style={{ display: "flex", alignItems: "center", gap: 8, height: 40 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                     {PRESET_COLORS.map((preset) => {
                       const isSelected = selectedColor.toLowerCase() === preset.hex.toLowerCase();
                       return (
@@ -163,62 +224,75 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                           onClick={() => setSelectedColor(preset.hex)}
                           title={preset.name}
                           aria-label={`Select ${preset.name} color`}
-                          className={`flex h-6 w-6 items-center justify-center rounded-full transition-all cursor-pointer ${
-                            isSelected
-                              ? "ring-2 ring-white ring-offset-2 ring-offset-[#101022] scale-110"
-                              : "opacity-75 hover:opacity-100 hover:scale-105"
-                          }`}
-                          style={{ backgroundColor: preset.hex }}
+                          style={{
+                            width: 26,
+                            height: 26,
+                            borderRadius: "50%",
+                            backgroundColor: preset.hex,
+                            border: isSelected ? "2px solid #ffffff" : "2px solid transparent",
+                            boxShadow: isSelected ? `0 0 8px ${preset.hex}` : "none",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transition: "all 0.15s ease",
+                          }}
                         >
-                          {isSelected && <Check size={11} className="text-white drop-shadow stroke-[3]" />}
+                          {isSelected && <Check size={12} color="#ffffff" strokeWidth={3} />}
                         </button>
                       );
                     })}
                   </div>
 
-                  {/* Custom color trigger */}
-                  <div className="relative pl-1 border-l border-white/10">
-                    <label
-                      htmlFor="custom-color-input"
-                      className="flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/[0.04] cursor-pointer hover:border-white/40 transition"
-                      title="Custom color"
-                    >
-                      <Palette size={11} className="text-white/60" />
-                    </label>
-                    <input
-                      id="custom-color-input"
-                      type="color"
-                      value={selectedColor}
-                      onChange={(e) => setSelectedColor(e.target.value)}
-                      className="sr-only"
-                    />
-                  </div>
+                  {/* Custom color picker */}
+                  <label
+                    htmlFor="custom-color-input"
+                    style={{
+                      width: 26,
+                      height: 26,
+                      borderRadius: "50%",
+                      border: "1px dashed var(--border)",
+                      background: "rgba(255,255,255,0.05)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      marginLeft: 4,
+                    }}
+                    title="Custom color"
+                  >
+                    <Palette size={12} style={{ color: "var(--text-secondary)" }} />
+                  </label>
+                  <input
+                    id="custom-color-input"
+                    type="color"
+                    value={selectedColor}
+                    onChange={(e) => setSelectedColor(e.target.value)}
+                    style={{ display: "none" }}
+                  />
                 </div>
               </div>
             </div>
 
             {/* Bottom Actions */}
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-white/[0.06]">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 10, paddingTop: 14, borderTop: "1px solid var(--border-subtle)" }}>
               <button
                 type="button"
                 onClick={() => {
                   setIsCreating(false);
                   setNewCatName("");
                 }}
-                className="inline-flex h-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] px-3.5 text-xs font-medium text-white/70 hover:bg-white/[0.06] hover:text-white transition cursor-pointer"
+                className="btn btn-ghost btn-sm"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isPending || !newCatName.trim()}
-                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-xs font-semibold text-white shadow-md shadow-violet-500/20 hover:from-violet-500 hover:to-indigo-500 transition disabled:opacity-40 cursor-pointer"
+                className="btn btn-primary btn-sm"
+                style={{ gap: 6 }}
               >
-                {isPending ? (
-                  <Loader2 size={13} className="animate-spin" />
-                ) : (
-                  <Check size={13} />
-                )}
+                {isPending ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
                 <span>Save Category</span>
               </button>
             </div>
@@ -227,28 +301,79 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
       )}
 
       {/* Unified Categories Data Table */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/80 backdrop-blur-xl shadow-xl shadow-black/30 overflow-hidden">
+      <div
+        style={{
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+          overflow: "hidden",
+        }}
+      >
         {/* Table Toolbar Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-white/[0.06] bg-white/[0.015]">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500/10 text-violet-300 border border-violet-500/20">
-              <Tag size={14} />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 16,
+            padding: "20px 24px",
+            borderBottom: "1px solid var(--border-subtle)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+                flexShrink: 0,
+              }}
+            >
+              <Tag size={16} />
             </div>
-            <h2 className="text-sm font-semibold text-white">Active Categories</h2>
-            <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-semibold text-white/60">
-              {filteredCategories.length} {filteredCategories.length === 1 ? "tag" : "tags"}
-            </span>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                  Active Categories
+                </h2>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: "var(--text-muted)",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: 99,
+                    padding: "2px 8px",
+                  }}
+                >
+                  {filteredCategories.length} {filteredCategories.length === 1 ? "tag" : "tags"}
+                </span>
+              </div>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                Organize content by campaign pillars and topics
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             {categories.length > 3 && (
-              <div className="relative">
-                <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/35" />
+              <div style={{ position: "relative" }}>
+                <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                 <input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Filter categories..."
-                  className="h-8 w-36 sm:w-44 rounded-lg border border-white/10 bg-[#16162a] pl-7 pr-2.5 text-xs text-white placeholder:text-white/30 outline-none focus:border-violet-500 transition"
+                  className="campaign-input"
+                  style={{ height: 38, paddingLeft: 30, width: 190 }}
                 />
               </div>
             )}
@@ -256,9 +381,22 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
               <button
                 type="button"
                 onClick={() => setIsCreating(true)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-violet-600 px-3 text-xs font-semibold text-white hover:bg-violet-500 transition shadow-sm cursor-pointer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  borderRadius: "var(--r-md)",
+                  background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+                  padding: "9px 16px",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: "#ffffff",
+                  border: "none",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 16px rgba(109,92,255,0.3)",
+                }}
               >
-                <Plus size={13} />
+                <Plus size={14} />
                 <span>New Category</span>
               </button>
             )}
@@ -267,16 +405,29 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
 
         {/* Column Headers */}
         {categories.length > 0 && (
-          <div className="grid grid-cols-12 px-5 py-2.5 border-b border-white/[0.04] bg-white/[0.01] text-[10.5px] font-semibold text-white/40 uppercase tracking-wider">
-            <div className="col-span-6 sm:col-span-5">Category Tag</div>
-            <div className="col-span-3 sm:col-span-3">Accent Color</div>
-            <div className="col-span-3 sm:col-span-2 hidden sm:block">Scope</div>
-            <div className="col-span-3 sm:col-span-2 text-right">Actions</div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "minmax(200px, 2fr) minmax(140px, 1.5fr) minmax(130px, 1fr) 100px",
+              padding: "12px 24px",
+              borderBottom: "1px solid var(--border-subtle)",
+              background: "rgba(255,255,255,0.015)",
+              fontSize: 11,
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              color: "var(--text-muted)",
+            }}
+          >
+            <div>Category Tag</div>
+            <div>Accent Color</div>
+            <div>Scope</div>
+            <div style={{ textAlign: "right" }}>Actions</div>
           </div>
         )}
 
         {/* Categories List */}
-        <div className="divide-y divide-white/[0.04]">
+        <div style={{ display: "flex", flexDirection: "column" }}>
           {filteredCategories.map((category) =>
             editing === category.id ? (
               /* Inline Edit Mode */
@@ -295,69 +446,72 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                     }
                   });
                 }}
-                className="grid grid-cols-12 items-center gap-3 px-5 py-3 bg-violet-500/[0.06] border-l-2 border-violet-500"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "minmax(200px, 2fr) minmax(140px, 1.5fr) minmax(130px, 1fr) 100px",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "14px 24px",
+                  background: "rgba(109,92,255,0.06)",
+                  borderLeft: "3px solid var(--accent)",
+                  borderBottom: "1px solid var(--border-subtle)",
+                }}
               >
                 <input type="hidden" name="category_id" value={category.id} />
-                <div className="col-span-6 sm:col-span-5">
+                <div>
                   <input
                     name="name"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     maxLength={80}
-                    className="h-8 w-full rounded-lg border border-white/20 bg-[#16162a] px-2.5 text-xs text-white outline-none focus:border-violet-500 transition"
+                    className="campaign-input"
+                    style={{ height: 36 }}
                     required
                     autoFocus
                   />
                 </div>
-                <div className="col-span-3 sm:col-span-3 flex items-center gap-1.5">
-                  <div className="flex items-center gap-1">
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                     {PRESET_COLORS.slice(0, 5).map((preset) => (
                       <button
                         key={preset.hex}
                         type="button"
                         onClick={() => setEditColor(preset.hex)}
                         title={preset.name}
-                        className={`h-4 w-4 rounded-full transition-all cursor-pointer ${
-                          editColor.toLowerCase() === preset.hex.toLowerCase()
-                            ? "ring-1.5 ring-white scale-110"
-                            : "opacity-60 hover:opacity-100"
-                        }`}
-                        style={{ backgroundColor: preset.hex }}
+                        style={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: "50%",
+                          backgroundColor: preset.hex,
+                          border: editColor.toLowerCase() === preset.hex.toLowerCase() ? "2px solid #ffffff" : "2px solid transparent",
+                          cursor: "pointer",
+                        }}
                       />
                     ))}
                   </div>
-                  <label
-                    htmlFor={`edit-color-${category.id}`}
-                    className="h-5 w-5 rounded-full border border-white/20 flex items-center justify-center cursor-pointer ml-1"
-                    title="Choose color"
-                  >
-                    <span
-                      className="h-3 w-3 rounded-full"
-                      style={{ backgroundColor: editColor }}
-                    />
-                  </label>
                   <input
-                    id={`edit-color-${category.id}`}
                     type="color"
                     value={editColor}
                     onChange={(e) => setEditColor(e.target.value)}
-                    className="sr-only"
+                    style={{ width: 22, height: 22, border: "none", background: "transparent", cursor: "pointer" }}
                   />
                   <input type="hidden" name="color" value={editColor} />
                 </div>
-                <div className="col-span-3 sm:col-span-4 flex items-center justify-end gap-1.5">
+                <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Editing…</div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
                   <button
                     disabled={isPending}
                     type="submit"
-                    className="inline-flex h-7 items-center gap-1 rounded-lg bg-violet-600 px-2.5 text-xs font-semibold text-white hover:bg-violet-500 transition cursor-pointer"
+                    className="btn btn-primary btn-sm"
+                    style={{ height: 32, padding: "0 10px", fontSize: 12 }}
                   >
-                    <Check size={12} />
-                    <span>Save</span>
+                    <Check size={12} /> Save
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditing(null)}
-                    className="inline-flex h-7 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-2 text-xs text-white/60 hover:bg-white/[0.08] hover:text-white transition cursor-pointer"
+                    className="btn btn-ghost btn-sm"
+                    style={{ height: 32, padding: "0 8px" }}
                   >
                     <X size={12} />
                   </button>
@@ -367,54 +521,93 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
               /* Standard Table Row */
               <div
                 key={category.id}
-                className="grid grid-cols-12 items-center px-5 py-3.5 hover:bg-white/[0.02] transition-colors group"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "minmax(200px, 2fr) minmax(140px, 1.5fr) minmax(130px, 1fr) 100px",
+                  alignItems: "center",
+                  padding: "16px 24px",
+                  borderBottom: "1px solid var(--border-subtle)",
+                  transition: "background 0.15s ease",
+                }}
+                className="hover:bg-white/[0.02]"
               >
                 {/* Badge Column */}
-                <div className="col-span-6 sm:col-span-5 flex items-center min-w-0 pr-2">
+                <div style={{ display: "flex", alignItems: "center", minWidth: 0, paddingRight: 8 }}>
                   <span
-                    className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold max-w-full truncate shadow-sm transition-transform group-hover:scale-[1.01]"
                     style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      borderRadius: 99,
+                      padding: "4px 12px",
+                      fontSize: 12,
+                      fontWeight: 600,
                       backgroundColor: `${category.color}15`,
                       border: `1px solid ${category.color}35`,
                       color: "#ffffff",
+                      maxWidth: "100%",
                     }}
                   >
                     <span
-                      className="h-2 w-2 rounded-full shrink-0"
                       style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: "50%",
+                        flexShrink: 0,
                         backgroundColor: category.color,
                         boxShadow: `0 0 6px ${category.color}`,
                       }}
                     />
-                    <span className="truncate">{category.name}</span>
+                    <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {category.name}
+                    </span>
                   </span>
                 </div>
 
                 {/* Color Column */}
-                <div className="col-span-3 sm:col-span-3 flex items-center gap-2 font-mono text-xs text-white/50">
+                <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "monospace", fontSize: 12, color: "var(--text-secondary)" }}>
                   <span
-                    className="h-2.5 w-2.5 rounded-full shrink-0 border border-white/20"
-                    style={{ backgroundColor: category.color }}
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: "50%",
+                      flexShrink: 0,
+                      backgroundColor: category.color,
+                      border: "1px solid rgba(255,255,255,0.2)",
+                    }}
                   />
                   <span>{category.color?.toUpperCase()}</span>
                 </div>
 
                 {/* Scope Column */}
-                <div className="col-span-3 sm:col-span-2 hidden sm:flex items-center gap-1.5 text-xs text-white/40">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80" />
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--text-muted)" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#34d399" }} />
                   <span>Workspace Tag</span>
                 </div>
 
                 {/* Actions Column */}
-                <div className="col-span-3 sm:col-span-2 flex items-center justify-end gap-1">
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 4 }}>
                   <button
                     type="button"
                     aria-label={`Edit ${category.name}`}
                     onClick={() => startEditingCategory(category)}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/[0.08] transition cursor-pointer"
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "var(--r-sm)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "var(--text-muted)",
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                    className="hover:text-white hover:bg-white/[0.08]"
                     title="Edit category"
                   >
-                    <Pencil size={13} />
+                    <Pencil size={14} />
                   </button>
                   <form
                     action={async (formData: FormData) => {
@@ -430,10 +623,23 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                     <button
                       type="submit"
                       aria-label={`Delete ${category.name}`}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: "var(--r-sm)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "var(--text-muted)",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                      className="hover:text-rose-400 hover:bg-rose-500/10"
                       title="Delete category"
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={14} />
                     </button>
                   </form>
                 </div>
@@ -443,19 +649,47 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
 
           {/* Empty State */}
           {categories.length === 0 && (
-            <div className="py-16 text-center px-4">
-              <div className="flex h-12 w-12 mx-auto items-center justify-center rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-400 mb-3 shadow-inner">
-                <Tag size={20} />
+            <div style={{ padding: "64px 24px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "var(--r-md)",
+                  background: "var(--accent-soft)",
+                  border: "1px solid var(--border-accent)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#a89dff",
+                  marginBottom: 16,
+                }}
+              >
+                <Tag size={24} />
               </div>
-              <h3 className="text-sm font-semibold text-white">No categories created yet</h3>
-              <p className="mt-1 text-xs text-white/40 max-w-sm mx-auto leading-relaxed">
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                No categories created yet
+              </h3>
+              <p style={{ fontSize: 12.5, color: "var(--text-secondary)", maxWidth: 380, margin: "8px 0 20px", lineHeight: 1.5 }}>
                 Color-coded categories help you group posts by campaign, content pillar, or department.
               </p>
               {!isCreating && (
                 <button
                   type="button"
                   onClick={() => setIsCreating(true)}
-                  className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-violet-600 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-violet-500/20 hover:bg-violet-500 transition cursor-pointer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    borderRadius: "var(--r-md)",
+                    background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+                    padding: "10px 18px",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: "#ffffff",
+                    border: "none",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 16px rgba(109,92,255,0.3)",
+                  }}
                 >
                   <Plus size={14} />
                   <span>Create First Category</span>
@@ -466,7 +700,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
 
           {/* No Search Results */}
           {categories.length > 0 && filteredCategories.length === 0 && (
-            <div className="py-12 text-center text-xs text-white/40">
+            <div style={{ padding: "48px 24px", textAlign: "center", fontSize: 13, color: "var(--text-muted)" }}>
               No categories match &quot;{searchTerm}&quot;
             </div>
           )}
