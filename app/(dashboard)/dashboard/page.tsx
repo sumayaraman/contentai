@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sparkles, TrendingUp, TrendingDown, Plus, ArrowRight, Clock, CheckCircle2, Zap, Bot, Check, X, Send, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
+function getGreeting(date: Date = new Date()): string {
+  const h = date.getHours();
+  if (h >= 5 && h < 12) return "Good morning";
+  if (h >= 12 && h < 17) return "Good afternoon";
   return "Good evening";
 }
 
@@ -175,6 +175,13 @@ function AIAssistant() {
 }
 
 export default function DashboardPage() {
+  const [greeting, setGreeting] = useState(() => getGreeting());
+
+  useEffect(() => {
+    // Re-evaluate on client mount according to user's local regional time
+    setGreeting(getGreeting(new Date()));
+  }, []);
+
   const metrics = [
     { label: "Total Posts", value: "142", change: "+12 this month", trend: "up" as const, accent: true },
     { label: "Scheduled", value: "23", change: "Next 7 days", trend: "flat" as const },
@@ -206,7 +213,7 @@ export default function DashboardPage() {
     <div className="page animate-fade-in">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{getGreeting()} ✦</h1>
+          <h1 className="page-title">{greeting} ✦</h1>
           <p className="page-subtitle">Here&apos;s what&apos;s happening with your content today.</p>
         </div>
         <Link href="/ai-studio" className="btn btn-ai">
