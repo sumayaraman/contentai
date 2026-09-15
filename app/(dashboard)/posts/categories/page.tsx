@@ -32,22 +32,27 @@ export default async function CategoriesPage() {
 
   return (
     <div className="page animate-fade-up">
-      <div className="mx-auto max-w-4xl space-y-8 pb-16">
+      <div className="mx-auto max-w-6xl space-y-8 pb-20">
         <div>
-          <Link href="/posts" className="inline-flex items-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition mb-5">
-            <ArrowLeft size={14} /> Back to Posts
+          <Link
+            href="/posts"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white transition mb-3 group"
+          >
+            <ArrowLeft size={13} className="transition group-hover:-translate-x-0.5" />
+            <span>Back to Posts</span>
           </Link>
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-indigo-500/10 text-violet-400 shadow-md">
-              <FolderOpen size={22} />
-            </div>
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-0.5 text-[11px] font-semibold text-violet-300">
-                Content Organization
-              </span>
-              <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Categories</h1>
-              <p className="mt-1 text-xs text-white/50 max-w-xl">
-                Create and manage color-coded categories to organize your posts, streamline multi-channel campaigns, and track analytics themes.
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-300">
+                  <FolderOpen size={13} /> Content Organization
+                </span>
+              </div>
+              <h1 className="mt-2.5 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                Categories
+              </h1>
+              <p className="mt-1.5 text-sm text-white/50 leading-relaxed max-w-2xl">
+                Create and manage color-coded tags to organize your posts, streamline multi-channel campaigns, and filter analytics themes.
               </p>
             </div>
           </div>
