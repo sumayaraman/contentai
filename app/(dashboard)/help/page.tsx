@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function HelpPage() {
   return (
-    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
+    <div className="page animate-fade-up campaign-container" style={{ maxWidth: 1360, margin: "0 auto", gap: 28 }}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">

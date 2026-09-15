@@ -140,91 +140,241 @@ export function HelpCenter() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Top Search & Direct Support Bar - Styled like Campaign Brief Bar */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 p-4 sm:p-5 backdrop-blur-xl shadow-lg">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-          <div className="relative flex-1">
-            <Search
-              size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
-            />
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search guides, workflows, or FAQs..."
-              className="h-11 w-full rounded-xl border border-white/10 bg-[#121224] pl-10 pr-20 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-white/50 hover:text-white px-2 py-1 rounded-md bg-white/[0.06] transition"
-              >
-                Clear
-              </button>
-            )}
-          </div>
-          <button
-            onClick={handleCopyEmail}
-            className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-medium text-white/70 hover:text-white hover:bg-white/[0.08] transition"
-          >
-            {copiedEmail ? (
-              <>
-                <Check size={14} className="text-emerald-400" />
-                <span className="text-emerald-300">Copied support email!</span>
-              </>
-            ) : (
-              <>
-                <Copy size={14} className="text-violet-400" />
-                <span>Need direct help? support@contentai.dev</span>
-              </>
-            )}
-          </button>
+    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+      {/* Search & Direct Support Toolbar Panel */}
+      <div
+        style={{
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          padding: "20px 24px",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 16,
+        }}
+      >
+        <div style={{ position: "relative", flex: "1 1 340px" }}>
+          <Search
+            size={18}
+            style={{
+              position: "absolute",
+              left: 14,
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "var(--text-muted)",
+              pointerEvents: "none",
+            }}
+          />
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search guides, workflows, or FAQs..."
+            className="campaign-input"
+            style={{
+              height: 44,
+              paddingLeft: 42,
+              paddingRight: searchQuery ? 70 : 16,
+              fontSize: 14,
+            }}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              style={{
+                position: "absolute",
+                right: 12,
+                top: "50%",
+                transform: "translateY(-50%)",
+                fontSize: 11.5,
+                fontWeight: 600,
+                color: "var(--text-secondary)",
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid var(--border-subtle)",
+                padding: "3px 8px",
+                borderRadius: "var(--r-sm)",
+                cursor: "pointer",
+              }}
+            >
+              Clear
+            </button>
+          )}
         </div>
+
+        <button
+          onClick={handleCopyEmail}
+          style={{
+            height: 44,
+            padding: "0 18px",
+            borderRadius: "var(--r-md)",
+            background: "var(--bg-elevated)",
+            border: "1px solid var(--border)",
+            color: copiedEmail ? "#4ade80" : "var(--text-secondary)",
+            fontSize: 13,
+            fontWeight: 600,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            whiteSpace: "nowrap",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "var(--border-accent)";
+            e.currentTarget.style.color = "var(--text-primary)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "var(--border)";
+            e.currentTarget.style.color = copiedEmail ? "#4ade80" : "var(--text-secondary)";
+          }}
+        >
+          {copiedEmail ? (
+            <>
+              <Check size={15} />
+              <span>Copied support email!</span>
+            </>
+          ) : (
+            <>
+              <Copy size={15} style={{ color: "#a89dff" }} />
+              <span>Need direct help? support@contentai.dev</span>
+            </>
+          )}
+        </button>
       </div>
 
-      {/* Feature Guides Grid */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
+      {/* Feature Guides - Spacious 2-Column Grid */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 12,
+          }}
+        >
           <div>
-            <h2 className="text-lg font-bold tracking-tight text-white">Feature Guides</h2>
-            <p className="text-xs text-white/50 mt-0.5">
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+              Feature Guides
+            </h2>
+            <p style={{ fontSize: 12.5, color: "var(--text-secondary)", margin: "3px 0 0" }}>
               Quick walkthroughs and direct shortcuts to essential platform tools
             </p>
           </div>
-          <span className="inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-300">
+          <span
+            style={{
+              fontSize: 11.5,
+              fontWeight: 600,
+              padding: "4px 12px",
+              borderRadius: 9999,
+              background: "var(--accent-soft)",
+              border: "1px solid var(--border-accent)",
+              color: "#a89dff",
+            }}
+          >
             4 essential workflows
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: 20,
+          }}
+        >
           {quickGuides.map((guide) => {
             const Icon = guide.icon;
             return (
               <Link
                 key={guide.title}
                 href={guide.href}
-                className="group relative flex flex-col justify-between rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 p-5 backdrop-blur-xl shadow-lg transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/40 hover:bg-[#121224]"
+                className="campaign-day-card"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  padding: 24,
+                  minHeight: 180,
+                }}
               >
                 <div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-500/20 bg-gradient-to-br from-violet-500/15 to-indigo-500/10 text-violet-400 transition group-hover:scale-105">
-                      <Icon size={19} />
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 16,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 42,
+                        height: 42,
+                        borderRadius: "var(--r-md)",
+                        background: "var(--accent-soft)",
+                        border: "1px solid var(--border-accent)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#a89dff",
+                      }}
+                    >
+                      <Icon size={20} />
                     </div>
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-semibold text-violet-300">
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        padding: "3px 10px",
+                        borderRadius: 9999,
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid var(--border-subtle)",
+                        color: "#a89dff",
+                      }}
+                    >
                       {guide.tag}
                     </span>
                   </div>
-                  <h3 className="mt-4 text-base font-semibold text-white group-hover:text-violet-300 transition">
+
+                  <h3
+                    style={{
+                      fontSize: 16.5,
+                      fontWeight: 700,
+                      color: "var(--text-primary)",
+                      margin: "0 0 8px",
+                    }}
+                  >
                     {guide.title}
                   </h3>
-                  <p className="mt-1.5 text-xs text-white/60 leading-relaxed line-clamp-3">
+                  <p
+                    style={{
+                      fontSize: 13,
+                      color: "var(--text-secondary)",
+                      lineHeight: 1.6,
+                      margin: 0,
+                    }}
+                  >
                     {guide.desc}
                   </p>
                 </div>
-                <div className="mt-6 flex items-center gap-1.5 text-xs font-semibold text-violet-400">
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    color: "#a89dff",
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    marginTop: 20,
+                  }}
+                >
                   <span>Explore tool</span>
-                  <ChevronRight size={14} className="transition group-hover:translate-x-1" />
+                  <ChevronRight size={14} />
                 </div>
               </Link>
             );
@@ -233,53 +383,114 @@ export function HelpCenter() {
       </div>
 
       {/* Frequently Asked Questions Section */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 p-6 sm:p-8 backdrop-blur-xl shadow-lg space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/[0.08]">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400 border border-violet-500/20">
+      <div
+        style={{
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          padding: "24px 28px",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 20,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 14,
+            paddingBottom: 18,
+            borderBottom: "1px solid var(--border-subtle)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+                flexShrink: 0,
+              }}
+            >
               <HelpCircle size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-bold tracking-tight text-white">
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
                 Frequently Asked Questions
               </h2>
-              <p className="text-xs text-white/50 mt-0.5">
+              <p style={{ fontSize: 12.5, color: "var(--text-secondary)", margin: "3px 0 0" }}>
                 Everything you need to know about AI models, generation limits, and publishing.
               </p>
             </div>
           </div>
-          <span className="inline-flex items-center self-start sm:self-auto rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-white/60">
+          <span
+            style={{
+              fontSize: 11.5,
+              fontWeight: 600,
+              padding: "4px 12px",
+              borderRadius: 9999,
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid var(--border)",
+              color: "var(--text-secondary)",
+            }}
+          >
             {filteredFaqs.length} {filteredFaqs.length === 1 ? "article" : "articles"}
           </span>
         </div>
 
         {/* Category filter pills row */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {[
             { id: "all", label: "All Topics" },
             { id: "getting-started", label: "Getting Started" },
             { id: "image-studio", label: "Image Studio" },
             { id: "publishing", label: "Publishing" },
             { id: "campaigns", label: "Campaigns" },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`rounded-lg px-3.5 py-1.5 text-xs font-medium transition duration-200 ${
-                activeCategory === cat.id
-                  ? "bg-violet-600 text-white shadow-md shadow-violet-600/25"
-                  : "bg-white/[0.03] border border-white/10 text-white/60 hover:text-white hover:bg-white/[0.07]"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+          ].map((cat) => {
+            const isActive = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                style={{
+                  borderRadius: "var(--r-md)",
+                  padding: "7px 15px",
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  background: isActive ? "var(--accent)" : "var(--bg-elevated)",
+                  color: isActive ? "#fff" : "var(--text-secondary)",
+                  border: isActive ? "1px solid var(--accent)" : "1px solid var(--border)",
+                  boxShadow: isActive ? "0 2px 8px rgba(109,92,255,0.35)" : "none",
+                }}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* FAQ List */}
-        <div className="space-y-3 pt-1">
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
           {filteredFaqs.length === 0 ? (
-            <div className="py-12 text-center text-sm text-white/40">
+            <div
+              style={{
+                padding: "48px 24px",
+                textAlign: "center",
+                fontSize: 13.5,
+                color: "var(--text-muted)",
+              }}
+            >
               No questions found matching &ldquo;{searchQuery}&rdquo;. Try another search term or contact our support team below.
             </div>
           ) : (
@@ -288,30 +499,101 @@ export function HelpCenter() {
               return (
                 <div
                   key={faq.id}
-                  className="rounded-xl border border-white/[0.08] bg-[#121224]/70 p-4 sm:p-5 transition-all duration-200 hover:border-violet-500/30 shadow-sm"
+                  style={{
+                    background: "var(--bg-elevated)",
+                    border: isOpen ? "1px solid var(--border-accent)" : "1px solid var(--border)",
+                    borderRadius: "var(--r-lg)",
+                    padding: "18px 20px",
+                    transition: "all 0.15s ease",
+                  }}
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : faq.id)}
-                    className="flex w-full items-center justify-between gap-4 text-left"
+                    style={{
+                      display: "flex",
+                      width: "100%",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 16,
+                      background: "transparent",
+                      border: "none",
+                      padding: 0,
+                      cursor: "pointer",
+                      textAlign: "left",
+                    }}
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-xs font-bold text-violet-400 border border-violet-500/20">
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <span
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: "var(--r-sm)",
+                          background: "var(--accent-soft)",
+                          border: "1px solid var(--border-accent)",
+                          color: "#a89dff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontWeight: 700,
+                          fontSize: 13,
+                          flexShrink: 0,
+                        }}
+                      >
                         ?
                       </span>
-                      <span className="text-sm sm:text-base font-semibold text-white/95 hover:text-violet-300 transition">
+                      <span
+                        style={{
+                          fontSize: 14.5,
+                          fontWeight: 600,
+                          color: "var(--text-primary)",
+                        }}
+                      >
                         {faq.question}
                       </span>
                     </div>
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] text-white/50 border border-white/[0.08]">
+
+                    <div
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: "var(--r-sm)",
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid var(--border-subtle)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: isOpen ? "#a89dff" : "var(--text-muted)",
+                        flexShrink: 0,
+                      }}
+                    >
                       <ChevronDown
-                        size={16}
-                        className={`transition-transform duration-200 ${isOpen ? "rotate-180 text-violet-400" : ""}`}
+                        size={15}
+                        style={{
+                          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 0.2s ease",
+                        }}
                       />
                     </div>
                   </button>
+
                   {isOpen && (
-                    <div className="mt-4 pt-3.5 border-t border-white/[0.06] pl-10 pr-2">
-                      <p className="text-xs sm:text-sm text-white/70 leading-relaxed">
+                    <div
+                      style={{
+                        marginTop: 14,
+                        paddingTop: 14,
+                        borderTop: "1px solid var(--border-subtle)",
+                        paddingLeft: 40,
+                        paddingRight: 8,
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontSize: 13.5,
+                          color: "var(--text-secondary)",
+                          lineHeight: 1.65,
+                          margin: 0,
+                        }}
+                      >
                         {faq.answer}
                       </p>
                     </div>
@@ -323,28 +605,91 @@ export function HelpCenter() {
         </div>
       </div>
 
-      {/* 2-column Bottom Section: Keyboard Shortcuts & Support */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {/* 2-Column Bottom Section: Keyboard Shortcuts & Support */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+          gap: 24,
+        }}
+      >
         {/* Keyboard Shortcuts Card */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 p-6 sm:p-8 backdrop-blur-xl shadow-lg space-y-5">
-          <div className="flex items-center gap-3 pb-4 border-b border-white/[0.08]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400 border border-violet-500/20">
-              <Command size={19} />
+        <div
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-xl)",
+            padding: "24px 28px",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              paddingBottom: 16,
+              borderBottom: "1px solid var(--border-subtle)",
+            }}
+          >
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+                flexShrink: 0,
+              }}
+            >
+              <Command size={18} />
             </div>
             <div>
-              <h2 className="text-base font-bold tracking-tight text-white">Keyboard Shortcuts</h2>
-              <p className="text-xs text-white/50 mt-0.5">Speed up your content creation workflow with quick hotkeys.</p>
+              <h2 style={{ fontSize: 16.5, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                Keyboard Shortcuts
+              </h2>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                Speed up your content creation workflow with quick hotkeys.
+              </p>
             </div>
           </div>
 
-          <div className="space-y-2.5">
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {keyboardShortcuts.map((item) => (
               <div
                 key={item.key}
-                className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-[#121224]/60 px-4 py-3"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "12px 16px",
+                  borderRadius: "var(--r-md)",
+                  background: "var(--bg-elevated)",
+                  border: "1px solid var(--border)",
+                }}
               >
-                <span className="text-xs sm:text-sm text-white/70">{item.action}</span>
-                <kbd className="rounded-lg border border-white/15 bg-white/[0.06] px-2.5 py-1 font-mono text-xs font-semibold text-white/90 shadow-sm">
+                <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+                  {item.action}
+                </span>
+                <kbd
+                  style={{
+                    padding: "4px 10px",
+                    borderRadius: "var(--r-sm)",
+                    background: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    fontFamily: "monospace",
+                    fontSize: 11.5,
+                    fontWeight: 700,
+                    color: "var(--text-primary)",
+                  }}
+                >
                   {item.key}
                 </kbd>
               </div>
@@ -353,47 +698,141 @@ export function HelpCenter() {
         </div>
 
         {/* Contact Support Card */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 p-6 sm:p-8 backdrop-blur-xl shadow-lg space-y-5">
-          <div className="flex items-center gap-3 pb-4 border-b border-white/[0.08]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400 border border-violet-500/20">
-              <MessageSquare size={19} />
+        <div
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-xl)",
+            padding: "24px 28px",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              paddingBottom: 16,
+              borderBottom: "1px solid var(--border-subtle)",
+            }}
+          >
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+                flexShrink: 0,
+              }}
+            >
+              <MessageSquare size={18} />
             </div>
             <div>
-              <h2 className="text-base font-bold tracking-tight text-white">Need Personal Help?</h2>
-              <p className="text-xs text-white/50 mt-0.5">Send an inquiry directly to the ContentAI support team.</p>
+              <h2 style={{ fontSize: 16.5, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                Need Personal Help?
+              </h2>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                Send an inquiry directly to the ContentAI support team.
+              </p>
             </div>
           </div>
 
           {supportSent ? (
-            <div className="flex flex-col items-center justify-center py-8 text-center space-y-2.5">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "36px 16px",
+                textAlign: "center",
+                gap: 10,
+              }}
+            >
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: "var(--r-md)",
+                  background: "rgba(34,197,94,0.12)",
+                  border: "1px solid rgba(34,197,94,0.25)",
+                  color: "#4ade80",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <Check size={24} />
               </div>
-              <p className="text-sm font-semibold text-emerald-300">Message Received!</p>
-              <p className="text-xs text-white/50 max-w-xs">
+              <p style={{ fontSize: 15, fontWeight: 700, color: "#4ade80", margin: 0 }}>
+                Message Received!
+              </p>
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: "var(--text-secondary)",
+                  maxWidth: 280,
+                  margin: 0,
+                }}
+              >
                 Thanks for reaching out. A support engineer will review your inquiry shortly.
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSendSupport} className="space-y-4">
+            <form onSubmit={handleSendSupport} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/70">
-                  Your Message
-                </label>
+                <label className="campaign-field-label">YOUR MESSAGE</label>
                 <textarea
                   value={supportMessage}
                   onChange={(e) => setSupportMessage(e.target.value)}
-                  rows={3}
+                  rows={4}
                   placeholder="Describe your question, feature request, or issue in detail..."
-                  className="w-full rounded-xl border border-white/10 bg-[#121224] p-3.5 text-xs sm:text-sm text-white placeholder:text-white/35 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 resize-none"
+                  className="campaign-input"
+                  style={{
+                    resize: "vertical",
+                    lineHeight: 1.6,
+                    minHeight: 105,
+                  }}
                   required
                 />
               </div>
+
               <button
                 type="submit"
-                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-sm font-semibold text-white shadow-md shadow-violet-600/25 transition hover:from-violet-500 hover:to-indigo-500"
+                style={{
+                  height: 42,
+                  width: "100%",
+                  borderRadius: "var(--r-md)",
+                  background: "var(--accent)",
+                  border: "none",
+                  color: "#fff",
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  boxShadow: "0 2px 10px rgba(109,92,255,0.35)",
+                  transition: "background 0.15s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "var(--accent-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "var(--accent)";
+                }}
               >
-                <Send size={15} /> Send Message to Support
+                <Send size={15} />
+                <span>Send Message to Support</span>
               </button>
             </form>
           )}
