@@ -1,13 +1,30 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { CalendarDays, Check, Coffee, ImageIcon, Loader2, Palette, Sparkles, Upload, WandSparkles, X } from "lucide-react";
+import {
+  CalendarDays,
+  CalendarPlus,
+  Check,
+  Coffee,
+  ImageIcon,
+  Loader2,
+  Palette,
+  RefreshCw,
+  Sparkles,
+  Upload,
+  WandSparkles,
+  X,
+} from "lucide-react";
 import { generateMarketingImage, generateMarketingPlan, saveMarketingPosts } from "@/lib/marketing/actions";
 import { saveGeneratedImage } from "@/lib/image/actions";
 import { updateBrandSettings, uploadBrandLogo } from "@/lib/workspace/brand-actions";
 import type { AIObjective, AIPlatform, AITone, CampaignDay } from "@/ai/types";
 
-type MarketingItem = CampaignDay & { slot: number; imageUrl?: string | null; status?: "pending" | "generating" | "ready" | "error" };
+type MarketingItem = CampaignDay & {
+  slot: number;
+  imageUrl?: string | null;
+  status?: "pending" | "generating" | "ready" | "error";
+};
 
 type Props = {
   workspace: {
@@ -23,14 +40,37 @@ type Props = {
   canEdit: boolean;
 };
 
-const platforms: Array<[AIPlatform, string]> = [["INSTAGRAM", "Instagram"], ["FACEBOOK", "Facebook"], ["LINKEDIN", "LinkedIn"], ["X", "X"]];
-const tones: Array<[AITone, string]> = [["FRIENDLY", "Friendly"], ["PROFESSIONAL", "Professional"], ["CASUAL", "Casual"], ["FUNNY", "Playful"], ["INSPIRATIONAL", "Inspirational"], ["EDUCATIONAL", "Educational"], ["LUXURY", "Luxury"]];
-const goals: Array<[AIObjective, string]> = [["AWARENESS", "Brand awareness"], ["ENGAGEMENT", "Engagement"], ["SALES", "Sales"], ["TRAFFIC", "Traffic"], ["LEADS", "Leads"], ["BRAND_BUILDING", "Brand building"]];
+const platforms: Array<[AIPlatform, string]> = [
+  ["INSTAGRAM", "Instagram"],
+  ["FACEBOOK", "Facebook"],
+  ["LINKEDIN", "LinkedIn"],
+  ["X", "X"],
+];
 
-const tomorrow = () => { const date = new Date(); date.setDate(date.getDate() + 1); return date.toISOString().slice(0, 10); };
+const tones: Array<[AITone, string]> = [
+  ["FRIENDLY", "Friendly"],
+  ["PROFESSIONAL", "Professional"],
+  ["CASUAL", "Casual"],
+  ["FUNNY", "Playful"],
+  ["INSPIRATIONAL", "Inspirational"],
+  ["EDUCATIONAL", "Educational"],
+  ["LUXURY", "Luxury"],
+];
 
-const inputClass = "h-13 w-full rounded-2xl border border-white/10 bg-[#16162a] px-4 sm:px-5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15 disabled:opacity-40";
-const labelClass = "block text-xs font-semibold text-white/70 mb-2";
+const goals: Array<[AIObjective, string]> = [
+  ["AWARENESS", "Brand awareness"],
+  ["ENGAGEMENT", "Engagement"],
+  ["SALES", "Sales"],
+  ["TRAFFIC", "Traffic"],
+  ["LEADS", "Leads"],
+  ["BRAND_BUILDING", "Brand building"],
+];
+
+const tomorrow = () => {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return date.toISOString().slice(0, 10);
+};
 
 export function MarketingWorkspace({ workspace, canEdit }: Props) {
   const [activeTab, setActiveTab] = useState<"brand" | "plan">("brand");
@@ -57,11 +97,11 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
 
   const total = duration * postsPerDay;
   const ready = items.filter((item) => item.status === "ready").length;
-  const previewDays = useMemo(() => Array.from(new Set(items.map((item) => item.day))).slice(0, 30), [items]);
 
   async function handleLogo(file: File | undefined) {
     if (!file || !canEdit) return;
-    setError(""); setMessage("Uploading logo…");
+    setError("");
+    setMessage("Uploading logo…");
     const reader = new FileReader();
     reader.onload = async () => {
       const dataUrl = String(reader.result || "");
@@ -79,7 +119,8 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   }
 
   function saveBrand() {
-    setError(""); setMessage("");
+    setError("");
+    setMessage("");
     startTransition(async () => {
       const result = await updateBrandSettings(workspace.id, {
         brandName,
@@ -95,14 +136,34 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   }
 
   function generatePlan() {
-    setError(""); setMessage(""); setItems([]); setProgress(0);
+    setError("");
+    setMessage("");
+    setItems([]);
+    setProgress(0);
     startTransition(async () => {
-      const result = await generateMarketingPlan({ businessName: brandName, description, audience, platform, tone, goal, startDate, duration, postsPerDay, brandVoice: voice });
-      if (!result.ok) { setError(result.error); return; }
-      const newItems: MarketingItem[] = result.items.map((item) => ({ ...item, status: "pending", imageUrl: null }));
+      const result = await generateMarketingPlan({
+        businessName: brandName,
+        description,
+        audience,
+        platform,
+        tone,
+        goal,
+        startDate,
+        duration,
+        postsPerDay,
+        brandVoice: voice,
+      });
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+      const newItems: MarketingItem[] = result.items.map((item) => ({
+        ...item,
+        status: "pending",
+        imageUrl: null,
+      }));
       setItems(newItems);
       setMessage(`Plan ready! Generating branded pictures for all ${newItems.length} days with your logo…`);
-      // Automatically generate the pictures with logo
       void generateImages(newItems);
     });
   }
@@ -236,18 +297,29 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   async function generateSingleImage(index: number) {
     const item = items[index];
     if (!item) return;
-    setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "generating" } : candidate));
+    setItems((current) =>
+      current.map((candidate, i) =>
+        i === index ? { ...candidate, status: "generating" } : candidate
+      )
+    );
     try {
-      const variation = item.slot > 1 ? ` Daily variation ${item.slot}: use a distinctly different composition, camera angle and supporting scene.` : "";
+      const variation =
+        item.slot > 1
+          ? ` Daily variation ${item.slot}: use a distinctly different composition, camera angle and supporting scene.`
+          : "";
       const posName = logoPosition.replace("-", " ");
       const prompt = `Day ${item.day}. ${item.imagePrompt} Brand: ${brandName}. Brand colors ${primary} and ${secondary}. Leave clean negative space in the ${posName} for the brand mark; do not generate text or a logo.${variation}`;
       const result = await generateMarketingImage(prompt, imageSize);
       if (!result.ok || !result.image) throw new Error(result.error || "Image generation failed.");
       const branded = await composeLogo(result.image.url);
 
-      setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "ready", imageUrl: branded } : candidate));
+      setItems((current) =>
+        current.map((candidate, i) =>
+          i === index ? { ...candidate, status: "ready", imageUrl: branded } : candidate
+        )
+      );
 
-      // Attempt background save without blocking
+      // Background save to media catalog
       try {
         const saveForm = new FormData();
         saveForm.set("image_url", branded);
@@ -258,7 +330,11 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
       } catch {}
     } catch (e) {
       console.warn("Single image error:", e);
-      setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "error" } : candidate));
+      setItems((current) =>
+        current.map((candidate, i) =>
+          i === index ? { ...candidate, status: "error" } : candidate
+        )
+      );
       setError(`Picture generation failed: ${e instanceof Error ? e.message : "Unknown error"}`);
     }
   }
@@ -266,23 +342,35 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
   async function generateImages(customList?: MarketingItem[]) {
     const targetItems = customList && customList.length ? customList : items;
     if (!targetItems.length) return;
-    setError(""); setMessage("Generating pictures with your brand mark…"); setProgress(0);
+    setError("");
+    setMessage("Generating pictures with your brand mark…");
+    setProgress(0);
 
     for (let index = 0; index < targetItems.length; index += 1) {
       const item = targetItems[index];
-      setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "generating" } : candidate));
+      setItems((current) =>
+        current.map((candidate, i) =>
+          i === index ? { ...candidate, status: "generating" } : candidate
+        )
+      );
       try {
-        const variation = item.slot > 1 ? ` Daily variation ${item.slot}: use a distinctly different composition, camera angle and supporting scene.` : "";
+        const variation =
+          item.slot > 1
+            ? ` Daily variation ${item.slot}: use a distinctly different composition, camera angle and supporting scene.`
+            : "";
         const posName = logoPosition.replace("-", " ");
         const prompt = `Day ${item.day}. ${item.imagePrompt} Brand: ${brandName}. Brand colors ${primary} and ${secondary}. Leave clean negative space in the ${posName} for the brand mark; do not generate text or a logo.${variation}`;
         const result = await generateMarketingImage(prompt, imageSize);
         if (!result.ok || !result.image) throw new Error(result.error || "Image generation failed.");
         const branded = await composeLogo(result.image.url);
 
-        // Immediately show the image on the card!
-        setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "ready", imageUrl: branded } : candidate));
+        setItems((current) =>
+          current.map((candidate, i) =>
+            i === index ? { ...candidate, status: "ready", imageUrl: branded } : candidate
+          )
+        );
 
-        // Background save to media catalog (non-blocking)
+        // Background save
         try {
           const saveForm = new FormData();
           saveForm.set("image_url", branded);
@@ -293,7 +381,11 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
         } catch {}
       } catch (e) {
         console.warn(`Image ${index + 1} generation error:`, e);
-        setItems((current) => current.map((candidate, i) => i === index ? { ...candidate, status: "error" } : candidate));
+        setItems((current) =>
+          current.map((candidate, i) =>
+            i === index ? { ...candidate, status: "error" } : candidate
+          )
+        );
       }
       setProgress(Math.round(((index + 1) / targetItems.length) * 100));
     }
@@ -307,407 +399,868 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
       const rows = generated.map((item) => ({
         title: `${brandName} — Day ${item.day}${postsPerDay > 1 ? ` · Post ${item.slot}` : ""}`,
         caption: `${item.hook}\n\n${item.caption}`,
-        platform, cta: item.cta, hashtags: item.hashtags,
-        imageUrl: item.imageUrl || null, imagePrompt: item.imagePrompt,
-        scheduledAt: new Date(`${item.suggestedDate}T${String(9 + (item.slot - 1) * 6).padStart(2, "0")}:00:00`).toISOString(),
+        platform,
+        cta: item.cta,
+        hashtags: item.hashtags,
+        imageUrl: item.imageUrl || null,
+        imagePrompt: item.imagePrompt,
+        scheduledAt: new Date(
+          `${item.suggestedDate}T${String(9 + (item.slot - 1) * 6).padStart(2, "0")}:00:00`
+        ).toISOString(),
         status: "SCHEDULED" as const,
       }));
       const result = await saveMarketingPosts(rows);
-      if (!result.ok) setError(result.error); else setMessage(`${result.count} posts added to your calendar.`);
+      if (!result.ok) setError(result.error);
+      else setMessage(`${result.count} posts added to your calendar.`);
     });
   }
 
   const canGenerate = brandName.trim() && description.trim() && audience.trim();
 
   return (
-    <div className="space-y-10">
-      {/* Stats bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-violet-500/20 bg-gradient-to-r from-violet-500/10 via-[#14142a]/80 to-indigo-500/10 p-6 backdrop-blur-2xl shadow-xl shadow-black/30">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/20 text-violet-300 border border-violet-500/30 shadow-md shadow-violet-500/20">
+    <div className="campaign-container">
+      {/* Planned Content Output Stats Bar */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 16,
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-xl)",
+          padding: "18px 24px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "var(--r-md)",
+              background: "var(--accent-soft)",
+              border: "1px solid var(--border-accent)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#a89dff",
+              flexShrink: 0,
+            }}
+          >
             <WandSparkles size={18} />
           </div>
           <div>
-            <div className="text-sm font-semibold text-white">Planned Content Output</div>
-            <div className="text-xs text-violet-300/70 mt-0.5">Automated brand campaigns &amp; watermarked visuals</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)" }}>
+              Planned Content Output
+            </div>
+            <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
+              Automated brand campaigns &amp; watermarked visuals
+            </div>
           </div>
         </div>
-        <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          {total} <span className="text-xs sm:text-sm font-normal text-white/50">posts &middot; {duration} days &middot; {postsPerDay}/day</span>
+        <div style={{ fontSize: 24, fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+          {total}{" "}
+          <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-muted)" }}>
+            posts &middot; {duration} days &middot; {postsPerDay}/day
+          </span>
         </div>
       </div>
 
-      {/* Alert */}
-      {(message || error) && (
+      {/* Notifications */}
+      {message && (
         <div
-          className={`rounded-2xl border px-5 py-4 text-xs sm:text-sm font-medium backdrop-blur-xl transition-all ${
-            error
-              ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
-              : "border-violet-500/30 bg-violet-500/10 text-violet-200"
-          }`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "12px 18px",
+            background: "rgba(34,197,94,0.1)",
+            border: "1px solid rgba(34,197,94,0.25)",
+            borderRadius: "var(--r-md)",
+            color: "#4ade80",
+            fontSize: 13,
+          }}
         >
-          {error || message}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Check size={16} />
+            <span>{message}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setMessage("")}
+            style={{ background: "transparent", border: "none", color: "#4ade80", cursor: "pointer" }}
+          >
+            <X size={14} />
+          </button>
         </div>
       )}
 
-      {/* Main grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* LEFT — tabbed card: Brand / Plan */}
-        <div className="lg:col-span-5 rounded-3xl border border-white/[0.08] bg-[#101020]/80 backdrop-blur-2xl shadow-2xl shadow-black/40 overflow-hidden">
-          <div className="flex items-center gap-2 p-3 border-b border-white/[0.08] bg-white/[0.02]">
+      {error && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "12px 18px",
+            background: "rgba(239,68,68,0.1)",
+            border: "1px solid rgba(239,68,68,0.25)",
+            borderRadius: "var(--r-md)",
+            color: "#f87171",
+            fontSize: 13,
+          }}
+        >
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => setError("")}
+            style={{ background: "transparent", border: "none", color: "#f87171", cursor: "pointer" }}
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* Main Grid: Left Brief Panel + Right Stage Panel */}
+      <div className="campaign-grid">
+        {/* LEFT COLUMN: Controls Panel */}
+        <div className="campaign-brief-panel">
+          {/* Header */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: "var(--r-md)",
+                background: "var(--accent-soft)",
+                border: "1px solid var(--border-accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#a89dff",
+                flexShrink: 0,
+              }}
+            >
+              <Sparkles size={18} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                Brand &amp; Campaign Setup
+              </h2>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
+                Configure your brand identity and content strategy
+              </p>
+            </div>
+          </div>
+
+          {/* Clean Studio Tab Toggle */}
+          <div
+            style={{
+              display: "flex",
+              gap: 6,
+              background: "var(--bg-elevated)",
+              padding: 4,
+              borderRadius: "var(--r-md)",
+              border: "1px solid var(--border)",
+            }}
+          >
             <button
               type="button"
-              className={`flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs sm:text-sm font-medium transition-all ${
-                activeTab === "brand"
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 scale-[1.01]"
-                  : "text-white/60 hover:text-white hover:bg-white/[0.05]"
-              }`}
+              className={`studio-tab-btn ${activeTab === "brand" ? "active" : ""}`}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                padding: "8px 12px",
+                fontSize: 12,
+                borderRadius: "var(--r-sm)",
+              }}
               onClick={() => setActiveTab("brand")}
             >
-              <Palette size={15} />
-              <span>Brand Identity</span>
+              <Palette size={14} /> Brand Identity
             </button>
             <button
               type="button"
-              className={`flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs sm:text-sm font-medium transition-all ${
-                activeTab === "plan"
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 scale-[1.01]"
-                  : "text-white/60 hover:text-white hover:bg-white/[0.05]"
-              }`}
+              className={`studio-tab-btn ${activeTab === "plan" ? "active" : ""}`}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                padding: "8px 12px",
+                fontSize: 12,
+                borderRadius: "var(--r-sm)",
+              }}
               onClick={() => setActiveTab("plan")}
             >
-              <CalendarDays size={15} />
-              <span>Content Plan</span>
+              <CalendarDays size={14} /> Content Plan
             </button>
           </div>
 
-          {activeTab === "brand" ? (
-            <div className="p-6 sm:p-8 space-y-6">
-              <p className="text-xs sm:text-sm text-white/50 leading-relaxed">
+          {/* TAB 1: Brand Identity */}
+          {activeTab === "brand" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>
                 Set this up once &mdash; it&apos;s reused every time you generate a multi-day marketing campaign.
               </p>
-              <div className="space-y-5">
-                <div>
-                  <label className={labelClass}>Brand Name</label>
-                  <input
-                    disabled={!canEdit}
-                    value={brandName}
-                    onChange={(e) => setBrandName(e.target.value)}
-                    placeholder="Your business name"
-                    className={inputClass}
-                  />
+
+              {/* Brand Name */}
+              <div>
+                <div className="campaign-field-label">
+                  <span>Brand Name</span>
                 </div>
-
-                <div>
-                  <label className={labelClass}>What do you sell?</label>
-                  <textarea
-                    disabled={!canEdit}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={3}
-                    placeholder="Specialty coffee, pastries and cozy cafe experiences."
-                    className="w-full rounded-2xl border border-white/10 bg-[#16162a] p-4 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15 disabled:opacity-40 resize-y"
-                  />
-                </div>
-
-                <div>
-                  <label className={labelClass}>Brand Voice &amp; Tone</label>
-                  <input
-                    disabled={!canEdit}
-                    value={voice}
-                    onChange={(e) => setVoice(e.target.value)}
-                    placeholder="Warm, witty, premium…"
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Primary Color</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        disabled={!canEdit}
-                        type="color"
-                        value={primary}
-                        onChange={(e) => setPrimary(e.target.value)}
-                        className="h-13 w-full rounded-2xl border border-white/10 bg-[#16162a] p-2 cursor-pointer transition focus:border-violet-500"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Accent Color</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        disabled={!canEdit}
-                        type="color"
-                        value={secondary}
-                        onChange={(e) => setSecondary(e.target.value)}
-                        className="h-13 w-full rounded-2xl border border-white/10 bg-[#16162a] p-2 cursor-pointer transition focus:border-violet-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className={labelClass}>Brand Logo Watermark</label>
-                  <div className="flex gap-3">
-                    <label className="flex-1 flex items-center justify-center gap-2.5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] hover:bg-white/[0.06] py-3.5 px-4 text-xs sm:text-sm font-medium text-white/70 hover:text-white transition cursor-pointer">
-                      <Upload size={16} className="text-violet-400" />
-                      <span>{logoUrl ? "Replace brand logo" : "Upload brand logo"}</span>
-                      <input
-                        disabled={!canEdit}
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
-                        className="hidden"
-                        onChange={(e) => void handleLogo(e.target.files?.[0])}
-                      />
-                    </label>
-                    {logoUrl && canEdit && (
-                      <button
-                        type="button"
-                        onClick={() => setLogoUrl("")}
-                        className="flex items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/10 hover:bg-rose-500/20 px-4 text-rose-300 transition cursor-pointer"
-                        title="Remove logo"
-                      >
-                        <X size={16} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {logoUrl && (
-                  <div className="space-y-4 pt-2">
-                    <div>
-                      <label className={labelClass}>Watermark Position on Photos</label>
-                      <select
-                        disabled={!canEdit}
-                        value={logoPosition}
-                        onChange={(e) => setLogoPosition(e.target.value as typeof logoPosition)}
-                        className={`${inputClass} cursor-pointer`}
-                      >
-                        <option value="bottom-right" className="bg-[#16162a] text-white">Bottom-Right (Recommended)</option>
-                        <option value="top-right" className="bg-[#16162a] text-white">Top-Right</option>
-                        <option value="bottom-left" className="bg-[#16162a] text-white">Bottom-Left</option>
-                        <option value="top-left" className="bg-[#16162a] text-white">Top-Left</option>
-                      </select>
-                    </div>
-
-                    {/* Live Watermark Preview Mockup */}
-                    <div className="rounded-2xl border border-violet-500/25 bg-[#0a0a14] p-4 space-y-3">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-violet-300">✦ Live Watermark Preview</span>
-                        <span className="text-white/40 text-[11px] capitalize">{logoPosition.replace("-", " ")}</span>
-                      </div>
-                      <div className="relative w-full h-40 rounded-xl overflow-hidden bg-radial from-[#3d2b26] to-[#171110] flex items-center justify-center border border-white/[0.06]">
-                        <div className="opacity-60 text-center">
-                          <Coffee size={36} className="text-amber-500 mx-auto" />
-                          <p className="text-[11px] text-white/80 mt-1.5 font-medium">Sample Coffee Post</p>
-                        </div>
-                        <div
-                          className="absolute flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0c0c16]/80 border border-white/20 shadow-xl backdrop-blur-md"
-                          style={{
-                            ...(logoPosition === "bottom-right" ? { bottom: 12, right: 12 } :
-                                logoPosition === "top-right" ? { top: 12, right: 12 } :
-                                logoPosition === "bottom-left" ? { bottom: 12, left: 12 } :
-                                { top: 12, left: 12 })
-                          }}
-                        >
-                          <img src={logoUrl} alt="Logo preview" className="h-5 max-w-[65px] object-contain" />
-                          <span className="text-[11px] font-bold text-white">{brandName}</span>
-                        </div>
-                      </div>
-                      <p className="text-[11px] text-white/40 text-center">
-                        This frosted watermark badge will be composited on every generated picture.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {canEdit && (
-                  <button
-                    type="button"
-                    onClick={saveBrand}
-                    disabled={isPending}
-                    className="h-13 w-full rounded-2xl border border-white/10 bg-white/[0.08] hover:bg-white/[0.14] text-sm font-semibold text-white transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer pt-1"
-                  >
-                    {isPending ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
-                    Save Brand Identity
-                  </button>
-                )}
+                <input
+                  disabled={!canEdit}
+                  value={brandName}
+                  onChange={(e) => setBrandName(e.target.value)}
+                  placeholder="Your business name"
+                  className="campaign-input"
+                />
               </div>
+
+              {/* Description */}
+              <div>
+                <div className="campaign-field-label">
+                  <span>What do you sell?</span>
+                </div>
+                <textarea
+                  disabled={!canEdit}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  placeholder="Specialty coffee, pastries and cozy cafe experiences."
+                  className="campaign-input"
+                  style={{ resize: "vertical", minHeight: 74, lineHeight: 1.5 }}
+                />
+              </div>
+
+              {/* Voice & Tone */}
+              <div>
+                <div className="campaign-field-label">
+                  <span>Brand Voice &amp; Tone</span>
+                </div>
+                <input
+                  disabled={!canEdit}
+                  value={voice}
+                  onChange={(e) => setVoice(e.target.value)}
+                  placeholder="Warm, witty, premium…"
+                  className="campaign-input"
+                />
+              </div>
+
+              {/* 2-Column Row: Primary Color & Accent Color */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Primary Color</span>
+                  </div>
+                  <input
+                    disabled={!canEdit}
+                    type="color"
+                    value={primary}
+                    onChange={(e) => setPrimary(e.target.value)}
+                    className="campaign-input"
+                    style={{ height: 40, padding: 4, cursor: "pointer" }}
+                  />
+                </div>
+
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Accent Color</span>
+                  </div>
+                  <input
+                    disabled={!canEdit}
+                    type="color"
+                    value={secondary}
+                    onChange={(e) => setSecondary(e.target.value)}
+                    className="campaign-input"
+                    style={{ height: 40, padding: 4, cursor: "pointer" }}
+                  />
+                </div>
+              </div>
+
+              {/* Brand Logo Watermark */}
+              <div>
+                <div className="campaign-field-label">
+                  <span>Brand Logo Watermark</span>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <label
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      borderRadius: "var(--r-md)",
+                      border: "1px dashed var(--border-accent)",
+                      background: "rgba(255,255,255,0.02)",
+                      padding: "10px 14px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "var(--text-secondary)",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    <Upload size={15} style={{ color: "var(--accent)" }} />
+                    <span>{logoUrl ? "Replace brand logo" : "Upload brand logo"}</span>
+                    <input
+                      disabled={!canEdit}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                      style={{ display: "none" }}
+                      onChange={(e) => void handleLogo(e.target.files?.[0])}
+                    />
+                  </label>
+                  {logoUrl && canEdit && (
+                    <button
+                      type="button"
+                      onClick={() => setLogoUrl("")}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "var(--r-md)",
+                        border: "1px solid rgba(239,68,68,0.25)",
+                        background: "rgba(239,68,68,0.1)",
+                        color: "#f87171",
+                        padding: "0 12px",
+                        cursor: "pointer",
+                      }}
+                      title="Remove logo"
+                    >
+                      <X size={15} />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Watermark position & live preview */}
+              {logoUrl && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div>
+                    <div className="campaign-field-label">
+                      <span>Watermark Position on Photos</span>
+                    </div>
+                    <select
+                      disabled={!canEdit}
+                      value={logoPosition}
+                      onChange={(e) => setLogoPosition(e.target.value as typeof logoPosition)}
+                      className="campaign-input"
+                      style={{ height: 40 }}
+                    >
+                      <option value="bottom-right">Bottom-Right (Recommended)</option>
+                      <option value="top-right">Top-Right</option>
+                      <option value="bottom-left">Bottom-Left</option>
+                      <option value="top-left">Top-Left</option>
+                    </select>
+                  </div>
+
+                  {/* Watermark Mockup */}
+                  <div
+                    style={{
+                      borderRadius: "var(--r-md)",
+                      border: "1px solid var(--border)",
+                      background: "var(--bg-elevated)",
+                      padding: 14,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 10,
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--accent)" }}>
+                        ✦ Live Watermark Preview
+                      </span>
+                      <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "capitalize" }}>
+                        {logoPosition.replace("-", " ")}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: 140,
+                        borderRadius: "var(--r-sm)",
+                        overflow: "hidden",
+                        background: "radial-gradient(circle at center, #2e2420 0%, #151010 100%)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid var(--border-subtle)",
+                      }}
+                    >
+                      <div style={{ textAlign: "center", opacity: 0.6 }}>
+                        <Coffee size={32} style={{ color: "#f59e0b", margin: "0 auto" }} />
+                        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", margin: "4px 0 0", fontWeight: 500 }}>
+                          Sample Coffee Post
+                        </p>
+                      </div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          padding: "5px 10px",
+                          borderRadius: 8,
+                          background: "rgba(12, 12, 22, 0.8)",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+                          backdropFilter: "blur(6px)",
+                          ...(logoPosition === "bottom-right"
+                            ? { bottom: 10, right: 10 }
+                            : logoPosition === "top-right"
+                            ? { top: 10, right: 10 }
+                            : logoPosition === "bottom-left"
+                            ? { bottom: 10, left: 10 }
+                            : { top: 10, left: 10 }),
+                        }}
+                      >
+                        <img src={logoUrl} alt="Logo preview" style={{ height: 18, maxWidth: 60, objectFit: "contain" }} />
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "#ffffff" }}>{brandName}</span>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: 11, color: "var(--text-muted)", margin: 0, textAlign: "center" }}>
+                      This frosted watermark badge will be composited on every generated picture.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {canEdit && (
+                <button
+                  type="button"
+                  onClick={saveBrand}
+                  disabled={isPending}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    borderRadius: "var(--r-md)",
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border)",
+                    padding: "11px 16px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                    marginTop: 4,
+                  }}
+                >
+                  {isPending ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
+                  Save Brand Identity
+                </button>
+              )}
             </div>
-          ) : (
-            <div className="p-6 sm:p-8 space-y-6">
-              <p className="text-xs sm:text-sm text-white/50 leading-relaxed">
+          )}
+
+          {/* TAB 2: Content Plan */}
+          {activeTab === "plan" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>
                 Tell us who you&apos;re talking to and how you want to show up &mdash; we&apos;ll build the full calendar from this.
               </p>
-              <div className="space-y-5">
+
+              {/* Target Audience */}
+              <div>
+                <div className="campaign-field-label">
+                  <span>Target Audience</span>
+                </div>
+                <input
+                  value={audience}
+                  onChange={(e) => setAudience(e.target.value)}
+                  placeholder="Coffee lovers, students, young professionals"
+                  className="campaign-input"
+                />
+              </div>
+
+              {/* 2-Column Row: Platform & Posts / Day */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
-                  <label className={labelClass}>Target Audience</label>
-                  <input
-                    value={audience}
-                    onChange={(e) => setAudience(e.target.value)}
-                    placeholder="Coffee lovers, students, young professionals"
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Platform</label>
-                    <select
-                      value={platform}
-                      onChange={(e) => setPlatform(e.target.value as AIPlatform)}
-                      className={`${inputClass} cursor-pointer`}
-                    >
-                      {platforms.map(([v, l]) => (
-                        <option key={v} value={v} className="bg-[#16162a] text-white">{l}</option>
-                      ))}
-                    </select>
+                  <div className="campaign-field-label">
+                    <span>Platform</span>
                   </div>
-                  <div>
-                    <label className={labelClass}>Posts / Day</label>
-                    <select
-                      value={postsPerDay}
-                      onChange={(e) => setPostsPerDay(Number(e.target.value))}
-                      className={`${inputClass} cursor-pointer`}
-                    >
-                      {[1, 2, 3].map((n) => (
-                        <option key={n} value={n} className="bg-[#16162a] text-white">
-                          {n} post{n > 1 ? "s" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Duration (Days)</label>
-                    <select
-                      value={duration}
-                      onChange={(e) => setDuration(Number(e.target.value))}
-                      className={`${inputClass} cursor-pointer`}
-                    >
-                      {Array.from({ length: 30 }, (_, i) => (
-                        <option key={i + 1} value={i + 1} className="bg-[#16162a] text-white">
-                          {i + 1} day{i > 0 ? "s" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Start Date</label>
-                    <input
-                      type="date"
-                      min={tomorrow()}
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className={`${inputClass} cursor-pointer`}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Tone of Voice</label>
-                    <select
-                      value={tone}
-                      onChange={(e) => setTone(e.target.value as AITone)}
-                      className={`${inputClass} cursor-pointer`}
-                    >
-                      {tones.map(([v, l]) => (
-                        <option key={v} value={v} className="bg-[#16162a] text-white">{l}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Campaign Goal</label>
-                    <select
-                      value={goal}
-                      onChange={(e) => setGoal(e.target.value as AIObjective)}
-                      className={`${inputClass} cursor-pointer`}
-                    >
-                      {goals.map(([v, l]) => (
-                        <option key={v} value={v} className="bg-[#16162a] text-white">{l}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className={labelClass}>Image Aspect Ratio</label>
                   <select
-                    value={imageSize}
-                    onChange={(e) => setImageSize(e.target.value as typeof imageSize)}
-                    className={`${inputClass} cursor-pointer`}
+                    value={platform}
+                    onChange={(e) => setPlatform(e.target.value as AIPlatform)}
+                    className="campaign-input"
+                    style={{ height: 40 }}
                   >
-                    <option value="1024x1024" className="bg-[#16162a] text-white">Square (1:1) — Instagram &amp; Feed</option>
-                    <option value="1536x1024" className="bg-[#16162a] text-white">Landscape (3:2) — Facebook &amp; LinkedIn</option>
-                    <option value="1024x1536" className="bg-[#16162a] text-white">Portrait (2:3) — Stories &amp; Pins</option>
+                    {platforms.map(([v, l]) => (
+                      <option key={v} value={v}>
+                        {l}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={generatePlan}
-                  disabled={isPending || !canGenerate}
-                  title={!canGenerate ? "Fill in brand name, description (Brand tab) and target audience first" : undefined}
-                  className="h-13 w-full rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-sm font-semibold text-white transition flex items-center justify-center gap-2.5 shadow-xl shadow-violet-500/25 disabled:opacity-40 cursor-pointer pt-1"
-                >
-                  {isPending ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                  Generate {total} Content Pieces
-                </button>
-                {!canGenerate && (
-                  <p className="text-xs text-white/40 text-center">
-                    Fill in your brand name &amp; description on the <b className="text-white/70">Brand Identity</b> tab first.
-                  </p>
-                )}
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Posts / Day</span>
+                  </div>
+                  <select
+                    value={postsPerDay}
+                    onChange={(e) => setPostsPerDay(Number(e.target.value))}
+                    className="campaign-input"
+                    style={{ height: 40 }}
+                  >
+                    {[1, 2, 3].map((n) => (
+                      <option key={n} value={n}>
+                        {n} post{n > 1 ? "s" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
+
+              {/* 2-Column Row: Duration (Days) & Start Date */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Duration (Days)</span>
+                  </div>
+                  <select
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value))}
+                    className="campaign-input"
+                    style={{ height: 40 }}
+                  >
+                    {Array.from({ length: 30 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {i + 1} day{i > 0 ? "s" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Start Date</span>
+                  </div>
+                  <input
+                    type="date"
+                    min={tomorrow()}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="campaign-input"
+                    style={{ height: 40 }}
+                  />
+                </div>
+              </div>
+
+              {/* 2-Column Row: Tone of Voice & Campaign Goal */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Tone of Voice</span>
+                  </div>
+                  <select
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value as AITone)}
+                    className="campaign-input"
+                    style={{ height: 40 }}
+                  >
+                    {tones.map(([v, l]) => (
+                      <option key={v} value={v}>
+                        {l}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Campaign Goal</span>
+                  </div>
+                  <select
+                    value={goal}
+                    onChange={(e) => setGoal(e.target.value as AIObjective)}
+                    className="campaign-input"
+                    style={{ height: 40 }}
+                  >
+                    {goals.map(([v, l]) => (
+                      <option key={v} value={v}>
+                        {l}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Image Aspect Ratio */}
+              <div>
+                <div className="campaign-field-label">
+                  <span>Image Aspect Ratio</span>
+                </div>
+                <select
+                  value={imageSize}
+                  onChange={(e) => setImageSize(e.target.value as typeof imageSize)}
+                  className="campaign-input"
+                  style={{ height: 40 }}
+                >
+                  <option value="1024x1024">Square (1:1) — Instagram &amp; Feed</option>
+                  <option value="1536x1024">Landscape (3:2) — Facebook &amp; LinkedIn</option>
+                  <option value="1024x1536">Portrait (2:3) — Stories &amp; Pins</option>
+                </select>
+              </div>
+
+              {/* Generate Button */}
+              <button
+                type="button"
+                onClick={generatePlan}
+                disabled={isPending || !canGenerate}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  borderRadius: "var(--r-md)",
+                  background: "linear-gradient(135deg, #6d5cff 0%, #a855f7 100%)",
+                  padding: "13px 20px",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: "#ffffff",
+                  border: "none",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 20px rgba(109,92,255,0.35)",
+                  opacity: isPending || !canGenerate ? 0.6 : 1,
+                  marginTop: 4,
+                }}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="animate-spin" size={17} /> Planning {total} Content Pieces…
+                  </>
+                ) : items.length > 0 ? (
+                  <>
+                    <RefreshCw size={17} /> Regenerate {total} Content Pieces
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={17} /> Generate {total} Content Pieces
+                  </>
+                )}
+              </button>
+
+              {!canGenerate && (
+                <p style={{ fontSize: 11.5, color: "var(--text-muted)", textAlign: "center", margin: "2px 0 0" }}>
+                  Fill in your brand name &amp; description on the <b style={{ color: "var(--text-secondary)" }}>Brand Identity</b> tab first.
+                </p>
+              )}
             </div>
           )}
         </div>
 
-        {/* RIGHT — Content Calendar & Batch Area */}
-        <div className="lg:col-span-7 min-w-0 space-y-6">
-          {!items.length ? (
-            <div className="flex flex-col items-center justify-center min-h-[480px] rounded-3xl border border-dashed border-white/15 bg-[#101020]/60 p-10 sm:p-14 text-center backdrop-blur-xl">
-              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 border border-violet-500/30 text-violet-300 shadow-xl shadow-violet-500/10 mb-5">
-                <Sparkles size={28} />
+        {/* RIGHT COLUMN: Output Studio Stage */}
+        <div className="campaign-stage-panel">
+          {/* Header Bar */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+              paddingBottom: 16,
+              borderBottom: "1px solid var(--border-subtle)",
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "var(--accent)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                }}
+              >
+                Campaign Studio
+              </span>
+              <h2
+                style={{
+                  fontSize: 18,
+                  fontWeight: 800,
+                  color: "var(--text-primary)",
+                  margin: "4px 0 0",
+                }}
+              >
+                {items.length > 0 ? "Content Batch" : "Your content calendar will appear here"}
+              </h2>
+              {items.length > 0 && (
+                <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "4px 0 0" }}>
+                  {ready}/{items.length} images generated with logo &middot; {duration} days &middot; {postsPerDay}/day
+                </p>
+              )}
+            </div>
+
+            {items.length > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span
+                  className="badge badge-ai"
+                  style={{
+                    fontSize: 11,
+                    background: "rgba(16,185,129,0.15)",
+                    color: "#34d399",
+                    borderColor: "rgba(16,185,129,0.3)",
+                  }}
+                >
+                  Logo Watermark Active
+                </span>
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-white">Your content calendar will appear here</h3>
-              <p className="text-xs sm:text-sm text-white/50 mt-3 leading-relaxed max-w-md">
+            )}
+          </div>
+
+          {/* Body Content */}
+          {!items.length ? (
+            /* Empty State matching campaigns page */
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+                padding: "48px 24px",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 20,
+                  background: "rgba(109,92,255,0.1)",
+                  border: "1px solid rgba(109,92,255,0.25)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#a89dff",
+                  marginBottom: 16,
+                }}
+              >
+                <WandSparkles size={30} />
+              </div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                Your content calendar will appear here
+              </h3>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: "var(--text-secondary)",
+                  maxWidth: 440,
+                  margin: "8px 0 28px",
+                  lineHeight: 1.6,
+                }}
+              >
                 The AI crafts an engaging mix of product highlights, lifestyle moments, educational tips, and offers. Your logo is automatically stamped on every visual.
               </p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {/* Batch Toolbar */}
-              <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-white/[0.08] bg-[#101020]/80 backdrop-blur-2xl shadow-xl shadow-black/30">
-                <div>
-                  <div className="text-sm sm:text-base font-bold text-white">Content Batch</div>
-                  <div className="text-xs text-violet-300/80 mt-1">
-                    {ready}/{items.length} images generated with logo &middot; {duration} days &middot; {postsPerDay}/day
+
+              {/* 3 Step Highlights */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                  gap: 12,
+                  width: "100%",
+                  maxWidth: 640,
+                }}
+              >
+                <div
+                  style={{
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--r-md)",
+                    padding: "16px 14px",
+                    textAlign: "left",
+                  }}
+                >
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#a89dff", marginBottom: 4 }}>
+                    1. Brand Watermark
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>
+                    Your logo is automatically stamped and composited onto every visual.
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
+
+                <div
+                  style={{
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--r-md)",
+                    padding: "16px 14px",
+                    textAlign: "left",
+                  }}
+                >
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#60a5fa", marginBottom: 4 }}>
+                    2. Multi-Day Sequence
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>
+                    Structured daily content with hooks, captions, CTAs, and hashtags.
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--r-md)",
+                    padding: "16px 14px",
+                    textAlign: "left",
+                  }}
+                >
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#34d399", marginBottom: 4 }}>
+                    3. 1-Click Scheduling
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>
+                    Review the batch, make adjustments, and schedule directly to your calendar.
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Active Batch Output */
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              {/* Batch Actions Toolbar */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: 12,
+                  background: "var(--bg-elevated)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--r-lg)",
+                  padding: "14px 18px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <CalendarDays size={18} style={{ color: "var(--accent)" }} />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>
+                    {ready < items.length
+                      ? `${ready}/${items.length} images generated with logo`
+                      : `All ${items.length} posts ready to schedule!`}
+                  </span>
+                </div>
+
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                   <button
                     type="button"
                     onClick={() => void generateImages()}
                     disabled={isPending || items.some((i) => i.status === "generating")}
-                    className={`inline-flex items-center gap-2 h-11 px-5 rounded-2xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
-                      ready < items.length
-                        ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:from-violet-500 hover:to-indigo-500"
-                        : "border border-white/10 bg-white/[0.08] text-white hover:bg-white/[0.14]"
-                    }`}
+                    className="btn btn-ghost btn-sm"
+                    style={{ gap: 6 }}
                   >
                     {items.some((i) => i.status === "generating") ? (
                       <>
-                        <Loader2 size={15} className="animate-spin" /> Generating visuals…
+                        <Loader2 size={14} className="animate-spin" /> Generating visuals…
                       </>
                     ) : (
                       <>
-                        <WandSparkles size={15} />
+                        <WandSparkles size={14} />
                         {ready === 0
                           ? `Generate All ${items.length} Pictures`
                           : ready < items.length
@@ -721,96 +1274,196 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                     type="button"
                     onClick={scheduleBatch}
                     disabled={isPending || ready === 0}
-                    className="inline-flex items-center gap-2 h-11 px-5 rounded-2xl border border-white/10 bg-white/[0.08] hover:bg-white/[0.14] text-xs sm:text-sm font-semibold text-white transition disabled:opacity-40 cursor-pointer"
+                    className="btn btn-primary btn-sm"
+                    style={{ gap: 6 }}
                   >
-                    <CalendarDays size={15} />
-                    <span>Add to Calendar</span>
+                    <CalendarPlus size={14} /> Add to Calendar
                   </button>
                 </div>
               </div>
 
               {/* Progress bar */}
               {progress > 0 && progress < 100 && (
-                <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+                <div
+                  style={{
+                    height: 6,
+                    width: "100%",
+                    borderRadius: 99,
+                    background: "rgba(255,255,255,0.08)",
+                    overflow: "hidden",
+                  }}
+                >
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 transition-all duration-300"
-                    style={{ width: `${progress}%` }}
+                    style={{
+                      height: "100%",
+                      borderRadius: 99,
+                      background: "linear-gradient(90deg, #6d5cff 0%, #a855f7 100%)",
+                      width: `${progress}%`,
+                      transition: "width 0.3s ease",
+                    }}
                   />
                 </div>
               )}
 
               {/* Items Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                  gap: 16,
+                }}
+              >
                 {items.map((item, index) => (
-                  <article
-                    key={`${item.day}-${item.slot}`}
-                    className="flex flex-col justify-between rounded-3xl border border-white/[0.08] bg-[#101020]/80 backdrop-blur-xl overflow-hidden shadow-xl hover:border-violet-500/30 transition-all duration-200"
-                  >
-                    <div className="aspect-square bg-[#0a0a14] relative overflow-hidden flex items-center justify-center">
+                  <article key={`${item.day}-${item.slot}`} className="campaign-day-card">
+                    {/* Visual Area */}
+                    <div
+                      style={{
+                        aspectRatio: "1/1",
+                        background: "var(--bg-surface)",
+                        borderRadius: "var(--r-md)",
+                        position: "relative",
+                        overflow: "hidden",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid var(--border-subtle)",
+                      }}
+                    >
                       {item.imageUrl ? (
                         <>
                           <img
                             src={item.imageUrl}
                             alt={item.contentIdea}
-                            className="w-full h-full object-cover"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                           <button
                             type="button"
                             onClick={() => void generateSingleImage(index)}
-                            className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md text-white/90 hover:text-white hover:bg-black/90 text-xs font-medium border border-white/20 shadow-lg transition cursor-pointer"
+                            style={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              padding: "4px 8px",
+                              borderRadius: "var(--r-sm)",
+                              background: "rgba(0,0,0,0.75)",
+                              backdropFilter: "blur(6px)",
+                              color: "#ffffff",
+                              fontSize: 11,
+                              fontWeight: 600,
+                              border: "1px solid rgba(255,255,255,0.2)",
+                              cursor: "pointer",
+                            }}
                             title="Regenerate this picture"
                           >
-                            ↻ Regenerate
+                            <RefreshCw size={11} /> Regenerate
                           </button>
                         </>
                       ) : (
-                        <div className="h-full flex flex-col items-center justify-center p-6 text-center text-white/40 gap-3">
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: 16,
+                            textAlign: "center",
+                            gap: 8,
+                          }}
+                        >
                           {item.status === "generating" ? (
                             <>
-                              <Loader2 size={26} className="animate-spin text-violet-400" />
-                              <span className="text-xs font-semibold text-violet-300">Creating with logo…</span>
+                              <Loader2 size={24} className="animate-spin" style={{ color: "var(--accent)" }} />
+                              <span style={{ fontSize: 11.5, fontWeight: 600, color: "var(--accent)" }}>
+                                Creating with logo…
+                              </span>
                             </>
                           ) : (
                             <>
-                              <ImageIcon size={26} className="text-white/20" />
-                              <span className="text-xs font-semibold text-white/60">
+                              <ImageIcon size={24} style={{ color: "var(--text-muted)" }} />
+                              <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-secondary)" }}>
                                 Day {item.day}{postsPerDay > 1 ? ` · Post ${item.slot}` : ""}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => void generateSingleImage(index)}
-                                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-3.5 py-1.5 text-xs font-semibold shadow-md shadow-violet-500/25 transition cursor-pointer"
+                                className="btn btn-secondary btn-sm"
+                                style={{ fontSize: 11, padding: "4px 10px", gap: 4 }}
                               >
-                                <Sparkles size={12} /> Generate picture
+                                <Sparkles size={11} /> Generate picture
                               </button>
                             </>
                           )}
                         </div>
                       )}
                     </div>
-                    <div className="p-5 sm:p-6 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold text-violet-300 bg-violet-500/10 border border-violet-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+
+                    {/* Content Details */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      <div className="campaign-day-header" style={{ paddingBottom: 8, borderBottom: "none" }}>
+                        <span
+                          className="badge badge-ai"
+                          style={{ fontSize: 10, padding: "2px 8px" }}
+                        >
                           Day {item.day}{postsPerDay > 1 ? ` · Post ${item.slot}` : ""}
                         </span>
-                        <span className="text-xs text-white/40">
-                          {new Date(`${item.suggestedDate}T12:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                        <span style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                          {new Date(`${item.suggestedDate}T12:00:00`).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </span>
                       </div>
-                      <h4 className="text-sm font-semibold text-white leading-snug line-clamp-2">
+
+                      <h4
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: "var(--text-primary)",
+                          margin: 0,
+                          lineHeight: 1.4,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
                         {item.hook}
                       </h4>
-                      <p className="text-xs text-white/60 line-clamp-3 leading-relaxed">
+
+                      <p
+                        style={{
+                          fontSize: 12,
+                          color: "var(--text-secondary)",
+                          margin: 0,
+                          lineHeight: 1.5,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 3,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
                         {item.caption}
                       </p>
-                      <p className="text-xs font-semibold text-violet-400">
+
+                      <p style={{ fontSize: 11.5, fontWeight: 600, color: "var(--accent)", margin: "2px 0 0" }}>
                         &rarr; {item.cta}
                       </p>
-                      <div className="flex flex-wrap gap-1.5 pt-1">
+
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4, paddingTop: 4 }}>
                         {item.hashtags.slice(0, 4).map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-0.5 text-[11px] text-white/50"
+                            style={{
+                              fontSize: 10,
+                              color: "var(--text-muted)",
+                              background: "rgba(255,255,255,0.03)",
+                              border: "1px solid var(--border-subtle)",
+                              borderRadius: 99,
+                              padding: "2px 8px",
+                            }}
                           >
                             {tag}
                           </span>

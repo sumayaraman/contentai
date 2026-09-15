@@ -26,21 +26,23 @@ export default async function WorkspacePage() {
   }
 
   return (
-    <div className="page animate-fade-up">
-      <div className="mx-auto max-w-6xl space-y-10 pb-24">
+    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3.5 py-1 text-xs font-semibold text-violet-300">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
             ✦ Content Workspace
-          </span>
-          <h1 className="mt-2.5 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Brand Identity &amp; Content Engine
-          </h1>
-          <p className="mt-1.5 text-sm text-white/50 leading-relaxed max-w-2xl">
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Brand Identity &amp; Content Engine</h1>
+          <p className="mt-1 text-sm text-white/50">
             Create a reusable brand identity, generate automated multi-day content, add your logo to every image, and send the finished batch to your calendar.
           </p>
         </div>
-        <MarketingWorkspace workspace={workspace} canEdit={role === "OWNER" || role === "ADMIN"} />
+        <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 self-start sm:self-auto">
+          <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
+          AI Powered Studio
+        </div>
       </div>
+      <MarketingWorkspace workspace={workspace} canEdit={role === "OWNER" || role === "ADMIN"} />
     </div>
   );
 }
