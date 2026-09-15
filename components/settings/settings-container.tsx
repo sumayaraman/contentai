@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bot, Building2, Globe, Settings as SettingsIcon, Shield, User, Users } from "lucide-react";
+import { Bot, Building2, Globe, Settings as SettingsIcon, User, Users } from "lucide-react";
 import { ProfileForm } from "@/components/ui/profile-form";
 import { WorkspaceSettings } from "@/components/workspace/workspace-settings";
 import { SocialAccounts } from "@/components/workspace/social-accounts";
@@ -36,23 +36,24 @@ export function SettingsContainer({
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
 
   return (
-    <div className="space-y-8">
-      {/* Tab Navigation Bar */}
-      <div className="flex items-center overflow-x-auto pb-1 border-b border-white/[0.08] gap-2">
+    <div className="space-y-6">
+      {/* Sleek Segmented Tab Navigation Bar */}
+      <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-white/[0.03] border border-white/[0.08] max-w-full overflow-x-auto">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 scale-[1.02]"
-                  : "text-white/60 hover:text-white hover:bg-white/[0.05]"
+                  ? "bg-violet-600 text-white shadow-sm shadow-violet-500/25"
+                  : "text-white/50 hover:text-white hover:bg-white/[0.04]"
               }`}
             >
-              <Icon size={16} />
+              <Icon size={14} />
               <span>{tab.label}</span>
             </button>
           );
@@ -60,21 +61,19 @@ export function SettingsContainer({
       </div>
 
       {/* Tab Content Panels */}
-      <div className="space-y-10">
+      <div className="space-y-6">
         {/* Profile Tab */}
         {(activeTab === "profile" || activeTab === "all") && (
-          <div className="rounded-3xl border border-white/[0.08] bg-[#101020]/80 p-8 sm:p-10 backdrop-blur-2xl shadow-2xl shadow-black/40 space-y-8">
-            <div className="pb-6 border-b border-white/[0.08]">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-400 border border-violet-500/20">
-                  <User size={18} />
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-white">Personal Profile</h2>
-                  <p className="text-xs text-white/50 mt-0.5">
-                    Your avatar and name appear across all post revisions and activity feeds.
-                  </p>
-                </div>
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-xl shadow-black/25 overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-4.5 border-b border-white/[0.06] bg-white/[0.015]">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
+                <User size={15} />
+              </div>
+              <div>
+                <h2 className="text-sm font-semibold text-white">Personal Profile</h2>
+                <p className="text-xs text-white/40 mt-0.5">
+                  Your avatar and display name visible across post revisions and activity logs
+                </p>
               </div>
             </div>
             <ProfileForm profile={profile} />
