@@ -54,20 +54,23 @@ export default async function SettingsPage() {
 
   return (
     <div className="page animate-fade-up">
-      <div className="mx-auto max-w-4xl space-y-8 pb-16">
-        {/* Header with generous spacing */}
-        <div className="space-y-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3.5 py-1 text-xs font-semibold text-violet-300">
-            ✦ Preferences
-          </span>
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl pt-1">
+      <div className="mx-auto max-w-5xl space-y-8 pb-20">
+        {/* Page Header */}
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-violet-400">
+              Preferences
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
             Settings
           </h1>
-          <p className="text-sm text-white/50 leading-relaxed max-w-xl pt-0.5">
-            Manage your personal profile, workspace details, team access, and AI preferences.
+          <p className="text-xs sm:text-sm text-white/50 max-w-2xl leading-relaxed">
+            Manage your personal profile, workspace details, team access, and AI generation preferences.
           </p>
         </div>
 
+        {/* Tab Navigation & Settings Panels */}
         <SettingsContainer
           profile={profile}
           workspace={workspace}

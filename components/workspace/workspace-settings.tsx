@@ -67,10 +67,10 @@ export function WorkspaceSettings({
 
   return (
     <div className="space-y-8">
-      {/* Toast message */}
+      {/* Toast Feedback */}
       {(message || error) && (
         <div
-          className={`flex items-center justify-between rounded-xl border px-5 py-3.5 text-xs font-medium backdrop-blur-xl ${
+          className={`flex items-center justify-between rounded-xl border px-4 py-3 text-xs font-medium backdrop-blur-xl ${
             error
               ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
               : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
@@ -90,22 +90,22 @@ export function WorkspaceSettings({
         </div>
       )}
 
-      {/* 1. Workspace Information */}
+      {/* 1. Workspace Details */}
       {(!filteredSection || filteredSection === "workspace") && (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-xl shadow-black/25 overflow-hidden">
-          <div className="flex items-center gap-3.5 px-8 py-6 border-b border-white/[0.06] bg-white/[0.015]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
+        <section className="rounded-2xl border border-white/[0.08] bg-[#0d0d1a] shadow-xl shadow-black/20 overflow-hidden">
+          <div className="flex items-center gap-3.5 px-6 py-5 sm:px-8 sm:py-6 border-b border-white/[0.06] bg-white/[0.015]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
               <Building2 size={16} />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white">Workspace Details</h2>
-              <p className="text-xs text-white/50 mt-1">Customize your brand workspace identifier</p>
+              <h2 className="text-sm sm:text-base font-semibold text-white">Workspace Details</h2>
+              <p className="text-xs text-white/45 mt-0.5">Customize your brand workspace identifier</p>
             </div>
           </div>
 
-          <div className="p-8 sm:p-9 space-y-6">
-            <div className="max-w-lg space-y-2">
-              <label htmlFor="workspace-name-input" className="block text-xs font-semibold uppercase tracking-wider text-white/60">
+          <div className="p-6 sm:p-8 space-y-4">
+            <div className="max-w-md">
+              <label htmlFor="workspace-name-input" className="block text-xs font-medium text-white/70 mb-2">
                 Workspace Name
               </label>
               <input
@@ -115,12 +115,12 @@ export function WorkspaceSettings({
                 onChange={(e) => setName(e.target.value)}
                 disabled={role === "MEMBER"}
                 placeholder="e.g. Acme Studio"
-                className="h-11 w-full rounded-xl border border-white/10 bg-[#151528] px-4 text-sm text-white outline-none transition duration-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15 disabled:opacity-40"
+                className="h-10 w-full rounded-lg border border-white/10 bg-[#121222] px-3.5 text-xs sm:text-sm text-white placeholder:text-white/25 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 disabled:opacity-40"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between px-8 py-5 border-t border-white/[0.06] bg-white/[0.015]">
+          <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-4.5 border-t border-white/[0.06] bg-white/[0.01]">
             <span className="text-xs text-white/40">
               {role === "MEMBER" ? "Only workspace admins can rename this workspace." : "Changes apply across all workspace members."}
             </span>
@@ -128,29 +128,29 @@ export function WorkspaceSettings({
               type="button"
               onClick={() => void saveWorkspace()}
               disabled={role === "MEMBER" || busy === "workspace" || !name.trim()}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 text-xs font-semibold text-white shadow-md shadow-violet-500/25 hover:from-violet-500 hover:to-indigo-500 transition disabled:opacity-40 cursor-pointer"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 px-4 text-xs font-medium text-white shadow-sm transition disabled:opacity-40 cursor-pointer"
             >
-              {busy === "workspace" ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+              {busy === "workspace" ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
               <span>Save Workspace</span>
             </button>
           </div>
         </section>
       )}
 
-      {/* 2. Team Access */}
+      {/* 2. Team Members & Permissions */}
       {(!filteredSection || filteredSection === "team") && (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-xl shadow-black/25 overflow-hidden">
-          <div className="flex items-center justify-between px-8 py-6 border-b border-white/[0.06] bg-white/[0.015]">
+        <section className="rounded-2xl border border-white/[0.08] bg-[#0d0d1a] shadow-xl shadow-black/20 overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-5 sm:px-8 sm:py-6 border-b border-white/[0.06] bg-white/[0.015]">
             <div className="flex items-center gap-3.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
                 <Users size={16} />
               </div>
               <div>
-                <h2 className="text-base font-semibold text-white">Team Members &amp; Permissions</h2>
-                <p className="text-xs text-white/50 mt-1">Control role assignments and collaborator privileges</p>
+                <h2 className="text-sm sm:text-base font-semibold text-white">Team Members &amp; Permissions</h2>
+                <p className="text-xs text-white/45 mt-0.5">Control role assignments and collaborator privileges</p>
               </div>
             </div>
-            <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-white/60">
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-xs font-medium text-white/60">
               {members.length} {members.length === 1 ? "member" : "members"}
             </span>
           </div>
@@ -158,33 +158,33 @@ export function WorkspaceSettings({
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-white/[0.06] bg-white/[0.01] text-xs uppercase tracking-wider font-semibold text-white/40">
-                  <th className="px-8 py-4">Member</th>
-                  <th className="px-8 py-4">Role</th>
-                  <th className="px-8 py-4">Joined</th>
-                  <th className="px-8 py-4 text-right">Actions</th>
+                <tr className="border-b border-white/[0.06] bg-white/[0.01] text-[10.5px] uppercase tracking-wider font-semibold text-white/40">
+                  <th className="px-6 py-3.5">Member</th>
+                  <th className="px-6 py-3.5">Role</th>
+                  <th className="px-6 py-3.5">Joined</th>
+                  <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.04]">
                 {members.map((member) => (
                   <tr key={member.membership_id} className="hover:bg-white/[0.02] transition">
-                    <td className="px-8 py-4.5">
-                      <div className="flex items-center gap-3.5">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300 border border-violet-500/25 text-xs font-bold">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300 border border-violet-500/25 text-xs font-semibold">
                           {(member.profile.name || member.profile.email).slice(0, 1).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <div className="truncate text-sm font-medium text-white">
+                          <div className="truncate text-xs sm:text-sm font-medium text-white">
                             {member.profile.name || "Unnamed member"}
                           </div>
-                          <div className="truncate text-xs text-white/40 font-mono mt-0.5">{member.profile.email}</div>
+                          <div className="truncate text-[11px] text-white/40 font-mono mt-0.5">{member.profile.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-4.5">
+                    <td className="px-6 py-4">
                       {member.role === "OWNER" ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-300">
-                          <Shield size={12} /> OWNER
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-violet-300">
+                          <Shield size={11} /> OWNER
                         </span>
                       ) : role === "OWNER" ? (
                         <select
@@ -192,25 +192,25 @@ export function WorkspaceSettings({
                           value={member.role}
                           disabled={busy === member.membership_id}
                           onChange={(e) => void changeRole(member, e.target.value as "ADMIN" | "MEMBER")}
-                          className="h-8 rounded-lg border border-white/10 bg-[#141426] px-3 text-xs font-medium text-white outline-none cursor-pointer focus:border-violet-500"
+                          className="h-7 rounded-md border border-white/10 bg-[#121222] px-2 text-xs font-medium text-white outline-none cursor-pointer focus:border-violet-500"
                         >
-                          <option value="ADMIN" className="bg-[#141426] text-white">ADMIN</option>
-                          <option value="MEMBER" className="bg-[#141426] text-white">MEMBER</option>
+                          <option value="ADMIN" className="bg-[#121222] text-white">ADMIN</option>
+                          <option value="MEMBER" className="bg-[#121222] text-white">MEMBER</option>
                         </select>
                       ) : (
                         <span className="text-xs font-medium text-white/70">{member.role}</span>
                       )}
                     </td>
-                    <td className="px-8 py-4.5 text-xs text-white/45">
+                    <td className="px-6 py-4 text-xs text-white/40 font-mono">
                       {new Date(member.joined_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
                     </td>
-                    <td className="px-8 py-4.5 text-right">
+                    <td className="px-6 py-4 text-right">
                       {role === "OWNER" && member.role !== "OWNER" && (
                         <button
                           type="button"
                           onClick={() => void remove(member)}
                           disabled={busy === member.membership_id}
-                          className="inline-flex h-7 items-center gap-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 text-xs font-medium text-rose-300 hover:bg-rose-500/20 transition disabled:opacity-50 cursor-pointer"
+                          className="inline-flex h-7 items-center gap-1 rounded-md border border-rose-500/20 bg-rose-500/10 px-2.5 text-xs font-medium text-rose-300 hover:bg-rose-500/20 transition disabled:opacity-50 cursor-pointer"
                         >
                           <Trash2 size={12} /> Remove
                         </button>
@@ -229,20 +229,20 @@ export function WorkspaceSettings({
 
       {/* 3. AI Settings */}
       {(!filteredSection || filteredSection === "ai") && (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-xl shadow-black/25 overflow-hidden">
-          <div className="flex items-center gap-3.5 px-8 py-6 border-b border-white/[0.06] bg-white/[0.015]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
+        <section className="rounded-2xl border border-white/[0.08] bg-[#0d0d1a] shadow-xl shadow-black/20 overflow-hidden">
+          <div className="flex items-center gap-3.5 px-6 py-5 sm:px-8 sm:py-6 border-b border-white/[0.06] bg-white/[0.015]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
               <Bot size={16} />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white">AI Generation Preferences</h2>
-              <p className="text-xs text-white/50 mt-1">Select the default intelligence engine used for drafting campaigns and posts</p>
+              <h2 className="text-sm sm:text-base font-semibold text-white">AI Generation Preferences</h2>
+              <p className="text-xs text-white/45 mt-0.5">Select the default intelligence engine used for drafting campaigns and posts</p>
             </div>
           </div>
 
-          <div className="p-8 sm:p-9 space-y-6">
-            <div className="max-w-lg space-y-2">
-              <label htmlFor="ai-provider-select" className="block text-xs font-semibold uppercase tracking-wider text-white/60">
+          <div className="p-6 sm:p-8 space-y-4">
+            <div className="max-w-md">
+              <label htmlFor="ai-provider-select" className="block text-xs font-medium text-white/70 mb-2">
                 Preferred AI Provider
               </label>
               <select
@@ -250,18 +250,18 @@ export function WorkspaceSettings({
                 value={provider}
                 disabled={role === "MEMBER" || busy === "provider"}
                 onChange={(e) => void saveProvider(e.target.value)}
-                className="h-11 w-full rounded-xl border border-white/10 bg-[#151528] px-4 text-sm text-white outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15 disabled:opacity-40 cursor-pointer"
+                className="h-10 w-full rounded-lg border border-white/10 bg-[#121222] px-3.5 text-xs sm:text-sm text-white outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 disabled:opacity-40 cursor-pointer"
               >
-                <option value="auto" className="bg-[#141426] text-white">Automatic (Best available model)</option>
-                <option value="mock" className="bg-[#141426] text-white">Demo Mode (Built-in mock response)</option>
-                <option value="openai" className="bg-[#141426] text-white">OpenAI (GPT-4o / GPT-4o-mini)</option>
-                <option value="anthropic" className="bg-[#141426] text-white">Anthropic (Claude 3.5 Sonnet)</option>
-                <option value="groq" className="bg-[#141426] text-white">Groq (Llama 3 70B Fast)</option>
+                <option value="auto" className="bg-[#121222] text-white">Automatic (Best available model)</option>
+                <option value="mock" className="bg-[#121222] text-white">Demo Mode (Built-in mock response)</option>
+                <option value="openai" className="bg-[#121222] text-white">OpenAI (GPT-4o / GPT-4o-mini)</option>
+                <option value="anthropic" className="bg-[#121222] text-white">Anthropic (Claude 3.5 Sonnet)</option>
+                <option value="groq" className="bg-[#121222] text-white">Groq (Llama 3 70B Fast)</option>
               </select>
             </div>
           </div>
 
-          <div className="flex items-center justify-between px-8 py-5 border-t border-white/[0.06] bg-white/[0.015]">
+          <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-4.5 border-t border-white/[0.06] bg-white/[0.01]">
             <span className="text-xs text-white/40">
               {role === "MEMBER" ? "Only workspace admins can modify AI engine options." : "Auto mode falls back to available providers if rate limits occur."}
             </span>
