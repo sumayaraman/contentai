@@ -25,8 +25,24 @@ const navWorkspace = [
   { href: "/help",             label: "Help & docs", icon: HelpCircle },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  profile?: {
+    name?: string | null;
+    email?: string | null;
+    avatar_url?: string | null;
+  } | null;
+}
+
+export function Sidebar({ profile }: SidebarProps = {}) {
   const pathname = usePathname();
+
+  const email = profile?.email || "";
+  const hasCustomName = Boolean(profile?.name?.trim());
+  const name = hasCustomName
+    ? profile!.name!.trim()
+    : (email ? email.split("@")[0] : "User");
+  const subtitle = email || "Free plan";
+  const avatarLetter = (name || email || "U").charAt(0).toUpperCase();
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
@@ -88,14 +104,46 @@ export function Sidebar() {
 
       {/* User */}
       <div className="sb-footer">
-        <div className="sb-user">
-          <div className="sb-avatar">S</div>
+        <Link
+          href="/settings"
+          className="sb-user"
+          title={email ? `${name} (${email})` : name}
+          style={{ textDecoration: "none" }}
+        >
+          {profile?.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={name}
+              className="sb-avatar"
+              style={{ objectFit: "cover" }}
+            />
+          ) : (
+            <div className="sb-avatar">{avatarLetter}</div>
+          )}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="sb-user-name">Sumaya Rahman</div>
-            <div className="sb-user-plan">Free plan</div>
+            <div
+              className="sb-user-name"
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {name}
+            </div>
+            <div
+              className="sb-user-plan"
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {subtitle}
+            </div>
           </div>
           <ChevronDown size={12} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
-        </div>
+        </Link>
       </div>
     </aside>
   );
