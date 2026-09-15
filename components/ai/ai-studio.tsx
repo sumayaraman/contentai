@@ -17,17 +17,20 @@ const objectives: Array<{ value: AIObjective; label: string }> = [
   { value: "ENGAGEMENT", label: "Engagement" }, { value: "SALES", label: "Sales" }, { value: "AWARENESS", label: "Awareness" }, { value: "TRAFFIC", label: "Traffic" }, { value: "LEADS", label: "Leads" }, { value: "BRAND_BUILDING", label: "Brand Building" },
 ];
 
+const inputClass =
+  "w-full rounded-xl border border-white/10 bg-[#121222] px-3.5 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20";
+const selectClass =
+  "h-10 w-full rounded-xl border border-white/10 bg-[#121222] px-3 text-sm text-white outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20";
+
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label style={{ marginBottom: 8, display: "block", fontSize: 12.5, fontWeight: 600, color: "var(--text-secondary)" }}>{label}</label>
+      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/60">{label}</label>
       {children}
-      {error && <p style={{ marginTop: 4, fontSize: 11.5, fontWeight: 500, color: "var(--red)" }}>{error}</p>}
+      {error && <p className="mt-1.5 text-xs font-medium text-red-400">{error}</p>}
     </div>
   );
 }
-
-const inputClass = "ai-input";
 
 export function AIStudio({ categories }: { categories: Category[] }) {
   const [topic, setTopic] = useState("");
@@ -48,18 +51,39 @@ export function AIStudio({ categories }: { categories: Category[] }) {
     setNotice("");
     startTransition(async () => {
       const result = await generateAIContent({ topic, targetAudience, platform, tone, objective });
-      if (!result.ok) { setErrors(result.errors); return; }
-      setErrors({}); setContent(result.content); setProvider(result.provider);
-      setNotice(result.provider === "mock" ? "Generated in Demo Mode. Add an AI key to use a real provider." : `Generated with ${result.provider}.`);
+      if (!result.ok) {
+        setErrors(result.errors);
+        return;
+      }
+      setErrors({});
+      setContent(result.content);
+      setProvider(result.provider);
+      setNotice(
+        result.provider === "mock"
+          ? "Generated in Demo Mode. Add an AI key to use a real provider."
+          : `Generated with ${result.provider}.`
+      );
     });
   }
 
   function updateField(field: keyof GeneratedContent, value: string) {
-    setContent((current) => current ? { ...current, [field]: field === "hashtags" ? value.split(/[,\n]/).map((item) => item.trim()).filter(Boolean) : value } : current);
+    setContent((current) =>
+      current
+        ? {
+            ...current,
+            [field]: field === "hashtags" ? value.split(/[,\n]/).map((item) => item.trim()).filter(Boolean) : value,
+          }
+        : current
+    );
   }
 
   async function copyText(value: string, label: string) {
-    try { await navigator.clipboard.writeText(value); setNotice(`${label} copied to clipboard.`); } catch { setNotice("Clipboard access is unavailable in this browser."); }
+    try {
+      await navigator.clipboard.writeText(value);
+      setNotice(`${label} copied to clipboard.`);
+    } catch {
+      setNotice("Clipboard access is unavailable in this browser.");
+    }
   }
 
   function save(status: "DRAFT" | "SCHEDULED") {
@@ -83,119 +107,324 @@ export function AIStudio({ categories }: { categories: Category[] }) {
     });
   }
 
-  return <div className="space-y-6">
-    <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-      <section className="card" style={{ padding: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ display: "flex", height: 40, width: 40, alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", background: "var(--accent-soft)", color: "var(--accent)" }}><Sparkles size={19} /></span>
-          <div>
-            <h2 style={{ fontWeight: 600, color: "var(--text-primary)" }}>Content brief</h2>
-            <p style={{ fontSize: 12, color: "var(--text-muted)" }}>Tell the studio what you want to create.</p>
-          </div>
-        </div>
-        <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 20 }}>
-          <Field label="Topic / Product" error={errors.topic}><textarea value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="New summer coffee collection" rows={3} maxLength={300} className={inputClass} /></Field>
-          <Field label="Target Audience" error={errors.targetAudience}><input value={targetAudience} onChange={(e) => setTargetAudience(e.target.value)} placeholder="Young professionals" maxLength={300} className={inputClass} /></Field>
-          <Field label="Platform" error={errors.platform}><select value={platform} onChange={(e) => setPlatform(e.target.value as AIPlatform)} className={inputClass}>{platforms.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field>
-          <Field label="Tone" error={errors.tone}><select value={tone} onChange={(e) => setTone(e.target.value as AITone)} className={inputClass}>{tones.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field>
-          <Field label="Objective" error={errors.objective}><select value={objective} onChange={(e) => setObjective(e.target.value as AIObjective)} className={inputClass}>{objectives.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field>
-          <Field label="Category"><select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={inputClass}><option value="">No category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></Field>
-          <button type="button" onClick={generate} disabled={isPending} className="btn btn-ai" style={{ width: "100%", padding: "12px 16px", fontSize: 13.5 }}>{isPending ? <Loader2 size={17} className="animate-spin" /> : <Sparkles size={17} />}{content ? "Regenerate Content" : "Generate Content"}</button>
-        </div>
-      </section>
-
-      <section className="card" style={{ minWidth: 0, padding: 20 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, borderBottom: "1px solid var(--border)", paddingBottom: 20 }} className="sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--accent)" }}>AI output</p>
-            <h2 style={{ marginTop: 4, fontSize: 17, fontWeight: 700, color: "var(--text-primary)" }}>Content studio</h2>
-          </div>
-          {content && (
-            <span style={{
-              display: "inline-flex", width: "fit-content", alignItems: "center", gap: 6,
-              borderRadius: 999, padding: "5px 10px", fontSize: 11.5, fontWeight: 600,
-              background: provider === "mock" ? "var(--amber-soft)" : "var(--green-soft)",
-              color: provider === "mock" ? "var(--amber)" : "var(--green)",
-            }}>
-              <span style={{ height: 6, width: 6, borderRadius: "50%", background: "currentColor" }} />
-              {provider === "mock" ? "Demo Mode" : `Real API · ${provider}`}
-            </span>
-          )}
-        </div>
-        {notice && (
-          <div role="status" style={{
-            marginTop: 16, display: "flex", alignItems: "center", gap: 8, borderRadius: "var(--r-md)",
-            border: "1px solid var(--border-accent)", background: "var(--accent-soft)", padding: "10px 14px",
-            fontSize: 12.5, fontWeight: 500, color: "var(--text-primary)",
-          }}>
-            <Check size={16} style={{ color: "var(--accent)", flexShrink: 0 }} />{notice}
-          </div>
-        )}
-        {errors.form && (
-          <div role="alert" style={{
-            marginTop: 16, borderRadius: "var(--r-md)",
-            border: "1px solid rgba(239,68,68,0.3)", background: "var(--red-soft)", padding: "10px 14px",
-            fontSize: 12.5, fontWeight: 500, color: "var(--red)",
-          }}>
-            {errors.form}
-          </div>
-        )}
-        {!content ? (
-          <div style={{ display: "flex", minHeight: 480, flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 24px", textAlign: "center" }}>
-            <div style={{ display: "flex", height: 56, width: 56, alignItems: "center", justifyContent: "center", borderRadius: "var(--r-xl)", background: "var(--bg-elevated)", color: "var(--text-muted)" }}><Sparkles size={24} /></div>
-            <h3 style={{ marginTop: 16, fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>Your generated content will appear here</h3>
-            <p style={{ marginTop: 8, maxWidth: 420, fontSize: 12.5, lineHeight: 1.6, color: "var(--text-muted)" }}>Build a brief on the left, then generate a structured hook, caption, CTA, hashtags, and image prompt.</p>
-          </div>
-        ) : (
-          <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 16 }}>
-            <OutputField label="Hook" value={content.hook} onChange={(value) => updateField("hook", value)} onCopy={() => copyText(content.hook, "Hook")} />
-            <OutputField label="Caption" value={content.caption} textarea onChange={(value) => updateField("caption", value)} onCopy={() => copyText(content.caption, "Caption")} />
-            <OutputField label="CTA" value={content.cta} onChange={(value) => updateField("cta", value)} onCopy={() => copyText(content.cta, "CTA")} />
-            <OutputField label="Hashtags" value={content.hashtags.join(" ")} textarea onChange={(value) => updateField("hashtags", value)} onCopy={() => copyText(content.hashtags.join(" "), "Hashtags")} />
-            <OutputField label="Image Prompt" value={content.imagePrompt} textarea onChange={(value) => updateField("imagePrompt", value)} onCopy={() => copyText(content.imagePrompt, "Image prompt")} />
-
-            {content.imagePrompt && (
-              <div style={{ borderRadius: "var(--r-lg)", border: "1px solid var(--border-accent)", background: "var(--purple-soft)", padding: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-                  <div style={{ display: "flex", height: 32, width: 32, alignItems: "center", justifyContent: "center", borderRadius: "var(--r-md)", background: "var(--accent-soft)", color: "var(--purple)" }}>
-                    <ImageIcon size={16} />
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--purple)" }}>AI Image + Video Studio</p>
-                    <p style={{ fontSize: 11.5, color: "var(--text-secondary)" }}>Generate an image or video from this prompt</p>
-                  </div>
-                </div>
-                <a href={"/image-studio?prompt=" + encodeURIComponent(content.imagePrompt)} className="btn btn-ai" style={{ width: "100%", padding: "10px 16px" }}>
-                  Open Image and Video Studio with this prompt
-                </a>
-              </div>
-            )}
-
-            <Field label="Schedule Date & Time"><input type="datetime-local" value={scheduledAt} min={minDateTime} onChange={(e) => setScheduledAt(e.target.value)} className={inputClass} /></Field>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, borderTop: "1px solid var(--border)", paddingTop: 20 }}>
-              <button type="button" onClick={() => copyText([content.hook, content.caption, content.cta, content.hashtags.join(" ")].join("\n\n"), "Content")} className="btn btn-primary"><Clipboard size={15} /> Copy All</button>
-              <button type="button" onClick={generate} disabled={isPending} className="btn btn-primary"><RefreshCw size={15} /> Regenerate</button>
-              <button type="button" onClick={() => save("DRAFT")} disabled={isPending} className="btn btn-primary"><Save size={15} /> Save Draft</button>
-              <button type="button" onClick={() => save("SCHEDULED")} disabled={isPending || !scheduledAt} title={!scheduledAt ? "Choose a future date and time first." : undefined} className="btn btn-ai" style={{ opacity: !scheduledAt ? 0.5 : 1 }}><Send size={15} /> Schedule</button>
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-8 xl:grid-cols-[380px_minmax(0,1fr)]">
+        {/* Left: Input Brief Card */}
+        <section className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 p-6 backdrop-blur-xl shadow-lg shadow-black/20">
+          <div className="flex items-center gap-3 border-b border-white/[0.06] pb-4 mb-6">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400">
+              <Sparkles size={18} />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold tracking-tight text-white">Content Brief</h2>
+              <p className="text-xs text-white/50">Define the theme, audience, and voice.</p>
             </div>
           </div>
-        )}
-      </section>
+
+          <div className="space-y-5">
+            <Field label="Topic / Concept" error={errors.topic}>
+              <textarea
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="e.g. 5 productivity habits every remote founder needs"
+                rows={3}
+                maxLength={300}
+                className={`${inputClass} resize-y leading-relaxed`}
+              />
+            </Field>
+
+            <Field label="Target Audience" error={errors.targetAudience}>
+              <input
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+                placeholder="e.g. Startup founders, remote engineers"
+                maxLength={300}
+                className={inputClass}
+              />
+            </Field>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Platform" error={errors.platform}>
+                <select
+                  value={platform}
+                  onChange={(e) => setPlatform(e.target.value as AIPlatform)}
+                  className={selectClass}
+                >
+                  {platforms.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Tone" error={errors.tone}>
+                <select
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value as AITone)}
+                  className={selectClass}
+                >
+                  {tones.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Objective" error={errors.objective}>
+                <select
+                  value={objective}
+                  onChange={(e) => setObjective(e.target.value as AIObjective)}
+                  className={selectClass}
+                >
+                  {objectives.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Category">
+                <select
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  className={selectClass}
+                >
+                  <option value="">No category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+
+            <button
+              type="button"
+              onClick={generate}
+              disabled={isPending}
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 hover:bg-violet-500 transition disabled:opacity-50"
+            >
+              {isPending ? <Loader2 size={17} className="animate-spin" /> : <Sparkles size={17} />}
+              {content ? "Regenerate Content" : "Generate Content"}
+            </button>
+          </div>
+        </section>
+
+        {/* Right: Output Studio Stage */}
+        <section className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 p-6 backdrop-blur-xl shadow-lg shadow-black/20">
+          <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-violet-400">
+                ✦ Studio Canvas
+              </div>
+              <h2 className="mt-1 text-base font-semibold tracking-tight text-white">Generated Content Bundle</h2>
+            </div>
+            {content && (
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                  provider === "mock"
+                    ? "border border-amber-500/20 bg-amber-500/10 text-amber-300"
+                    : "border border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                {provider === "mock" ? "Demo Mode" : `Real API · ${provider}`}
+              </span>
+            )}
+          </div>
+
+          {notice && (
+            <div
+              role="status"
+              className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-xs font-medium text-emerald-300"
+            >
+              <Check size={16} className="text-emerald-400 shrink-0" />
+              {notice}
+            </div>
+          )}
+
+          {errors.form && (
+            <div
+              role="alert"
+              className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-xs font-medium text-red-400"
+            >
+              {errors.form}
+            </div>
+          )}
+
+          {!content ? (
+            <div className="flex min-h-[460px] flex-col items-center justify-center p-8 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.03] text-white/30">
+                <Sparkles size={24} />
+              </div>
+              <h3 className="mt-4 text-base font-semibold text-white">Your generated copy will appear here</h3>
+              <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-white/40">
+                Provide a prompt on the left and click Generate to produce hooks, captions, calls-to-action, hashtags, and visual prompts.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-6 space-y-4">
+              <OutputField
+                label="Hook"
+                value={content.hook}
+                onChange={(value) => updateField("hook", value)}
+                onCopy={() => copyText(content.hook, "Hook")}
+              />
+              <OutputField
+                label="Caption"
+                value={content.caption}
+                textarea
+                onChange={(value) => updateField("caption", value)}
+                onCopy={() => copyText(content.caption, "Caption")}
+              />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <OutputField
+                  label="CTA"
+                  value={content.cta}
+                  onChange={(value) => updateField("cta", value)}
+                  onCopy={() => copyText(content.cta, "CTA")}
+                />
+                <OutputField
+                  label="Hashtags"
+                  value={content.hashtags.join(" ")}
+                  onChange={(value) => updateField("hashtags", value)}
+                  onCopy={() => copyText(content.hashtags.join(" "), "Hashtags")}
+                />
+              </div>
+              <OutputField
+                label="Visual Image Prompt"
+                value={content.imagePrompt}
+                textarea
+                onChange={(value) => updateField("imagePrompt", value)}
+                onCopy={() => copyText(content.imagePrompt, "Image prompt")}
+              />
+
+              {content.imagePrompt && (
+                <div className="rounded-xl border border-violet-500/20 bg-violet-500/[0.06] p-4">
+                  <div className="mb-3 flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/20 text-violet-300">
+                      <ImageIcon size={16} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-violet-300">AI Image Studio</p>
+                      <p className="text-[11px] text-white/50">Turn this prompt into high-resolution visuals</p>
+                    </div>
+                  </div>
+                  <a
+                    href={"/image-studio?prompt=" + encodeURIComponent(content.imagePrompt)}
+                    className="inline-flex h-9 w-full items-center justify-center rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white transition hover:bg-violet-500"
+                  >
+                    Open Image Studio with this prompt &rarr;
+                  </a>
+                </div>
+              )}
+
+              <Field label="Schedule Date & Time">
+                <input
+                  type="datetime-local"
+                  value={scheduledAt}
+                  min={minDateTime}
+                  onChange={(e) => setScheduledAt(e.target.value)}
+                  className={inputClass}
+                />
+              </Field>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.08] pt-5">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      copyText(
+                        [content.hook, content.caption, content.cta, content.hashtags.join(" ")].join("\n\n"),
+                        "Content"
+                      )
+                    }
+                    className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+                  >
+                    <Clipboard size={14} /> Copy All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={generate}
+                    disabled={isPending}
+                    className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+                  >
+                    <RefreshCw size={14} /> Regenerate
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => save("DRAFT")}
+                    disabled={isPending}
+                    className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+                  >
+                    <Save size={14} /> Save Draft
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => save("SCHEDULED")}
+                    disabled={isPending || !scheduledAt}
+                    title={!scheduledAt ? "Choose a future date and time first." : undefined}
+                    className="inline-flex h-10 items-center gap-2 rounded-xl bg-violet-600 px-5 text-xs font-semibold text-white shadow-lg shadow-violet-600/25 hover:bg-violet-500 transition disabled:opacity-50"
+                  >
+                    <Send size={14} /> Schedule
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
-  </div>;
+  );
 }
 
-function OutputField({ label, value, onChange, onCopy, textarea = false }: { label: string; value: string; onChange: (value: string) => void; onCopy: () => void; textarea?: boolean }) {
+function OutputField({
+  label,
+  value,
+  onChange,
+  onCopy,
+  textarea = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  onCopy: () => void;
+  textarea?: boolean;
+}) {
   return (
-    <div style={{ borderRadius: "var(--r-lg)", border: "1px solid var(--border)", background: "var(--bg-elevated)", padding: 16 }}>
-      <div style={{ marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <label style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-muted)" }}>{label}</label>
-        <button type="button" onClick={onCopy} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 600, color: "var(--text-muted)", background: "none", border: "none", cursor: "pointer" }}><Clipboard size={13} /> Copy</button>
+    <div className="rounded-xl border border-white/10 bg-[#121222]/80 p-4 transition focus-within:border-violet-500/50">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <label className="text-[11px] font-semibold uppercase tracking-wider text-white/50">{label}</label>
+        <button
+          type="button"
+          onClick={onCopy}
+          className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-violet-400 hover:text-violet-300 transition"
+        >
+          <Clipboard size={12} /> Copy
+        </button>
       </div>
       {textarea ? (
-        <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={label === "Caption" ? 8 : 4} style={{ width: "100%", resize: "vertical", background: "transparent", fontSize: 13, lineHeight: 1.6, color: "var(--text-primary)", outline: "none", border: "none", fontFamily: "inherit" }} />
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          rows={label === "Caption" ? 7 : 3}
+          className="w-full resize-y bg-transparent text-sm leading-relaxed text-white outline-none placeholder:text-white/30"
+        />
       ) : (
-        <input value={value} onChange={(e) => onChange(e.target.value)} style={{ width: "100%", background: "transparent", fontSize: 13, lineHeight: 1.6, color: "var(--text-primary)", outline: "none", border: "none", fontFamily: "inherit" }} />
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+        />
       )}
     </div>
   );

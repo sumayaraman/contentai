@@ -4,15 +4,20 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 const pageTitles: Record<string, string> = {
-  "/dashboard":      "Overview",
-  "/ai-studio":      "AI Studio",
-  "/posts":          "Posts",
-  "/calendar":       "Calendar",
-  "/campaigns":      "Campaigns",
-  "/analytics":      "Analytics",
-  "/publishing":     "Publishing",
-  "/media-library":  "Media Library",
-  "/settings":       "Settings",
+  "/dashboard":        "Overview",
+  "/ai-studio":        "AI Studio",
+  "/image-studio":     "Image Studio",
+  "/posts/new":        "Create Post",
+  "/posts/categories": "Categories",
+  "/posts":            "Posts",
+  "/calendar":         "Calendar",
+  "/campaigns":        "Campaigns",
+  "/workspace":        "Content Workspace",
+  "/analytics":        "Analytics",
+  "/publishing":       "Publishing",
+  "/media-library":    "Media Library",
+  "/settings":         "Settings",
+  "/help":             "Help & Documentation",
 };
 
 interface TopbarProps {
@@ -24,8 +29,8 @@ interface TopbarProps {
 export function Topbar({ profile }: TopbarProps) {
   const pathname = usePathname();
   const title = Object.entries(pageTitles).find(([key]) =>
-    pathname === key || pathname.startsWith(key + "/")
-  )?.[1] ?? "ContentAI";
+    pathname === key || (key !== "/posts" && pathname.startsWith(key + "/"))
+  )?.[1] ?? (pathname.startsWith("/posts/") ? "Post Details" : "ContentAI");
 
   return (
     <header className="app-topbar">
@@ -33,7 +38,7 @@ export function Topbar({ profile }: TopbarProps) {
 
       {/* Search */}
       <div className="tb-search">
-        <Search size={12} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+        <Search size={13} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
         <input placeholder="Search content…" aria-label="Search" />
         <kbd style={{
           fontSize: 9.5,

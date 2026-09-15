@@ -34,19 +34,21 @@ export default async function CampaignsPage() {
   }
 
   return (
-    <div className="page animate-fade-up">
-      <div className="page-header">
+    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="ai-tag" style={{ marginBottom: 6 }}>✦ AI Campaigns</p>
-          <h1 className="page-title">Plan a complete campaign in minutes</h1>
-          <p className="page-subtitle">
-            Generate a structured multi-day campaign, refine each idea, then add the final plan to your calendar.
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
+            ✦ AI Campaign Planner
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Multi-Day Campaigns</h1>
+          <p className="mt-1 text-sm text-white/50">
+            Generate structured multi-day campaigns, refine day-by-day hooks and copy, then batch schedule directly to your calendar.
           </p>
         </div>
-        <span className="badge badge-ai">
-          <span className="ai-dot" style={{ width: 5, height: 5 }} />
-          AI Powered
-        </span>
+        <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 self-start sm:self-auto">
+          <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
+          AI Powered Studio
+        </div>
       </div>
       <CampaignGenerator history={history} />
     </div>

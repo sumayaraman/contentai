@@ -42,10 +42,11 @@ export function SignupForm() {
 
   return (
     <AuthShell title="Create your account" subtitle="Set up your ContentAI workspace in seconds.">
-      <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-
+      <form onSubmit={submit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="name" className="label">Your name</label>
+          <label htmlFor="name" className="mb-2 block text-xs font-semibold text-white/70">
+            Your name
+          </label>
           <input
             id="name"
             type="text"
@@ -53,13 +54,15 @@ export function SignupForm() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={80}
-            className="input"
+            className="h-10 w-full rounded-xl border border-white/10 bg-[#121222] px-3.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
             placeholder="Sumaya Rahman"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="label">Email address</label>
+          <label htmlFor="email" className="mb-2 block text-xs font-semibold text-white/70">
+            Email address
+          </label>
           <input
             id="email"
             type="email"
@@ -67,13 +70,15 @@ export function SignupForm() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input"
+            className="h-10 w-full rounded-xl border border-white/10 bg-[#121222] px-3.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
             placeholder="you@company.com"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="label">Password</label>
+          <label htmlFor="password" className="mb-2 block text-xs font-semibold text-white/70">
+            Password
+          </label>
           <input
             id="password"
             type="password"
@@ -82,35 +87,19 @@ export function SignupForm() {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="input"
+            className="h-10 w-full rounded-xl border border-white/10 bg-[#121222] px-3.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
             placeholder="Min. 8 characters"
           />
         </div>
 
         {error && (
-          <div style={{
-            background: "var(--red-soft)",
-            border: "1px solid rgba(239,68,68,0.2)",
-            borderRadius: "var(--r-sm)",
-            padding: "10px 13px",
-            fontSize: 12.5,
-            color: "var(--red)",
-            animation: "bounce-in 0.3s ease forwards"
-          }}>
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-3.5 py-2.5 text-xs text-red-400">
             {error}
           </div>
         )}
 
         {message && (
-          <div style={{
-            background: "var(--green-soft)",
-            border: "1px solid rgba(34,197,94,0.2)",
-            borderRadius: "var(--r-sm)",
-            padding: "10px 13px",
-            fontSize: 12.5,
-            color: "var(--green)",
-            animation: "bounce-in 0.3s ease forwards"
-          }}>
+          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-300">
             {message}
           </div>
         )}
@@ -118,29 +107,35 @@ export function SignupForm() {
         <button
           type="submit"
           disabled={loading}
-          className="btn btn-ai btn-lg"
-          style={{ width: "100%", marginTop: 4 }}
+          className="mt-1 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 hover:bg-violet-500 transition disabled:opacity-50"
         >
           {loading ? (
             <>
-              <Loader2 size={14} style={{ animation: "spin-slow 1s linear infinite" }} />
+              <Loader2 size={16} className="animate-spin" />
               Creating account…
             </>
-          ) : "Create account"}
+          ) : (
+            "Create account"
+          )}
         </button>
 
-        <p style={{ textAlign: "center", fontSize: 13, color: "var(--text-secondary)" }}>
+        <p className="text-center text-xs text-white/60">
           Already have an account?{" "}
-          <Link href="/login" style={{ color: "var(--accent)", fontWeight: 500 }}>
+          <Link href="/login" className="font-semibold text-violet-400 hover:text-violet-300 transition">
             Sign in
           </Link>
         </p>
 
-        <p style={{ textAlign: "center", fontSize: 11.5, color: "var(--text-muted)", lineHeight: 1.6 }}>
+        <p className="text-center text-[11px] text-white/40 leading-relaxed">
           By creating an account you agree to our{" "}
-          <Link href="/terms" style={{ color: "var(--text-secondary)" }}>Terms</Link>
-          {" "}and{" "}
-          <Link href="/privacy" style={{ color: "var(--text-secondary)" }}>Privacy Policy</Link>.
+          <Link href="/terms" className="text-white/60 hover:text-white transition">
+            Terms
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-white/60 hover:text-white transition">
+            Privacy Policy
+          </Link>
+          .
         </p>
       </form>
     </AuthShell>

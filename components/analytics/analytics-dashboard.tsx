@@ -329,7 +329,7 @@ export function AnalyticsDashboard({
   const scorePost = posts.find((p) => p.id === scorePostId);
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>

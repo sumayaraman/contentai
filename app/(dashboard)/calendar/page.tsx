@@ -43,16 +43,19 @@ export default async function CalendarPage() {
   }
 
   return (
-    <div className="page animate-fade-up">
-      <div className="page-header">
+    <div className="page animate-fade-up max-w-7xl mx-auto space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="ai-tag" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <CalendarDays size={13} /> Content planning
-          </p>
-          <h1 className="page-title">Calendar</h1>
-          <p className="page-subtitle">Plan scheduled content, review your publishing rhythm, and move posts to a better time.</p>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
+            <CalendarDays size={13} /> Content Schedule
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Editorial Calendar</h1>
+          <p className="mt-1 text-sm text-white/50">Plan and coordinate scheduled content, balance publication rhythms across channels, and reschedule on the fly.</p>
         </div>
-        <Link href="/posts/new" className="btn btn-ai">
+        <Link
+          href="/posts/new"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white shadow-lg shadow-violet-600/25 transition hover:bg-violet-500"
+        >
           <Plus size={15} /> Create Post
         </Link>
       </div>

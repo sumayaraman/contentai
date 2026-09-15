@@ -18,9 +18,15 @@ function isNextRouterSignal(err: unknown): boolean {
   return false;
 }
 
-function getParam(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
+function getParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
-export default async function PostsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+export default async function PostsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const params = await searchParams;
   const search = getParam(params.search) || "";
   const platform = getParam(params.platform) || "";
@@ -35,20 +41,36 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
   try {
     const { supabase, workspaceId } = await getActiveWorkspace();
 
-    let query = supabase.from("posts").select("id, workspace_id, created_by, title, caption, platform, status, category_id, cta, hashtags, image_url, image_prompt, scheduled_at, published_at, created_at, updated_at, categories!posts_category_id_fkey(name, color)").eq("workspace_id", workspaceId);
+    let query = supabase
+      .from("posts")
+      .select(
+        "id, workspace_id, created_by, title, caption, platform, status, category_id, cta, hashtags, image_url, image_prompt, scheduled_at, published_at, created_at, updated_at, categories!posts_category_id_fkey(name, color)"
+      )
+      .eq("workspace_id", workspaceId);
+
     if (platform) query = query.eq("platform", platform);
     if (status) query = query.eq("status", status);
     if (category) query = query.eq("category_id", category);
-    if (search) query = query.or(`title.ilike.%${search.replace(/[%,()]/g, "").replace(/'/g, "''")}%,caption.ilike.%${search.replace(/[%,()]/g, "").replace(/'/g, "''")}%`);
+    if (search)
+      query = query.or(
+        `title.ilike.%${search.replace(/[%,()]/g, "").replace(/'/g, "''")}%,caption.ilike.%${search.replace(/[%,()]/g, "").replace(/'/g, "''")}%`
+      );
+
     if (sort === "oldest") query = query.order("created_at", { ascending: true });
-    else if (sort === "scheduled") query = query.order("scheduled_at", { ascending: true, nullsFirst: false });
+    else if (sort === "scheduled")
+      query = query.order("scheduled_at", { ascending: true, nullsFirst: false });
     else if (sort === "title") query = query.order("title", { ascending: true });
     else query = query.order("created_at", { ascending: false });
 
     const [{ data: posts }, { data: categories }] = await Promise.all([
       query.limit(100),
-      supabase.from("categories").select("id, workspace_id, name, color, created_at").eq("workspace_id", workspaceId).order("name", { ascending: true }),
+      supabase
+        .from("categories")
+        .select("id, workspace_id, name, color, created_at")
+        .eq("workspace_id", workspaceId)
+        .order("name", { ascending: true }),
     ]);
+
     if (posts) list = posts as unknown as Post[];
     if (categories) categoryList = categories as Category[];
   } catch (err) {
@@ -63,127 +85,190 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
     duplicated: "Post duplicated as a draft.",
   };
 
-
   return (
     <div className="page animate-fade-up">
-      {/* Header */}
-      <div className="page-header">
-        <div>
-          <p className="ai-tag" style={{ marginBottom: 6 }}>Content management</p>
-          <h1 className="page-title">Posts</h1>
-          <p className="page-subtitle">Create, organize, and manage your social content in one place.</p>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/posts/categories" className="btn btn-primary">
-            <FolderOpen size={15} /> Categories
-          </Link>
-          <Link href="/posts/new" className="btn btn-ai">
-            <Plus size={15} /> Create Post
-          </Link>
-        </div>
-      </div>
-
-      {/* Success message */}
-      {savedMessages[saved] && (
-        <div className="badge badge-success" style={{ padding: '10px 16px', borderRadius: 'var(--r-md)', fontSize: 13, marginBottom: 16, display: 'block' }}>
-          {savedMessages[saved]}
-        </div>
-      )}
-
-      {/* Toolbar */}
-      <PostsToolbar categories={categoryList} values={{ search, platform, status, category, sort }} />
-
-      {/* Table */}
-      <div className="card" style={{ marginTop: 16, overflow: 'hidden' }}>
-        {/* Table header — hidden on mobile, shown as grid on desktop (≥1024px) */}
-        <div className="posts-table-header">
-          <div>Post</div>
-          <div>Platform</div>
-          <div>Category</div>
-          <div>Status</div>
-          <div>Schedule</div>
-          <div style={{ textAlign: 'right' }}>Actions</div>
-        </div>
-
-        {/* Empty state */}
-        {list.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">
-              {search || platform || status || category ? <SearchX size={20} /> : <FileText size={20} />}
-            </div>
-            <p className="empty-title">
-              {search || platform || status || category ? "No posts match your filters" : "No posts yet"}
+      <div className="mx-auto max-w-7xl space-y-6 pb-20">
+        {/* Page Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-violet-400">
+              ✦ Content Management
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+              Posts
+            </h1>
+            <p className="text-xs sm:text-sm text-white/50">
+              Create, organize, and manage your multi-channel social content in one place.
             </p>
-            <p className="empty-desc">
-              {search || platform || status || category
-                ? "Try changing your search or filters."
-                : "Create your first post to start building your content library."}
-            </p>
-            {search || platform || status || category
-              ? <Link href="/posts" className="btn btn-primary">Clear filters</Link>
-              : <Link href="/posts/new" className="btn btn-ai"><Plus size={15} /> Create your first post</Link>
-            }
           </div>
-        ) : (
-          <div>
-            {list.map((post) => {
-              const cat = categoryList.find((item) => item.id === post.category_id);
-              return (
-                <div key={post.id} className="posts-row">
-                  {/* Post info */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                    <div style={{
-                      width: 44, height: 44, borderRadius: 'var(--r-md)',
-                      background: 'var(--bg-elevated)', flexShrink: 0, overflow: 'hidden',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      {post.image_url
-                        ? <img src={post.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        : <FileText size={16} color="var(--text-muted)" />
-                      }
-                    </div>
-                    <div style={{ minWidth: 0 }}>
-                      <Link href={`/posts/${post.id}/edit`} style={{
-                        display: 'block', fontSize: 13, fontWeight: 600,
-                        color: 'var(--text-primary)', overflow: 'hidden',
-                        textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                      }}>
-                        {post.title}
-                      </Link>
-                      <p style={{
-                        marginTop: 3, fontSize: 11.5, color: 'var(--text-secondary)',
-                        overflow: 'hidden', display: '-webkit-box',
-                        WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                      }}>
-                        {post.caption || "No caption added yet."}
-                      </p>
-                    </div>
-                  </div>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/posts/categories"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+            >
+              <FolderOpen size={14} />
+              <span>Categories</span>
+            </Link>
+            <Link
+              href="/posts/new"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-xs font-semibold text-white shadow-md shadow-violet-500/20 hover:from-violet-500 hover:to-indigo-500 transition"
+            >
+              <Plus size={14} />
+              <span>Create Post</span>
+            </Link>
+          </div>
+        </div>
 
-                  <PlatformBadge platform={post.platform} />
-
-                  <div>
-                    {cat
-                      ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-secondary)' }}>
-                          <span style={{ width: 8, height: 8, borderRadius: '50%', background: cat.color, flexShrink: 0 }} />
-                          {cat.name}
-                        </span>
-                      : <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Uncategorized</span>
-                    }
-                  </div>
-
-                  <div><PostStatusBadge status={post.status} /></div>
-
-                  <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
-                    {post.scheduled_at ? new Date(post.scheduled_at).toLocaleString() : "Not scheduled"}
-                  </div>
-
-                  <PostActions postId={post.id} />
-                </div>
-              );
-            })}
+        {/* Success Alert */}
+        {savedMessages[saved] && (
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs font-medium text-emerald-300">
+            {savedMessages[saved]}
           </div>
         )}
+
+        {/* Toolbar */}
+        <PostsToolbar
+          categories={categoryList}
+          values={{ search, platform, status, category, sort }}
+        />
+
+        {/* Posts Table */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 shadow-xl overflow-hidden">
+          {list.length === 0 ? (
+            <div className="py-20 text-center px-4">
+              <div className="flex h-12 w-12 mx-auto items-center justify-center rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-400 mb-3 shadow-inner">
+                {search || platform || status || category ? (
+                  <SearchX size={20} />
+                ) : (
+                  <FileText size={20} />
+                )}
+              </div>
+              <h3 className="text-sm font-semibold text-white">
+                {search || platform || status || category
+                  ? "No posts match your filters"
+                  : "No posts created yet"}
+              </h3>
+              <p className="mt-1 text-xs text-white/40 max-w-sm mx-auto leading-relaxed">
+                {search || platform || status || category
+                  ? "Try resetting your search query or adjusting your filter criteria."
+                  : "Create your first draft post or generate an automated batch using AI Studio."}
+              </p>
+              <div className="mt-4">
+                {search || platform || status || category ? (
+                  <Link
+                    href="/posts"
+                    className="inline-flex h-8 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-3.5 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+                  >
+                    Clear Filters
+                  </Link>
+                ) : (
+                  <Link
+                    href="/posts/new"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white shadow-md shadow-violet-500/20 hover:bg-violet-500 transition"
+                  >
+                    <Plus size={14} />
+                    <span>Create First Post</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div>
+              {/* Desktop Table Header */}
+              <div className="hidden lg:grid grid-cols-12 px-6 py-3 border-b border-white/[0.06] bg-white/[0.015] text-[10.5px] uppercase tracking-wider font-semibold text-white/40">
+                <div className="col-span-5">Post Content</div>
+                <div className="col-span-2">Platform</div>
+                <div className="col-span-2">Category</div>
+                <div className="col-span-1">Status</div>
+                <div className="col-span-2 text-right">Actions</div>
+              </div>
+
+              {/* Rows */}
+              <div className="divide-y divide-white/[0.04]">
+                {list.map((post) => {
+                  const cat = categoryList.find((item) => item.id === post.category_id);
+                  return (
+                    <div
+                      key={post.id}
+                      className="flex flex-col lg:grid lg:grid-cols-12 gap-3 lg:gap-4 items-start lg:items-center px-5 py-4 sm:px-6 hover:bg-white/[0.02] transition"
+                    >
+                      {/* Post Info */}
+                      <div className="lg:col-span-5 flex items-center gap-3.5 min-w-0 w-full">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#141426] border border-white/10 overflow-hidden">
+                          {post.image_url ? (
+                            <img
+                              src={post.image_url}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <FileText size={16} className="text-white/30" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <Link
+                            href={`/posts/${post.id}/edit`}
+                            className="text-xs sm:text-sm font-semibold text-white hover:text-violet-300 transition truncate block"
+                          >
+                            {post.title}
+                          </Link>
+                          <p className="text-[11.5px] text-white/40 line-clamp-1 mt-0.5">
+                            {post.caption || "No caption added"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Platform */}
+                      <div className="lg:col-span-2">
+                        <PlatformBadge platform={post.platform} />
+                      </div>
+
+                      {/* Category */}
+                      <div className="lg:col-span-2">
+                        {cat ? (
+                          <span
+                            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                            style={{
+                              backgroundColor: `${cat.color}15`,
+                              border: `1px solid ${cat.color}35`,
+                              color: "#fff",
+                            }}
+                          >
+                            <span
+                              className="h-1.5 w-1.5 rounded-full"
+                              style={{ backgroundColor: cat.color }}
+                            />
+                            <span className="truncate max-w-[120px]">{cat.name}</span>
+                          </span>
+                        ) : (
+                          <span className="text-xs text-white/35">Uncategorized</span>
+                        )}
+                      </div>
+
+                      {/* Status */}
+                      <div className="lg:col-span-1">
+                        <PostStatusBadge status={post.status} />
+                      </div>
+
+                      {/* Actions */}
+                      <div className="lg:col-span-2 w-full lg:w-auto flex items-center justify-between lg:justify-end gap-2 pt-2 lg:pt-0 border-t lg:border-0 border-white/[0.04]">
+                        <span className="text-[11px] text-white/35 font-mono lg:hidden">
+                          {post.scheduled_at
+                            ? new Date(post.scheduled_at).toLocaleDateString(undefined, {
+                                month: "short",
+                                day: "numeric",
+                              })
+                            : "Draft"}
+                        </span>
+                        <PostActions postId={post.id} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

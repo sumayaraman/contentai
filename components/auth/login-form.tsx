@@ -31,10 +31,11 @@ export function LoginForm() {
 
   return (
     <AuthShell title="Welcome back" subtitle="Sign in to continue to your ContentAI workspace.">
-      <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-
+      <form onSubmit={submit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="email" className="label">Email address</label>
+          <label htmlFor="email" className="mb-2 block text-xs font-semibold text-white/70">
+            Email address
+          </label>
           <input
             id="email"
             type="email"
@@ -42,15 +43,17 @@ export function LoginForm() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input"
+            className="h-10 w-full rounded-xl border border-white/10 bg-[#121222] px-3.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
             placeholder="you@company.com"
           />
         </div>
 
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <label htmlFor="password" className="label" style={{ marginBottom: 0 }}>Password</label>
-            <Link href="/forgot-password" style={{ fontSize: 12, color: "var(--accent)" }}>
+          <div className="mb-2 flex items-center justify-between">
+            <label htmlFor="password" className="text-xs font-semibold text-white/70">
+              Password
+            </label>
+            <Link href="/forgot-password" className="text-xs text-violet-400 hover:text-violet-300 transition">
               Forgot password?
             </Link>
           </div>
@@ -61,21 +64,13 @@ export function LoginForm() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="input"
+            className="h-10 w-full rounded-xl border border-white/10 bg-[#121222] px-3.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
             placeholder="••••••••"
           />
         </div>
 
         {error && (
-          <div style={{
-            background: "var(--red-soft)",
-            border: "1px solid rgba(239,68,68,0.2)",
-            borderRadius: "var(--r-sm)",
-            padding: "10px 13px",
-            fontSize: 12.5,
-            color: "var(--red)",
-            animation: "bounce-in 0.3s ease forwards"
-          }}>
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-3.5 py-2.5 text-xs text-red-400">
             {error}
           </div>
         )}
@@ -83,26 +78,27 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="btn btn-ai btn-lg"
-          style={{ width: "100%", marginTop: 4 }}
+          className="mt-1 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 hover:bg-violet-500 transition disabled:opacity-50"
         >
           {loading ? (
             <>
-              <Loader2 size={14} style={{ animation: "spin-slow 1s linear infinite" }} />
+              <Loader2 size={16} className="animate-spin" />
               Signing in…
             </>
-          ) : "Sign in"}
+          ) : (
+            "Sign in"
+          )}
         </button>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 0" }}>
-          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
-          <span style={{ fontSize: 11.5, color: "var(--text-muted)" }}>or</span>
-          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+        <div className="my-1 flex items-center gap-3">
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="text-xs text-white/40">or</span>
+          <div className="h-px flex-1 bg-white/10" />
         </div>
 
-        <p style={{ textAlign: "center", fontSize: 13, color: "var(--text-secondary)" }}>
+        <p className="text-center text-xs text-white/60">
           New to ContentAI?{" "}
-          <Link href="/signup" style={{ color: "var(--accent)", fontWeight: 500 }}>
+          <Link href="/signup" className="font-semibold text-violet-400 hover:text-violet-300 transition">
             Create an account
           </Link>
         </p>

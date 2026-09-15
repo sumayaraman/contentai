@@ -36,16 +36,18 @@ export default async function NewPostPage({ searchParams }: { searchParams: Prom
   }
 
   return (
-    <div className="page animate-fade-up max-w-7xl mx-auto space-y-6">
+    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
       <div>
         <Link href="/posts" className="inline-flex items-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition mb-4">
           <ArrowLeft size={14} /> Back to Posts
         </Link>
-        <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-300 mb-2">
-          Content management
+        <div className="flex flex-col gap-2">
+          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300">
+            ✦ Content Composer
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Create Post</h1>
+          <p className="text-sm text-white/50">Build a new social post, attach media assets, and save as a draft or schedule for automated publishing.</p>
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Create Post</h1>
-        <p className="mt-1 text-xs text-white/50">Build a post and save it as a draft or schedule it for publishing.</p>
       </div>
       <PostEditor post={null} initialScheduledAt={scheduled || null} initialStatus={initialStatus === "SCHEDULED" ? "SCHEDULED" : "DRAFT"} categories={categories} media={media} />
     </div>
