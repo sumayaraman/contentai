@@ -1,6 +1,6 @@
 import { AnalyticsDashboard } from "@/components/analytics/analytics-dashboard";
 import { getActiveWorkspace } from "@/lib/content/workspace";
-import { getAnalyticsDashboard } from "@/lib/analytics/service";
+import { getAnalyticsDashboard, getMockAnalyticsForPreview } from "@/lib/analytics/service";
 import type { Category, Post } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -34,8 +34,25 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
       supabase.from("categories").select("id, name").eq("workspace_id", workspaceId).order("name"),
       supabase.from("posts").select("id, workspace_id, created_by, title, caption, platform, status, category_id, cta, hashtags, image_url, image_prompt, scheduled_at, published_at, created_at, updated_at").eq("workspace_id", workspaceId).order("created_at", { ascending: false }),
     ]);
-    if (cats) categories = cats as Pick<Category, "id" | "name">[];
-    if (postData) posts = postData as Post[];
+
+    if (cats && cats.length > 0) {
+      categories = cats as Pick<Category, "id" | "name">[];
+    } else {
+      categories = [
+        { id: "cat-edu", name: "Educational" },
+        { id: "cat-prod", name: "Product Launch" },
+        { id: "cat-bts", name: "Behind the Scenes" },
+        { id: "cat-promo", name: "Promotional" },
+        { id: "cat-comm", name: "Community & Culture" },
+      ];
+    }
+
+    if (postData && postData.length > 0) {
+      posts = postData as Post[];
+    } else {
+      posts = getMockAnalyticsForPreview(workspaceId) as unknown as Post[];
+    }
+
     data = await getAnalyticsDashboard(supabase, workspaceId, { platform, categoryId: category });
   } catch (err) {
     if (isNextRouterSignal(err)) throw err;
