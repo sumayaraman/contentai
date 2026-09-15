@@ -39,17 +39,42 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   if (!post) notFound();
 
   return (
-    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
-      <div>
-        <Link href="/posts" className="inline-flex items-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition mb-4">
-          <ArrowLeft size={14} /> Back to Posts
-        </Link>
-        <div className="flex flex-col gap-2">
-          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300">
+    <div className="page animate-fade-up campaign-container" style={{ maxWidth: 1360, margin: "0 auto", gap: 28 }}>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
             ✦ Content Editor
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Edit Post</h1>
-          <p className="text-sm text-white/50">Update post copy, media assets, platform channels, and publication schedule.</p>
+          <p className="mt-1 text-sm text-white/50">
+            Update post copy, media assets, platform channels, and publication schedule.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/posts"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              height: 38,
+              padding: "0 16px",
+              borderRadius: "var(--r-md)",
+              border: "1px solid var(--border)",
+              background: "var(--bg-surface)",
+              color: "var(--text-secondary)",
+              fontSize: 12,
+              fontWeight: 600,
+              transition: "all 0.15s ease",
+            }}
+            className="hover:text-white hover:border-white/20"
+          >
+            <ArrowLeft size={14} /> Back to Posts
+          </Link>
+          <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 self-start sm:self-auto">
+            <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
+            Multi-Channel Dispatch
+          </div>
         </div>
       </div>
       <PostEditor post={post} categories={categories} media={media} />

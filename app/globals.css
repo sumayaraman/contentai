@@ -1304,6 +1304,19 @@ main {
   }
 }
 
+.post-composer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .post-composer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .campaign-brief-panel {
   background: var(--bg-surface);
   border: 1px solid var(--border);
