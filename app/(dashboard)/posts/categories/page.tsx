@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, FolderOpen } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { getActiveWorkspace } from "@/lib/content/workspace";
 import { CategoryManager } from "@/components/posts/category-manager";
 import type { Category } from "@/types/database";
@@ -32,34 +32,32 @@ export default async function CategoriesPage() {
 
   return (
     <div className="page animate-fade-up">
-      <div className="mx-auto max-w-6xl space-y-8 pb-20">
+      <div className="mx-auto max-w-5xl space-y-6">
+        {/* Navigation Breadcrumb */}
         <div>
           <Link
             href="/posts"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white transition mb-3 group"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white transition-colors group"
           >
-            <ArrowLeft size={13} className="transition group-hover:-translate-x-0.5" />
+            <ArrowLeft size={13} className="transition-transform group-hover:-translate-x-0.5" />
             <span>Back to Posts</span>
           </Link>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-300">
-                  <FolderOpen size={13} /> Content Organization
-                </span>
-              </div>
-              <h1 className="mt-2.5 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Categories
-              </h1>
-              <p className="mt-1.5 text-sm text-white/50 leading-relaxed max-w-2xl">
-                Create and manage color-coded tags to organize your posts, streamline multi-channel campaigns, and filter analytics themes.
-              </p>
-            </div>
+        </div>
+
+        {/* Page Header */}
+        <div className="page-header !mb-2">
+          <div>
+            <p className="ai-tag" style={{ marginBottom: 6 }}>✦ Content Taxonomy</p>
+            <h1 className="page-title">Categories</h1>
+            <p className="page-subtitle">
+              Create and manage color-coded tags to organize your posts, streamline multi-channel campaigns, and filter analytics themes.
+            </p>
           </div>
         </div>
+
+        {/* Category Manager */}
         <CategoryManager categories={categories} />
       </div>
     </div>
   );
 }
-
