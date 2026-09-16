@@ -36,10 +36,10 @@ export default async function AIStudioPage() {
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <p className="ai-tag" style={{ marginBottom: 6 }}>✦ AI Studio</p>
-          <h1 className="page-title">Create better content, faster</h1>
+          <p className="ai-tag" style={{ marginBottom: 6 }}>✦ Create Content</p>
+          <h1 className="page-title">AI Content Studio</h1>
           <p className="page-subtitle">
-            Generate structured social content from one brief. Your API key stays server-side, and Demo Mode keeps the studio usable without an AI provider.
+            Describe what you want to post about, and ContentAI will craft compelling hooks, captions, and hashtags.
           </p>
         </div>
         <span className="badge badge-ai">

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { FileText, FolderOpen, Plus, SearchX } from "lucide-react";
+import { FileText, FolderOpen, Plus, SearchX, Sparkles } from "lucide-react";
 import { getActiveWorkspace } from "@/lib/content/workspace";
 import { PostsToolbar } from "@/components/posts/posts-toolbar";
 import { PostActions } from "@/components/posts/post-actions";
@@ -132,6 +132,39 @@ export default async function PostsPage({
           values={{ search, platform, status, category, sort }}
         />
 
+        {/* 1-Click Status Quick Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          {[
+            { label: "All Content", value: "" },
+            { label: "Drafts", value: "DRAFT" },
+            { label: "Scheduled", value: "SCHEDULED" },
+            { label: "Published", value: "PUBLISHED" },
+          ].map((tab) => {
+            const isActive = status === tab.value;
+            const queryParams = new URLSearchParams();
+            if (search) queryParams.set("search", search);
+            if (platform) queryParams.set("platform", platform);
+            if (category) queryParams.set("category", category);
+            if (sort && sort !== "newest") queryParams.set("sort", sort);
+            if (tab.value) queryParams.set("status", tab.value);
+            const href = `/posts${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+
+            return (
+              <Link
+                key={tab.label}
+                href={href}
+                className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition whitespace-nowrap ${
+                  isActive
+                    ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
+                    : "border border-white/10 bg-white/[0.02] text-white/60 hover:bg-white/[0.05] hover:text-white"
+                }`}
+              >
+                {tab.label}
+              </Link>
+            );
+          })}
+        </div>
+
         {/* Posts Table */}
         <div className="rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 shadow-xl overflow-hidden">
           {list.length === 0 ? (
@@ -162,13 +195,22 @@ export default async function PostsPage({
                     Clear Filters
                   </Link>
                 ) : (
-                  <Link
-                    href="/posts/new"
-                    className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white shadow-md shadow-violet-500/20 hover:bg-violet-500 transition"
-                  >
-                    <Plus size={14} />
-                    <span>Create First Post</span>
-                  </Link>
+                  <div className="flex items-center justify-center gap-2">
+                    <Link
+                      href="/create"
+                      className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white shadow-md shadow-violet-500/20 hover:bg-violet-500 transition"
+                    >
+                      <Sparkles size={14} />
+                      <span>Create with AI</span>
+                    </Link>
+                    <Link
+                      href="/posts/new"
+                      className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+                    >
+                      <Plus size={14} />
+                      <span>Blank Post</span>
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>

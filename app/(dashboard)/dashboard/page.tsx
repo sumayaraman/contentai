@@ -1,7 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sparkles, TrendingUp, TrendingDown, Plus, ArrowRight, Clock, CheckCircle2, Zap, Bot, Check, X, Send, Loader2 } from "lucide-react";
+import {
+  Sparkles,
+  TrendingUp,
+  TrendingDown,
+  Plus,
+  ArrowRight,
+  Clock,
+  CheckCircle2,
+  Zap,
+  Bot,
+  Check,
+  X,
+  Send,
+  Loader2,
+  BarChart3,
+  CalendarDays,
+  Image as ImageIcon,
+  Megaphone,
+  WandSparkles,
+} from "lucide-react";
 import Link from "next/link";
 
 function getGreeting(date: Date = new Date()): string {
@@ -210,16 +229,285 @@ export default function DashboardPage() {
     { title: "5 Content Tips That Actually Work", platform: "LinkedIn", time: "May 23, 03:00 PM" },
   ];
 
+  const featureCards = [
+    {
+      title: "AI Content",
+      badge: "✨ Instant Copy",
+      badgeColor: "#a89dff",
+      badgeBg: "rgba(109,92,255,0.12)",
+      badgeBorder: "rgba(109,92,255,0.25)",
+      icon: Sparkles,
+      iconColor: "#a89dff",
+      iconBg: "rgba(109,92,255,0.12)",
+      iconBorder: "rgba(109,92,255,0.25)",
+      description: "Create captions, hooks, CTAs and hashtags with AI tailored for every social channel.",
+      cta: "Create Content →",
+      href: "/ai-studio",
+    },
+    {
+      title: "Image & Video Generator",
+      badge: "🎨 Visual Studio",
+      badgeColor: "#f472b6",
+      badgeBg: "rgba(244,114,182,0.12)",
+      badgeBorder: "rgba(244,114,182,0.25)",
+      icon: ImageIcon,
+      iconColor: "#f472b6",
+      iconBg: "rgba(244,114,182,0.12)",
+      iconBorder: "rgba(244,114,182,0.25)",
+      description: "Create a custom image or video visual for your individual social media posts.",
+      cta: "Create Visual →",
+      href: "/image-studio",
+    },
+    {
+      title: "30-Day Content Workshop",
+      badge: "📅 Month Plan",
+      badgeColor: "#fbbf24",
+      badgeBg: "rgba(245,158,11,0.12)",
+      badgeBorder: "rgba(245,158,11,0.25)",
+      icon: WandSparkles,
+      iconColor: "#fbbf24",
+      iconBg: "rgba(245,158,11,0.12)",
+      iconBorder: "rgba(245,158,11,0.25)",
+      description: "Generate a complete month of branded visual content with your logo, watermark, and schedule.",
+      cta: "Open Workshop →",
+      href: "/workspace",
+    },
+    {
+      title: "Content Calendar",
+      badge: "📅 Schedule",
+      badgeColor: "#60a5fa",
+      badgeBg: "rgba(59,130,246,0.12)",
+      badgeBorder: "rgba(59,130,246,0.25)",
+      icon: CalendarDays,
+      iconColor: "#60a5fa",
+      iconBg: "rgba(59,130,246,0.12)",
+      iconBorder: "rgba(59,130,246,0.25)",
+      description: "Plan and schedule your upcoming social media content across all connected channels.",
+      cta: "Open Calendar →",
+      href: "/calendar",
+    },
+    {
+      title: "Campaigns",
+      badge: "🚀 Goal Focused",
+      badgeColor: "#818cf8",
+      badgeBg: "rgba(129,140,248,0.12)",
+      badgeBorder: "rgba(129,140,248,0.25)",
+      icon: Megaphone,
+      iconColor: "#818cf8",
+      iconBg: "rgba(129,140,248,0.12)",
+      iconBorder: "rgba(129,140,248,0.25)",
+      description: "Organize multiple posts around one marketing goal, launch, or event.",
+      cta: "View Campaigns →",
+      href: "/campaigns",
+    },
+    {
+      title: "Analytics",
+      badge: "📊 Insights",
+      badgeColor: "#34d399",
+      badgeBg: "rgba(16,185,129,0.12)",
+      badgeBorder: "rgba(16,185,129,0.25)",
+      icon: BarChart3,
+      iconColor: "#34d399",
+      iconBg: "rgba(16,185,129,0.12)",
+      iconBorder: "rgba(16,185,129,0.25)",
+      description: "Understand what content is performing, review engagement, and score post quality.",
+      cta: "View Analytics →",
+      href: "/analytics",
+    },
+  ];
+
   return (
     <div className="page animate-fade-in">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">{greeting} ✦</h1>
-          <p className="page-subtitle">Here&apos;s what&apos;s happening with your content today.</p>
+      {/* 1. Hero Welcome Section */}
+      <div
+        className="card"
+        style={{
+          marginBottom: 20,
+          padding: "24px 28px",
+          background: "linear-gradient(135deg, rgba(109,92,255,0.10) 0%, rgba(168,85,247,0.05) 100%), var(--bg-surface)",
+          border: "1px solid var(--border-accent)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: "var(--accent)",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              background: "var(--accent-soft)",
+              border: "1px solid var(--border-accent)",
+              padding: "3px 10px",
+              borderRadius: "var(--r-full)",
+            }}
+          >
+            {greeting} ✦
+          </span>
         </div>
-        <Link href="/ai-studio" className="btn btn-ai">
-          <Sparkles size={13} /> Create with AI
-        </Link>
+
+        <div>
+          <h1
+            style={{
+              fontSize: "clamp(20px, 3vw, 26px)",
+              fontWeight: 800,
+              color: "var(--text-primary)",
+              letterSpacing: "-0.03em",
+              margin: 0,
+            }}
+          >
+            Create better social content with AI.
+          </h1>
+          <p
+            style={{
+              fontSize: 13,
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+              margin: "6px 0 0",
+              maxWidth: 640,
+            }}
+          >
+            Create, organize, schedule, and analyze your social media content — all in one place.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginTop: 4 }}>
+          <Link
+            href="/create"
+            className="btn btn-primary"
+            style={{
+              height: 40,
+              padding: "0 18px",
+              fontSize: 13,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <Sparkles size={14} />
+            <span>✨ Create Content</span>
+          </Link>
+          <Link
+            href="/ai-assistant"
+            className="btn btn-secondary"
+            style={{
+              height: 40,
+              padding: "0 18px",
+              fontSize: 13,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "var(--bg-elevated)",
+              border: "1px solid var(--border)",
+              color: "var(--text-primary)",
+              borderRadius: "var(--r-md)",
+            }}
+          >
+            <Bot size={14} />
+            <span>🤖 Ask AI Assistant</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* 2. What would you like to do? Section */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <div>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+              What would you like to do?
+            </h2>
+            <p style={{ fontSize: 11.5, color: "var(--text-muted)", margin: "2px 0 0" }}>
+              Explore the core creation, planning, and analytics capabilities of ContentAI.
+            </p>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: 16,
+          }}
+        >
+          {featureCards.map((c) => {
+            const Icon = c.icon;
+            return (
+              <div
+                key={c.title}
+                className="card"
+                style={{
+                  padding: "18px 20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  background: "var(--bg-surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--r-xl)",
+                  transition: "border-color 0.15s ease, transform 0.15s ease",
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: "var(--r-md)",
+                        background: c.iconBg,
+                        border: `1px solid ${c.iconBorder}`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: c.iconColor,
+                      }}
+                    >
+                      <Icon size={18} />
+                    </div>
+                    <span
+                      style={{
+                        fontSize: 10.5,
+                        fontWeight: 600,
+                        color: c.badgeColor,
+                        background: c.badgeBg,
+                        border: `1px solid ${c.badgeBorder}`,
+                        padding: "2px 8px",
+                        borderRadius: "var(--r-full)",
+                      }}
+                    >
+                      {c.badge}
+                    </span>
+                  </div>
+                  <h3 style={{ fontSize: 13.5, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+                    {c.title}
+                  </h3>
+                  <p style={{ fontSize: 11.5, color: "var(--text-secondary)", margin: "4px 0 0", lineHeight: 1.45 }}>
+                    {c.description}
+                  </p>
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <Link
+                    href={c.href}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "var(--accent)",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <span>{c.cta}</span>
+                    <ArrowRight size={12} />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className="metrics-grid" style={{ marginBottom: 20 }}>

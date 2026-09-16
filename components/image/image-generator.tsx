@@ -196,10 +196,31 @@ export function ImageGenerator({
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span className="badge badge-ai" style={{ fontSize: 11 }}>
             <span className="ai-dot" style={{ width: 6, height: 6 }} />
-            Free · Pollinations Flux
+            {activeTab === "image" ? "Free Live Generator · Pollinations Flux" : "Coming Soon · Video Studio Preview"}
           </span>
         </div>
       </div>
+
+      {/* Video in-development notice */}
+      {activeTab === "video" && (
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          padding: "12px 18px",
+          background: "rgba(245,158,11,0.08)",
+          border: "1px solid rgba(245,158,11,0.25)",
+          borderRadius: "var(--r-md)",
+          color: "var(--amber)",
+          fontSize: 12.5,
+          lineHeight: 1.5,
+        }}>
+          <Film size={18} style={{ flexShrink: 0 }} />
+          <span>
+            <strong>Video Generation (Preview):</strong> Video generation requires dedicated compute hardware and is currently in development. You can preview the interface and controls below while we prepare the service for launch.
+          </span>
+        </div>
+      )}
 
       {/* Notifications */}
       {notice && (

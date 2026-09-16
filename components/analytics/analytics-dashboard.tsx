@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Filter,
   Gauge,
+  Info,
   MessageCircle,
   PenSquare,
   RefreshCw,
@@ -870,9 +871,24 @@ export function AnalyticsDashboard({
               >
                 AI Scoring Studio
               </span>
-              <h2 style={{ fontSize: 17, fontWeight: 800, color: "var(--text-primary)", margin: "2px 0 0" }}>
-                Content Intelligence &amp; Scoring
-              </h2>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
+                <h2 style={{ fontSize: 17, fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
+                  Content Intelligence &amp; Scoring
+                </h2>
+                <span
+                  title="A quick assessment of how strong your content is based on clarity and engagement potential"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 3,
+                    fontSize: 11,
+                    color: "var(--text-muted)",
+                    cursor: "help",
+                  }}
+                >
+                  <Info size={14} />
+                </span>
+              </div>
               <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "2px 0 0" }}>
                 Score a post from 0–100 using AI readability and engagement metrics
               </p>
@@ -1016,8 +1032,21 @@ export function AnalyticsDashboard({
                   {scoreResult.score}
                 </div>
                 <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>/ 100</div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--accent)", marginTop: 8 }}>
-                  Content Score
+                <div
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: "var(--accent)",
+                    marginTop: 8,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                    cursor: "help",
+                  }}
+                  title="A quick assessment of how strong your content is based on clarity and engagement potential"
+                >
+                  <span>Content Score</span>
+                  <Info size={13} style={{ opacity: 0.8 }} />
                 </div>
               </div>
 
