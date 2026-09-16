@@ -57,6 +57,18 @@ export function Topbar({ profile }: TopbarProps) {
     setDrawerOpen(false);
   }, [pathname]);
 
+  // Listen for drawer toggle event from mobile bottom navigation
+  useEffect(() => {
+    const handleToggle = () => setDrawerOpen((prev) => !prev);
+    const handleOpen = () => setDrawerOpen(true);
+    window.addEventListener("toggle-mobile-drawer", handleToggle);
+    window.addEventListener("open-mobile-drawer", handleOpen);
+    return () => {
+      window.removeEventListener("toggle-mobile-drawer", handleToggle);
+      window.removeEventListener("open-mobile-drawer", handleOpen);
+    };
+  }, []);
+
   // Lock body scroll when drawer is open
   useEffect(() => {
     if (drawerOpen) {

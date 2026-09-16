@@ -1158,15 +1158,9 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
                 The AI crafts an engaging mix of product highlights, lifestyle moments, educational tips, and offers. Your logo is automatically stamped on every visual.
               </p>
 
-              {/* 3 Step Highlights */}
+              {/* 3 Step Highlights: 1 column on mobile, 3 columns on tablet/desktop */}
               <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                  gap: 12,
-                  width: "100%",
-                  maxWidth: 640,
-                }}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-[640px]"
               >
                 <div
                   style={{
@@ -1309,7 +1303,7 @@ export function MarketingWorkspace({ workspace, canEdit }: Props) {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 260px), 1fr))",
                   gap: 16,
                 }}
               >
