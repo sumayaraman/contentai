@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { FileText, FolderOpen, Plus, SearchX, Sparkles } from "lucide-react";
+import { FileText, FolderOpen, Plus, SearchX } from "lucide-react";
 import { getActiveWorkspace } from "@/lib/content/workspace";
 import { PostsToolbar } from "@/components/posts/posts-toolbar";
 import { PostActions } from "@/components/posts/post-actions";
@@ -95,7 +95,7 @@ export default async function PostsPage({
               ✦ Content Management
             </span>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Content
+              Posts
             </h1>
             <p className="text-xs sm:text-sm text-white/50">
               Create, organize, and manage your multi-channel social content in one place.
@@ -126,40 +126,6 @@ export default async function PostsPage({
           </div>
         )}
 
-        {/* 1-Click Status Filter Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-          {[
-            { label: "All Content", val: "" },
-            { label: "Drafts", val: "DRAFT" },
-            { label: "Scheduled", val: "SCHEDULED" },
-            { label: "Published", val: "PUBLISHED" },
-          ].map((tab) => {
-            const isActive = (status || "").toUpperCase() === tab.val;
-            const queryParams = new URLSearchParams();
-            if (search) queryParams.set("search", search);
-            if (platform) queryParams.set("platform", platform);
-            if (category) queryParams.set("category", category);
-            if (sort) queryParams.set("sort", sort);
-            if (tab.val) queryParams.set("status", tab.val);
-            const queryStr = queryParams.toString();
-            const href = queryStr ? `/posts?${queryStr}` : "/posts";
-
-            return (
-              <Link
-                key={tab.label}
-                href={href}
-                className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition shrink-0 ${
-                  isActive
-                    ? "bg-violet-600 text-white shadow-sm shadow-violet-600/30"
-                    : "border border-white/10 bg-white/[0.02] text-white/60 hover:bg-white/[0.05] hover:text-white"
-                }`}
-              >
-                {tab.label}
-              </Link>
-            );
-          })}
-        </div>
-
         {/* Toolbar */}
         <PostsToolbar
           categories={categoryList}
@@ -185,7 +151,7 @@ export default async function PostsPage({
               <p className="mt-1 text-xs text-white/40 max-w-sm mx-auto leading-relaxed">
                 {search || platform || status || category
                   ? "Try resetting your search query or adjusting your filter criteria."
-                  : "Create your first social media post with AI or write a manual draft from scratch."}
+                  : "Create your first draft post or generate an automated batch using AI Studio."}
               </p>
               <div className="mt-4">
                 {search || platform || status || category ? (
@@ -196,22 +162,13 @@ export default async function PostsPage({
                     Clear Filters
                   </Link>
                 ) : (
-                  <div className="flex items-center justify-center gap-2">
-                    <Link
-                      href="/create"
-                      className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white shadow-md shadow-violet-500/20 hover:bg-violet-500 transition"
-                    >
-                      <Sparkles size={14} />
-                      <span>Create with AI</span>
-                    </Link>
-                    <Link
-                      href="/posts/new"
-                      className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
-                    >
-                      <Plus size={14} />
-                      <span>Blank Post</span>
-                    </Link>
-                  </div>
+                  <Link
+                    href="/posts/new"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-semibold text-white shadow-md shadow-violet-500/20 hover:bg-violet-500 transition"
+                  >
+                    <Plus size={14} />
+                    <span>Create First Post</span>
+                  </Link>
                 )}
               </div>
             </div>

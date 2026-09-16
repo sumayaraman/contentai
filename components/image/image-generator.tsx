@@ -196,7 +196,7 @@ export function ImageGenerator({
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span className="badge badge-ai" style={{ fontSize: 11 }}>
             <span className="ai-dot" style={{ width: 6, height: 6 }} />
-            {activeTab === "image" ? "Free Live Generator · Pollinations Flux" : "Coming Soon · Video Studio Preview"}
+            Free · Pollinations Flux
           </span>
         </div>
       </div>
@@ -362,26 +362,7 @@ export function ImageGenerator({
               )}
             </button>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: "var(--r-md)",
-                  background: "rgba(245,158,11,0.08)",
-                  border: "1px solid rgba(245,158,11,0.25)",
-                  color: "var(--amber)",
-                  fontSize: 12,
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 10,
-                }}
-              >
-                <Film size={16} style={{ flexShrink: 0, marginTop: 2 }} />
-                <div>
-                  <strong style={{ display: "block", marginBottom: 2 }}>Video Generation: In Development</strong>
-                  Video synthesis via Stable Video Diffusion is currently in development. Full automated video rendering will be available soon.
-                </div>
-              </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <button
                 type="button"
                 onClick={generateVideo}

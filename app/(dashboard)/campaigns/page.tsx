@@ -38,11 +38,11 @@ export default async function CampaignsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
-            ✦ Campaign Studio
+            ✦ AI Campaign Planner
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Campaigns</h1>
-          <p className="mt-1 text-sm text-white/50 max-w-xl">
-            Organize multiple social posts around one goal. Generate a structured multi-day strategy, refine hooks, and batch schedule directly to your calendar.
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Multi-Day Campaigns</h1>
+          <p className="mt-1 text-sm text-white/50">
+            Generate structured multi-day campaigns, refine day-by-day hooks and copy, then batch schedule directly to your calendar.
           </p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 self-start sm:self-auto">

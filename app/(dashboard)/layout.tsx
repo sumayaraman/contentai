@@ -4,7 +4,6 @@ import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { getActiveWorkspace } from "@/lib/content/workspace";
 import { getWorkspaceOptions } from "@/lib/workspace/actions";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { FloatingAIAssistant } from "@/components/ai/floating-ai-assistant";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +51,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
           {children}
         </main>
       </div>
-      <FloatingAIAssistant />
       <MobileNav />
     </div>
   );
