@@ -2,42 +2,27 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3,
-  Bot,
-  CalendarDays,
-  ChevronDown,
-  HelpCircle,
-  Image,
-  LayoutDashboard,
-  Megaphone,
-  PenSquare,
-  PlusCircle,
-  RadioTower,
-  Settings,
-  Sparkles,
+  BarChart3, CalendarDays, FolderKanban, Image, WandSparkles,
+  LayoutDashboard, Megaphone, PenSquare, RadioTower,
+  Settings, Sparkles, ChevronDown, HelpCircle
 } from "lucide-react";
 
 const navMain = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { href: "/ai-assistant", label: "AI Assistant", icon: Bot },
-  { href: "/create", label: "Create", icon: PlusCircle },
-  { href: "/calendar", label: "Calendar", icon: CalendarDays },
-  { href: "/posts", label: "Content", icon: PenSquare },
+  { href: "/dashboard",     label: "Overview",      icon: LayoutDashboard },
+  { href: "/ai-studio",     label: "AI Studio",     icon: Sparkles },
+  { href: "/posts",         label: "Posts",         icon: PenSquare },
+  { href: "/calendar",      label: "Calendar",      icon: CalendarDays },
+  { href: "/campaigns",     label: "Campaigns",     icon: Megaphone },
+  { href: "/workspace",     label: "Content Workspace", icon: WandSparkles },
+  { href: "/analytics",     label: "Analytics",     icon: BarChart3 },
+  { href: "/publishing",    label: "Publishing",    icon: RadioTower },
+  { href: "/media-library", label: "Media Library", icon: Image },
 ];
 
-const navInsights = [
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
-];
-
-const navTools = [
-  { href: "/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/media-library", label: "Media", icon: Image },
-  { href: "/publishing", label: "Publishing", icon: RadioTower },
-];
-
-const navSettings = [
-  { href: "/settings", label: "Settings", icon: Settings },
-  { href: "/help", label: "Help & docs", icon: HelpCircle },
+const navWorkspace = [
+  { href: "/posts/categories", label: "Categories", icon: FolderKanban },
+  { href: "/settings",         label: "Settings",   icon: Settings },
+  { href: "/help",             label: "Help & docs", icon: HelpCircle },
 ];
 
 interface SidebarProps {
@@ -86,7 +71,7 @@ export function Sidebar({ profile }: SidebarProps = {}) {
       {/* Nav */}
       <nav className="sb-nav">
         <div className="sb-section">Main</div>
-        {navMain.map(({ href, label, icon: Icon }) => {
+        {navMain.map(({ href, label, icon: Icon }, i) => {
           const active = isActive(href);
           return (
             <Link
@@ -101,40 +86,8 @@ export function Sidebar({ profile }: SidebarProps = {}) {
         })}
 
         <div className="sb-divider" />
-        <div className="sb-section">Insights</div>
-        {navInsights.map(({ href, label, icon: Icon }) => {
-          const active = isActive(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`sb-link${active ? " active" : ""}`}
-            >
-              <Icon size={14} strokeWidth={active ? 2.2 : 1.8} style={{ flexShrink: 0 }} />
-              {label}
-            </Link>
-          );
-        })}
-
-        <div className="sb-divider" />
-        <div className="sb-section">Tools</div>
-        {navTools.map(({ href, label, icon: Icon }) => {
-          const active = isActive(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`sb-link${active ? " active" : ""}`}
-            >
-              <Icon size={14} strokeWidth={active ? 2.2 : 1.8} style={{ flexShrink: 0 }} />
-              {label}
-            </Link>
-          );
-        })}
-
-        <div className="sb-divider" />
-        <div className="sb-section">Settings</div>
-        {navSettings.map(({ href, label, icon: Icon }) => {
+        <div className="sb-section">Workspace</div>
+        {navWorkspace.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
             <Link

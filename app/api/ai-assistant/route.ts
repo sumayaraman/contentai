@@ -30,16 +30,16 @@ PLATFORM OVERVIEW:
 - It works in demo mode without any API keys
 
 MAIN FEATURES:
-1. Create Hub (/create) - Central starting point offering 3 distinct pathways: Social Content, Single Image/Video, or 30-Day Workshop.
-2. AI Content Studio (/ai-studio) - Generate social media copy with hooks, captions, CTAs, hashtags, and visual prompts with progressive disclosure.
-3. Image & Video Studio (/image-studio) - Create single custom images or preview video clips for specific posts. Powered live by Flux.
-4. 30-Day Content Workshop (/workspace) - Generate a complete month of branded visual content with custom logo watermarks and automated schedule. (DO NOT confuse this with the single Image Studio).
-5. Content Calendar (/calendar) - Monthly and weekly views with drag-and-drop rescheduling and status indicators.
-6. Campaigns (/campaigns) - Organize multiple posts around one marketing goal with daily plans.
-7. Content Management (/posts) - Full CRUD with 1-click status tabs (Drafts, Scheduled, Published), search, and categories.
-8. Media Library (/media-library) - Upload, store, and attach images to posts with private workspace storage.
-9. Social Publishing (/publishing) - Multi-channel queue with connections for Instagram, Facebook, LinkedIn, and X.
-10. Analytics Dashboard (/analytics) - Engagement metrics, reach, clicks, and AI content intelligence scoring.
+1. AI Studio - Generate social media posts with hook, caption, CTA, hashtags, and image prompts. Supports OpenAI, Anthropic, Groq, or demo mode.
+2. AI Campaign Generator - Create multi-day content campaigns with per-day regeneration and one-click calendar export.
+3. AI Image Generation - Turn image prompts into media assets stored in your workspace.
+4. Content Calendar - Monthly and weekly views with drag-and-drop rescheduling and status indicators.
+5. Posts Management - Full CRUD with search, filters, categories, platform selection, and draft/schedule workflows.
+6. Media Library - Upload, store, and attach images to posts with workspace-isolated private storage.
+7. Social Publishing - Demo publishing plus optional OAuth connections for Instagram, Facebook, LinkedIn, and X/Twitter.
+8. Analytics Dashboard - Engagement metrics, platform performance, category performance, and best-performing content.
+9. Content Intelligence - AI-powered 0-100 content scoring with recommendations.
+10. Workspace & Team - Multi-workspace support with OWNER, ADMIN, and MEMBER roles.
 
 HOW TO USE KEY FEATURES:
 - To create a post: Go to Posts → click "New Post" → fill in details → save as draft or schedule.
