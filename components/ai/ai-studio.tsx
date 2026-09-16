@@ -11,8 +11,6 @@ import {
   Send,
   Sparkles,
   ImageIcon,
-  ChevronDown,
-  ChevronUp,
   ArrowRight,
   SlidersHorizontal,
   CalendarDays,
@@ -62,7 +60,6 @@ export function AIStudio({ categories }: { categories: Category[] }) {
   const [provider, setProvider] = useState<string>("mock");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState("");
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function generate() {
@@ -215,12 +212,84 @@ export function AIStudio({ categories }: { categories: Category[] }) {
             </div>
           </div>
 
+          {/* Advanced / Strategy Options (Always Visible) */}
+          <div className="border-t border-white/[0.08] pt-5 space-y-4">
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal size={14} className="text-violet-400" />
+              <span className="text-xs font-bold uppercase tracking-wider text-white/70">
+                Advanced Strategy Options
+              </span>
+            </div>
+
+            {/* Target Audience */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/70">Target Audience</label>
+              <input
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+                placeholder="e.g. Freelancers, agency owners (25-45)"
+                maxLength={300}
+                className="w-full rounded-xl border border-white/10 bg-[#16162a]/80 px-3.5 py-2.5 text-xs text-white placeholder-white/30 outline-none focus:border-violet-500 focus:bg-[#1a1a32]"
+              />
+            </div>
+
+            {/* Tone of Voice & Primary Objective in a 2-Column Row */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">Tone of Voice</label>
+                <select
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value as AITone)}
+                  className="w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 py-2.5 text-xs text-white outline-none focus:border-violet-500"
+                >
+                  {tones.map((t) => (
+                    <option key={t.value} value={t.value} className="bg-[#16162a] text-white">
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">Primary Objective</label>
+                <select
+                  value={objective}
+                  onChange={(e) => setObjective(e.target.value as AIObjective)}
+                  className="w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 py-2.5 text-xs text-white outline-none focus:border-violet-500"
+                >
+                  {objectives.map((o) => (
+                    <option key={o.value} value={o.value} className="bg-[#16162a] text-white">
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Category */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/70">Category</label>
+              <select
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                className="w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 py-2.5 text-xs text-white outline-none focus:border-violet-500"
+              >
+                <option value="" className="bg-[#16162a] text-white">No category</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id} className="bg-[#16162a] text-white">
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           {/* Generate Button */}
           <button
             type="button"
             onClick={generate}
             disabled={isPending}
-            className="flex h-12 w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-sm font-bold text-white shadow-lg shadow-violet-600/25 hover:from-violet-500 hover:to-indigo-500 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+            className="flex h-12 w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-sm font-bold text-white shadow-lg shadow-violet-600/25 hover:from-violet-500 hover:to-indigo-500 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 cursor-pointer pt-0"
           >
             {isPending ? (
               <>
@@ -234,86 +303,6 @@ export function AIStudio({ categories }: { categories: Category[] }) {
               </>
             )}
           </button>
-
-          {/* Collapsible Advanced Options */}
-          <div className="border-t border-white/[0.08] pt-4">
-            <button
-              type="button"
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex w-full items-center justify-between py-1 text-xs font-semibold text-white/60 hover:text-white transition cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal size={14} className="text-violet-400" />
-                <span>Advanced Options (Audience, Tone, Goal)</span>
-              </div>
-              {showAdvanced ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-            </button>
-
-            {showAdvanced && (
-              <div className="mt-5 space-y-4 pt-2 border-t border-white/[0.04]">
-                {/* Target Audience */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-white/70">Target Audience</label>
-                  <input
-                    value={targetAudience}
-                    onChange={(e) => setTargetAudience(e.target.value)}
-                    placeholder="e.g. Freelancers, agency owners (25-45)"
-                    maxLength={300}
-                    className="w-full rounded-xl border border-white/10 bg-[#16162a]/80 px-3.5 py-2.5 text-xs text-white placeholder-white/30 outline-none focus:border-violet-500 focus:bg-[#1a1a32]"
-                  />
-                </div>
-
-                {/* Tone of Voice */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-white/70">Tone of Voice</label>
-                  <select
-                    value={tone}
-                    onChange={(e) => setTone(e.target.value as AITone)}
-                    className="w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 py-2.5 text-xs text-white outline-none focus:border-violet-500"
-                  >
-                    {tones.map((t) => (
-                      <option key={t.value} value={t.value} className="bg-[#16162a] text-white">
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Campaign Objective */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-white/70">Primary Objective</label>
-                  <select
-                    value={objective}
-                    onChange={(e) => setObjective(e.target.value as AIObjective)}
-                    className="w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 py-2.5 text-xs text-white outline-none focus:border-violet-500"
-                  >
-                    {objectives.map((o) => (
-                      <option key={o.value} value={o.value} className="bg-[#16162a] text-white">
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Category */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-white/70">Category</label>
-                  <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 py-2.5 text-xs text-white outline-none focus:border-violet-500"
-                  >
-                    <option value="" className="bg-[#16162a] text-white">No category</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id} className="bg-[#16162a] text-white">
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* RIGHT COLUMN: Output Canvas Area */}
