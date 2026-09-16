@@ -4,17 +4,19 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 const pageTitles: Record<string, string> = {
-  "/dashboard":        "Overview",
-  "/ai-studio":        "AI Studio",
-  "/image-studio":     "Image Studio",
+  "/dashboard":        "Home",
+  "/create":           "Create Studio",
+  "/ai-assistant":     "AI Assistant",
+  "/ai-studio":        "AI Content Studio",
+  "/image-studio":     "Image & Video Studio",
   "/posts/new":        "Create Post",
   "/posts/categories": "Categories",
-  "/posts":            "Posts",
+  "/posts":            "Content",
   "/calendar":         "Calendar",
   "/campaigns":        "Campaigns",
-  "/workspace":        "Content Workspace",
+  "/workspace":        "30-Day Content Workshop",
   "/analytics":        "Analytics",
-  "/publishing":       "Publishing",
+  "/publishing":       "Publishing & Social Queue",
   "/media-library":    "Media Library",
   "/settings":         "Settings",
   "/help":             "Help & Documentation",
@@ -58,7 +60,7 @@ export function Topbar({ profile }: TopbarProps) {
       </button>
 
       {/* Create with AI */}
-      <Link href="/ai-studio" className="btn btn-ai btn-sm" style={{ gap: 6 }}>
+      <Link href="/create" className="btn btn-ai btn-sm" style={{ gap: 6 }}>
         <Sparkles size={12} />
         <span className="tb-create-label">Create with AI</span>
       </Link>

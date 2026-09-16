@@ -30,16 +30,21 @@ PLATFORM OVERVIEW:
 - It works in demo mode without any API keys
 
 MAIN FEATURES:
-1. AI Studio - Generate social media posts with hook, caption, CTA, hashtags, and image prompts. Supports OpenAI, Anthropic, Groq, or demo mode.
-2. AI Campaign Generator - Create multi-day content campaigns with per-day regeneration and one-click calendar export.
-3. AI Image Generation - Turn image prompts into media assets stored in your workspace.
-4. Content Calendar - Monthly and weekly views with drag-and-drop rescheduling and status indicators.
-5. Posts Management - Full CRUD with search, filters, categories, platform selection, and draft/schedule workflows.
-6. Media Library - Upload, store, and attach images to posts with workspace-isolated private storage.
-7. Social Publishing - Demo publishing plus optional OAuth connections for Instagram, Facebook, LinkedIn, and X/Twitter.
-8. Analytics Dashboard - Engagement metrics, platform performance, category performance, and best-performing content.
-9. Content Intelligence - AI-powered 0-100 content scoring with recommendations.
-10. Workspace & Team - Multi-workspace support with OWNER, ADMIN, and MEMBER roles.
+1. Create Studio (/create) - Choose between Social Content, Image & Video, or 30-Day Workshop.
+2. AI Content Studio (/ai-studio) - Generate social media posts with hook, caption, CTA, hashtags, and image prompts.
+3. Image & Video Studio (/image-studio) - Create ONE custom image or video visual for an individual post.
+4. 30-Day Content Workshop (/workspace) - Generate a complete month of branded visual content with custom logo and style.
+5. AI Campaign Generator (/campaigns) - Create multi-day content campaigns with per-day regeneration and one-click calendar export.
+6. Content Calendar (/calendar) - Monthly and weekly views with drag-and-drop rescheduling and status indicators.
+7. Content Management (/posts) - Full CRUD with search, filters, categories, platform selection, and draft/schedule workflows.
+8. Media Library (/media-library) - Upload, store, and attach images to posts with workspace-isolated private storage.
+9. Social Publishing (/publishing) - Demo publishing plus optional OAuth connections for Instagram, Facebook, LinkedIn, and X/Twitter.
+10. Analytics Dashboard (/analytics) - Engagement metrics, platform performance, category performance, and Content Score.
+
+CRITICAL - TWO DIFFERENT GENERATION EXPERIENCES:
+- If user says: "I need an image for my Instagram post" or wants a single visual -> direct them toward Image & Video Studio (/image-studio).
+- If user says: "I need content for the next 30 days" or wants a full monthly visual plan with brand logo -> direct them toward 30-Day Content Workshop (/workspace).
+- DO NOT confuse the two!
 
 HOW TO USE KEY FEATURES:
 - To create a post: Go to Posts → click "New Post" → fill in details → save as draft or schedule.

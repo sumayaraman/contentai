@@ -1,33 +1,54 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, Clipboard, Loader2, RefreshCw, Save, Send, Sparkles, ImageIcon } from "lucide-react";
+import Link from "next/link";
+import {
+  Check,
+  Clipboard,
+  Loader2,
+  RefreshCw,
+  Save,
+  Send,
+  Sparkles,
+  ImageIcon,
+  ChevronDown,
+  ChevronUp,
+  ArrowRight,
+  SlidersHorizontal,
+  CalendarDays,
+  FileText,
+  Share2,
+} from "lucide-react";
 import { generateAIContent } from "@/lib/ai/actions";
 import { createPost } from "@/lib/content/actions";
 import type { Category } from "@/types/database";
 import type { AIObjective, AIPlatform, AITone, GeneratedContent } from "@/ai/types";
 
 const platforms: Array<{ value: AIPlatform; label: string }> = [
-  { value: "INSTAGRAM", label: "Instagram" }, { value: "FACEBOOK", label: "Facebook" }, { value: "LINKEDIN", label: "LinkedIn" }, { value: "X", label: "X" },
+  { value: "INSTAGRAM", label: "Instagram" },
+  { value: "LINKEDIN", label: "LinkedIn" },
+  { value: "FACEBOOK", label: "Facebook" },
+  { value: "X", label: "X (Twitter)" },
 ];
+
 const tones: Array<{ value: AITone; label: string }> = [
-  { value: "PROFESSIONAL", label: "Professional" }, { value: "FRIENDLY", label: "Friendly" }, { value: "FUNNY", label: "Funny" }, { value: "INSPIRATIONAL", label: "Inspirational" }, { value: "EDUCATIONAL", label: "Educational" }, { value: "LUXURY", label: "Luxury" }, { value: "CASUAL", label: "Casual" },
+  { value: "FRIENDLY", label: "Friendly" },
+  { value: "PROFESSIONAL", label: "Professional" },
+  { value: "EDUCATIONAL", label: "Educational" },
+  { value: "INSPIRATIONAL", label: "Inspirational" },
+  { value: "FUNNY", label: "Funny" },
+  { value: "LUXURY", label: "Luxury" },
+  { value: "CASUAL", label: "Casual" },
 ];
+
 const objectives: Array<{ value: AIObjective; label: string }> = [
-  { value: "ENGAGEMENT", label: "Engagement" }, { value: "SALES", label: "Sales" }, { value: "AWARENESS", label: "Awareness" }, { value: "TRAFFIC", label: "Traffic" }, { value: "LEADS", label: "Leads" }, { value: "BRAND_BUILDING", label: "Brand Building" },
+  { value: "ENGAGEMENT", label: "Engagement" },
+  { value: "SALES", label: "Sales & Conversions" },
+  { value: "AWARENESS", label: "Brand Awareness" },
+  { value: "TRAFFIC", label: "Website Traffic" },
+  { value: "LEADS", label: "Lead Generation" },
+  { value: "BRAND_BUILDING", label: "Brand Building" },
 ];
-
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label style={{ marginBottom: 8, display: "block", fontSize: 12.5, fontWeight: 600, color: "var(--text-secondary)" }}>{label}</label>
-      {children}
-      {error && <p style={{ marginTop: 4, fontSize: 11.5, fontWeight: 500, color: "var(--red)" }}>{error}</p>}
-    </div>
-  );
-}
-
-const inputClass = "ai-input";
 
 export function AIStudio({ categories }: { categories: Category[] }) {
   const [topic, setTopic] = useState("");
@@ -41,25 +62,56 @@ export function AIStudio({ categories }: { categories: Category[] }) {
   const [provider, setProvider] = useState<string>("mock");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [minDateTime] = useState(() => new Date(Date.now() + 60000).toISOString().slice(0, 16));
 
   function generate() {
+    if (!topic.trim()) {
+      setErrors({ topic: "Please describe what you want to post about." });
+      return;
+    }
     setNotice("");
     startTransition(async () => {
       const result = await generateAIContent({ topic, targetAudience, platform, tone, objective });
-      if (!result.ok) { setErrors(result.errors); return; }
-      setErrors({}); setContent(result.content); setProvider(result.provider);
-      setNotice(result.provider === "mock" ? "Generated in Demo Mode. Add an AI key to use a real provider." : `Generated with ${result.provider}.`);
+      if (!result.ok) {
+        setErrors(result.errors);
+        return;
+      }
+      setErrors({});
+      setContent(result.content);
+      setProvider(result.provider);
+      setNotice(
+        result.provider === "mock"
+          ? "Generated in Demo Mode. Add an AI key in settings to use a live provider."
+          : `Generated with ${result.provider}.`
+      );
     });
   }
 
   function updateField(field: keyof GeneratedContent, value: string) {
-    setContent((current) => current ? { ...current, [field]: field === "hashtags" ? value.split(/[,\n]/).map((item) => item.trim()).filter(Boolean) : value } : current);
+    setContent((current) =>
+      current
+        ? {
+            ...current,
+            [field]:
+              field === "hashtags"
+                ? value
+                    .split(/[,\n ]/)
+                    .map((item) => item.trim())
+                    .filter(Boolean)
+                : value,
+          }
+        : current
+    );
   }
 
   async function copyText(value: string, label: string) {
-    try { await navigator.clipboard.writeText(value); setNotice(`${label} copied to clipboard.`); } catch { setNotice("Clipboard access is unavailable in this browser."); }
+    try {
+      await navigator.clipboard.writeText(value);
+      setNotice(`${label} copied to clipboard!`);
+    } catch {
+      setNotice("Clipboard access unavailable.");
+    }
   }
 
   function save(status: "DRAFT" | "SCHEDULED") {
@@ -77,126 +129,429 @@ export function AIStudio({ categories }: { categories: Category[] }) {
     startTransition(async () => {
       try {
         await createPost(form);
+        setNotice(status === "SCHEDULED" ? "Post scheduled successfully!" : "Post saved as draft!");
       } catch (error) {
         if (error instanceof Error && error.message) setNotice(error.message);
       }
     });
   }
 
-  return <div className="space-y-6">
-    <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-      <section className="card" style={{ padding: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ display: "flex", height: 40, width: 40, alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", background: "var(--accent-soft)", color: "var(--accent)" }}><Sparkles size={19} /></span>
-          <div>
-            <h2 style={{ fontWeight: 600, color: "var(--text-primary)" }}>Content brief</h2>
-            <p style={{ fontSize: 12, color: "var(--text-muted)" }}>Tell the studio what you want to create.</p>
+  return (
+    <div className="space-y-6">
+      {/* Notice Banner */}
+      {notice && (
+        <div className="flex items-center justify-between rounded-xl border border-violet-500/25 bg-violet-500/10 px-4 py-3 text-xs text-violet-300">
+          <div className="flex items-center gap-2">
+            <Sparkles size={14} className="text-violet-400" />
+            <span>{notice}</span>
           </div>
+          <button
+            type="button"
+            onClick={() => setNotice("")}
+            className="text-white/40 hover:text-white transition"
+          >
+            ✕
+          </button>
         </div>
-        <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 20 }}>
-          <Field label="Topic / Product" error={errors.topic}><textarea value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="New summer coffee collection" rows={3} maxLength={300} className={inputClass} /></Field>
-          <Field label="Target Audience" error={errors.targetAudience}><input value={targetAudience} onChange={(e) => setTargetAudience(e.target.value)} placeholder="Young professionals" maxLength={300} className={inputClass} /></Field>
-          <Field label="Platform" error={errors.platform}><select value={platform} onChange={(e) => setPlatform(e.target.value as AIPlatform)} className={inputClass}>{platforms.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field>
-          <Field label="Tone" error={errors.tone}><select value={tone} onChange={(e) => setTone(e.target.value as AITone)} className={inputClass}>{tones.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field>
-          <Field label="Objective" error={errors.objective}><select value={objective} onChange={(e) => setObjective(e.target.value as AIObjective)} className={inputClass}>{objectives.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field>
-          <Field label="Category"><select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={inputClass}><option value="">No category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></Field>
-          <button type="button" onClick={generate} disabled={isPending} className="btn btn-ai" style={{ width: "100%", padding: "12px 16px", fontSize: 13.5 }}>{isPending ? <Loader2 size={17} className="animate-spin" /> : <Sparkles size={17} />}{content ? "Regenerate Content" : "Generate Content"}</button>
-        </div>
-      </section>
+      )}
 
-      <section className="card" style={{ minWidth: 0, padding: 20 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, borderBottom: "1px solid var(--border)", paddingBottom: 20 }} className="sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--accent)" }}>AI output</p>
-            <h2 style={{ marginTop: 4, fontSize: 17, fontWeight: 700, color: "var(--text-primary)" }}>Content studio</h2>
-          </div>
-          {content && (
-            <span style={{
-              display: "inline-flex", width: "fit-content", alignItems: "center", gap: 6,
-              borderRadius: 999, padding: "5px 10px", fontSize: 11.5, fontWeight: 600,
-              background: provider === "mock" ? "var(--amber-soft)" : "var(--green-soft)",
-              color: provider === "mock" ? "var(--amber)" : "var(--green)",
-            }}>
-              <span style={{ height: 6, width: 6, borderRadius: "50%", background: "currentColor" }} />
-              {provider === "mock" ? "Demo Mode" : `Real API · ${provider}`}
-            </span>
-          )}
-        </div>
-        {notice && (
-          <div role="status" style={{
-            marginTop: 16, display: "flex", alignItems: "center", gap: 8, borderRadius: "var(--r-md)",
-            border: "1px solid var(--border-accent)", background: "var(--accent-soft)", padding: "10px 14px",
-            fontSize: 12.5, fontWeight: 500, color: "var(--text-primary)",
-          }}>
-            <Check size={16} style={{ color: "var(--accent)", flexShrink: 0 }} />{notice}
-          </div>
-        )}
-        {errors.form && (
-          <div role="alert" style={{
-            marginTop: 16, borderRadius: "var(--r-md)",
-            border: "1px solid rgba(239,68,68,0.3)", background: "var(--red-soft)", padding: "10px 14px",
-            fontSize: 12.5, fontWeight: 500, color: "var(--red)",
-          }}>
-            {errors.form}
-          </div>
-        )}
-        {!content ? (
-          <div style={{ display: "flex", minHeight: 480, flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 24px", textAlign: "center" }}>
-            <div style={{ display: "flex", height: 56, width: 56, alignItems: "center", justifyContent: "center", borderRadius: "var(--r-xl)", background: "var(--bg-elevated)", color: "var(--text-muted)" }}><Sparkles size={24} /></div>
-            <h3 style={{ marginTop: 16, fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>Your generated content will appear here</h3>
-            <p style={{ marginTop: 8, maxWidth: 420, fontSize: 12.5, lineHeight: 1.6, color: "var(--text-muted)" }}>Build a brief on the left, then generate a structured hook, caption, CTA, hashtags, and image prompt.</p>
-          </div>
-        ) : (
-          <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 16 }}>
-            <OutputField label="Hook" value={content.hook} onChange={(value) => updateField("hook", value)} onCopy={() => copyText(content.hook, "Hook")} />
-            <OutputField label="Caption" value={content.caption} textarea onChange={(value) => updateField("caption", value)} onCopy={() => copyText(content.caption, "Caption")} />
-            <OutputField label="CTA" value={content.cta} onChange={(value) => updateField("cta", value)} onCopy={() => copyText(content.cta, "CTA")} />
-            <OutputField label="Hashtags" value={content.hashtags.join(" ")} textarea onChange={(value) => updateField("hashtags", value)} onCopy={() => copyText(content.hashtags.join(" "), "Hashtags")} />
-            <OutputField label="Image Prompt" value={content.imagePrompt} textarea onChange={(value) => updateField("imagePrompt", value)} onCopy={() => copyText(content.imagePrompt, "Image prompt")} />
-
-            {content.imagePrompt && (
-              <div style={{ borderRadius: "var(--r-lg)", border: "1px solid var(--border-accent)", background: "var(--purple-soft)", padding: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-                  <div style={{ display: "flex", height: 32, width: 32, alignItems: "center", justifyContent: "center", borderRadius: "var(--r-md)", background: "var(--accent-soft)", color: "var(--purple)" }}>
-                    <ImageIcon size={16} />
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--purple)" }}>AI Image + Video Studio</p>
-                    <p style={{ fontSize: 11.5, color: "var(--text-secondary)" }}>Generate an image or video from this prompt</p>
-                  </div>
-                </div>
-                <a href={"/image-studio?prompt=" + encodeURIComponent(content.imagePrompt)} className="btn btn-ai" style={{ width: "100%", padding: "10px 16px" }}>
-                  Open Image and Video Studio with this prompt
-                </a>
-              </div>
-            )}
-
-            <Field label="Schedule Date & Time"><input type="datetime-local" value={scheduledAt} min={minDateTime} onChange={(e) => setScheduledAt(e.target.value)} className={inputClass} /></Field>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, borderTop: "1px solid var(--border)", paddingTop: 20 }}>
-              <button type="button" onClick={() => copyText([content.hook, content.caption, content.cta, content.hashtags.join(" ")].join("\n\n"), "Content")} className="btn btn-primary"><Clipboard size={15} /> Copy All</button>
-              <button type="button" onClick={generate} disabled={isPending} className="btn btn-primary"><RefreshCw size={15} /> Regenerate</button>
-              <button type="button" onClick={() => save("DRAFT")} disabled={isPending} className="btn btn-primary"><Save size={15} /> Save Draft</button>
-              <button type="button" onClick={() => save("SCHEDULED")} disabled={isPending || !scheduledAt} title={!scheduledAt ? "Choose a future date and time first." : undefined} className="btn btn-ai" style={{ opacity: !scheduledAt ? 0.5 : 1 }}><Send size={15} /> Schedule</button>
+      <div className="grid gap-8 lg:grid-cols-[400px_minmax(0,1fr)] items-start">
+        {/* LEFT COLUMN: Prompt & Settings Form */}
+        <div className="campaign-brief-panel" style={{ gap: 20 }}>
+          {/* Card Header */}
+          <div className="flex items-center gap-3.5 pb-4 border-b border-white/[0.06]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/30 shrink-0">
+              <Sparkles size={19} />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-white tracking-tight">Content Prompt</h2>
+              <p className="text-xs text-white/50 mt-0.5">Describe your idea and choose your platform.</p>
             </div>
           </div>
-        )}
-      </section>
-    </div>
-  </div>;
-}
 
-function OutputField({ label, value, onChange, onCopy, textarea = false }: { label: string; value: string; onChange: (value: string) => void; onCopy: () => void; textarea?: boolean }) {
-  return (
-    <div style={{ borderRadius: "var(--r-lg)", border: "1px solid var(--border)", background: "var(--bg-elevated)", padding: 16 }}>
-      <div style={{ marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <label style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-muted)" }}>{label}</label>
-        <button type="button" onClick={onCopy} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 600, color: "var(--text-muted)", background: "none", border: "none", cursor: "pointer" }}><Clipboard size={13} /> Copy</button>
+          {/* Primary Prompt Input */}
+          <div>
+            <div className="campaign-field-label">
+              <span>What do you want to create? *</span>
+              <span className="text-[11px] text-white/40 font-normal normal-case">Be descriptive</span>
+            </div>
+            <textarea
+              value={topic}
+              onChange={(e) => {
+                setTopic(e.target.value);
+                if (errors.topic) setErrors({});
+              }}
+              placeholder="e.g. 5 game-changing productivity habits for agency founders, including morning rituals and time-blocking..."
+              rows={4}
+              maxLength={400}
+              className="campaign-input resize-y"
+              style={{ minHeight: 110, lineHeight: 1.6 }}
+            />
+            {errors.topic && <p className="mt-1.5 text-xs font-medium text-red-400">{errors.topic}</p>}
+          </div>
+
+          {/* Platform Selector Chips */}
+          <div>
+            <div className="campaign-field-label">
+              <span>Target Platform</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {platforms.map((p) => (
+                <button
+                  key={p.value}
+                  type="button"
+                  onClick={() => setPlatform(p.value)}
+                  className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 px-3 text-xs font-semibold transition ${
+                    platform === p.value
+                      ? "border-violet-500 bg-violet-600/20 text-white shadow-sm"
+                      : "border-white/10 bg-white/[0.02] text-white/60 hover:border-white/20 hover:text-white"
+                  }`}
+                >
+                  <span>{p.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Generate Button */}
+          <button
+            type="button"
+            onClick={generate}
+            disabled={isPending}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 py-3 text-xs font-bold text-white shadow-lg shadow-violet-600/25 hover:from-violet-500 hover:to-indigo-500 transition disabled:opacity-50"
+          >
+            {isPending ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>Crafting with AI...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles size={16} />
+                <span>{content ? "Regenerate Content" : "Generate Content"}</span>
+              </>
+            )}
+          </button>
+
+          {/* Collapsible Advanced Options */}
+          <div className="border-t border-white/[0.06] pt-4">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="flex w-full items-center justify-between py-1 text-xs font-semibold text-white/60 hover:text-white transition"
+            >
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal size={14} className="text-violet-400" />
+                <span>Advanced Options (Audience, Tone, Goal)</span>
+              </div>
+              {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </button>
+
+            {showAdvanced && (
+              <div className="mt-4 space-y-4 pt-2">
+                {/* Target Audience */}
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Target Audience</span>
+                  </div>
+                  <input
+                    value={targetAudience}
+                    onChange={(e) => setTargetAudience(e.target.value)}
+                    placeholder="e.g. Freelancers, agency owners (25-45)"
+                    maxLength={300}
+                    className="campaign-input"
+                  />
+                </div>
+
+                {/* Tone of Voice */}
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Tone of Voice</span>
+                  </div>
+                  <select
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value as AITone)}
+                    className="campaign-input"
+                    style={{ height: 40 }}
+                  >
+                    {tones.map((t) => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Campaign Objective */}
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Primary Objective</span>
+                  </div>
+                  <select
+                    value={objective}
+                    onChange={(e) => setObjective(e.target.value as AIObjective)}
+                    className="campaign-input"
+                    style={{ height: 40 }}
+                  >
+                    {objectives.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Category */}
+                <div>
+                  <div className="campaign-field-label">
+                    <span>Category</span>
+                  </div>
+                  <select
+                    value={categoryId}
+                    onChange={(e) => setCategoryId(e.target.value)}
+                    className="campaign-input"
+                    style={{ height: 40 }}
+                  >
+                    <option value="">No category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: Output Canvas Area */}
+        <div className="space-y-5 min-w-0">
+          {!content ? (
+            /* Empty State */
+            <div className="campaign-stage-panel flex flex-col items-center justify-center text-center p-12 space-y-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-violet-500/10 border border-violet-500/20 text-violet-400">
+                <Sparkles size={28} />
+              </div>
+              <div className="max-w-md space-y-1">
+                <h3 className="text-base font-bold text-white">Ready to create your post</h3>
+                <p className="text-xs text-white/50 leading-relaxed">
+                  Enter your topic on the left and choose your target platform. ContentAI will synthesize a high-converting hook, caption, call to action, and hashtags.
+                </p>
+              </div>
+              <div className="pt-2 flex flex-wrap justify-center gap-2">
+                {[
+                  "5 productivity hacks",
+                  "Behind the scenes of our launch",
+                  "Why most creators fail at consistency",
+                ].map((sug, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setTopic(sug)}
+                    className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/60 hover:text-white hover:border-violet-500/30 transition"
+                  >
+                    💡 {sug}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* Generated Content Cards */
+            <div className="space-y-4">
+              {/* Studio Header Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-[#0c0c16]/90 p-4">
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className={`h-2 w-2 rounded-full ${
+                      provider === "mock" ? "bg-amber-400" : "bg-emerald-400"
+                    }`}
+                  />
+                  <span className="text-xs font-semibold text-white">
+                    Generated for {platform} · {provider === "mock" ? "Demo Provider" : provider}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => copyText(`${content.hook}\n\n${content.caption}\n\n${content.cta}\n\n${content.hashtags.join(" ")}`, "Full post")}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+                  >
+                    <Clipboard size={12} />
+                    <span>Copy All</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={generate}
+                    disabled={isPending}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+                  >
+                    <RefreshCw size={12} />
+                    <span>Regenerate</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Card 1: Hook Card */}
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a] p-5 shadow-lg space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-violet-400">
+                    Hook / Attention Grabber
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => copyText(content.hook, "Hook")}
+                    className="text-white/40 hover:text-white transition"
+                    title="Copy hook"
+                  >
+                    <Clipboard size={14} />
+                  </button>
+                </div>
+                <input
+                  value={content.hook}
+                  onChange={(e) => updateField("hook", e.target.value)}
+                  className="w-full rounded-xl border border-white/10 bg-[#16162a] px-3.5 py-2.5 text-sm font-semibold text-white outline-none focus:border-violet-500"
+                />
+              </div>
+
+              {/* Card 2: Main Caption Card */}
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a] p-5 shadow-lg space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-violet-400">
+                    Post Caption / Story
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => copyText(content.caption, "Caption")}
+                    className="text-white/40 hover:text-white transition"
+                    title="Copy caption"
+                  >
+                    <Clipboard size={14} />
+                  </button>
+                </div>
+                <textarea
+                  value={content.caption}
+                  onChange={(e) => updateField("caption", e.target.value)}
+                  rows={6}
+                  className="w-full rounded-xl border border-white/10 bg-[#16162a] p-3.5 text-xs sm:text-sm text-white outline-none leading-relaxed focus:border-violet-500 resize-y"
+                />
+              </div>
+
+              {/* Card 3: 2-Column Row for CTA & Hashtags */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* CTA */}
+                <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a] p-4 shadow-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-violet-400">
+                      Call to Action (CTA)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => copyText(content.cta, "CTA")}
+                      className="text-white/40 hover:text-white transition"
+                    >
+                      <Clipboard size={14} />
+                    </button>
+                  </div>
+                  <input
+                    value={content.cta}
+                    onChange={(e) => updateField("cta", e.target.value)}
+                    className="w-full rounded-xl border border-white/10 bg-[#16162a] px-3 py-2 text-xs text-white outline-none focus:border-violet-500"
+                  />
+                </div>
+
+                {/* Hashtags */}
+                <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a] p-4 shadow-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-violet-400">
+                      Hashtags
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => copyText(content.hashtags.join(" "), "Hashtags")}
+                      className="text-white/40 hover:text-white transition"
+                    >
+                      <Clipboard size={14} />
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+                    {content.hashtags.map((tag, i) => (
+                      <span
+                        key={i}
+                        className="rounded-lg bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 text-[11px] font-medium text-violet-300"
+                      >
+                        {tag.startsWith("#") ? tag : `#${tag}`}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Visual Direction & Image Studio Link */}
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0f0f1a] p-5 shadow-lg space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon size={16} className="text-violet-400" />
+                    <span className="text-xs font-bold text-white">Visual Art Direction</span>
+                  </div>
+                  <Link
+                    href={`/image-studio?prompt=${encodeURIComponent(content.imagePrompt)}`}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-violet-400 hover:text-violet-300 transition"
+                  >
+                    <span>Generate in Image Studio</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+                <p className="text-xs text-white/70 italic bg-[#16162a] p-3 rounded-xl border border-white/10">
+                  &ldquo;{content.imagePrompt}&rdquo;
+                </p>
+              </div>
+
+              {/* Card 5: Publishing & Scheduling Actions */}
+              <div className="rounded-2xl border border-white/[0.08] bg-[#0c0c16]/95 p-5 shadow-xl space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <CalendarDays size={16} className="text-violet-400 shrink-0" />
+                    <div>
+                      <div className="text-xs font-bold text-white">Ready to Publish or Schedule?</div>
+                      <div className="text-[11px] text-white/50">Save directly to your workspace posts</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="datetime-local"
+                      value={scheduledAt}
+                      onChange={(e) => setScheduledAt(e.target.value)}
+                      className="rounded-xl border border-white/10 bg-[#16162a] px-3 py-2 text-xs text-white outline-none focus:border-violet-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-end gap-2.5 pt-2 border-t border-white/[0.06]">
+                  <button
+                    type="button"
+                    onClick={() => save("DRAFT")}
+                    disabled={isPending}
+                    className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition disabled:opacity-50"
+                  >
+                    <Save size={14} />
+                    <span>Save Draft</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => save("SCHEDULED")}
+                    disabled={isPending}
+                    className="inline-flex h-10 items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 text-xs font-semibold text-white shadow-lg shadow-violet-600/25 hover:from-violet-500 hover:to-indigo-500 transition disabled:opacity-50"
+                  >
+                    <CalendarDays size={14} />
+                    <span>Schedule Post</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-      {textarea ? (
-        <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={label === "Caption" ? 8 : 4} style={{ width: "100%", resize: "vertical", background: "transparent", fontSize: 13, lineHeight: 1.6, color: "var(--text-primary)", outline: "none", border: "none", fontFamily: "inherit" }} />
-      ) : (
-        <input value={value} onChange={(e) => onChange(e.target.value)} style={{ width: "100%", background: "transparent", fontSize: 13, lineHeight: 1.6, color: "var(--text-primary)", outline: "none", border: "none", fontFamily: "inherit" }} />
-      )}
     </div>
   );
 }

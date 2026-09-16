@@ -32,20 +32,22 @@ export default async function AIStudioPage() {
 
 
   return (
-    <div className="page animate-fade-up">
+    <div className="page animate-fade-up max-w-7xl mx-auto space-y-8">
       {/* Page Header */}
-      <div className="page-header">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="ai-tag" style={{ marginBottom: 6 }}>✦ AI Studio</p>
-          <h1 className="page-title">Create better content, faster</h1>
-          <p className="page-subtitle">
-            Generate structured social content from one brief. Your API key stays server-side, and Demo Mode keeps the studio usable without an AI provider.
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-300 mb-2">
+            ✦ Create Content
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">AI Content Studio</h1>
+          <p className="mt-1 text-sm text-white/50 max-w-2xl">
+            Turn your ideas into ready-to-publish social media copy with hooks, captions, calls-to-action, and optimized hashtags.
           </p>
         </div>
-        <span className="badge badge-ai">
-          <span className="ai-dot" style={{ width: 5, height: 5 }} />
+        <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 self-start sm:self-auto">
+          <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
           AI Powered
-        </span>
+        </div>
       </div>
 
       {/* AI Studio Component */}
