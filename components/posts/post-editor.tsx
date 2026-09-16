@@ -548,10 +548,8 @@ export function PostEditor({
 
       {/* Sticky Bottom Action Bar matching Campaigns Studio */}
       <div
+        className="sticky bottom-20 lg:bottom-6 z-20"
         style={{
-          position: "sticky",
-          bottom: 24,
-          zIndex: 20,
           display: "flex",
           flexWrap: "wrap",
           alignItems: "center",
@@ -560,7 +558,7 @@ export function PostEditor({
           background: "var(--bg-surface)",
           border: "1px solid var(--border)",
           borderRadius: "var(--r-xl)",
-          padding: "16px 20px",
+          padding: "14px 18px",
           boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
           backdropFilter: "blur(16px)",
         }}

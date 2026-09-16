@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, CalendarDays, LayoutDashboard, PenSquare, Sparkles, WandSparkles } from "lucide-react";
+import { CalendarDays, LayoutDashboard, PenSquare, Sparkles, WandSparkles } from "lucide-react";
 
 const items = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
@@ -17,7 +17,7 @@ export function MobileNav() {
     <nav aria-label="Mobile navigation" className="mobile-nav" style={{ zIndex: 9999 }}>
       <div className="mobile-nav-grid">
         {items.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
+          const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
           return (
             <Link
               key={href}
@@ -25,7 +25,7 @@ export function MobileNav() {
               aria-current={active ? "page" : undefined}
               className={`mobile-nav-link${active ? " active" : ""}`}
             >
-              <Icon size={19} strokeWidth={active ? 2.3 : 1.8} />
+              <Icon size={19} strokeWidth={active ? 2.4 : 1.8} />
               <span>{label}</span>
             </Link>
           );

@@ -960,7 +960,21 @@ main {
     width: 100%;
     max-width: 100%;
   }
-  .page { padding: 20px 16px; }
+  .page { padding: 6px 2px; }
+}
+
+@media (max-width: 639px) {
+  .page { padding: 0; }
+  .card { padding: 14px 12px; }
+}
+
+/* ── No scrollbar touch utility ── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1394,5 +1408,19 @@ main {
   padding-bottom: 14px;
   border-bottom: 1px solid var(--border-subtle);
 }
+
+@media (max-width: 639px) {
+  .studio-panel,
+  .studio-stage,
+  .campaign-brief-panel,
+  .campaign-stage-panel {
+    padding: 16px;
+    border-radius: var(--r-lg);
+  }
+  .campaign-day-card {
+    padding: 14px;
+  }
+}
+
 
 

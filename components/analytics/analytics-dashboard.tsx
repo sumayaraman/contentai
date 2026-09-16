@@ -539,7 +539,7 @@ export function AnalyticsDashboard({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
             gap: 16,
           }}
         >
@@ -624,7 +624,7 @@ export function AnalyticsDashboard({
       </section>
 
       {/* Platform & Category Performance */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: 20 }}>
         <section
           style={{
             background: "var(--bg-surface)",
@@ -756,66 +756,68 @@ export function AnalyticsDashboard({
             No published posts match these filters.
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {data.bestPosts.map((post, index) => (
-              <div
-                key={post.id}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "36px 1fr 130px 140px",
-                  alignItems: "center",
-                  gap: 16,
-                  padding: "16px 24px",
-                  borderBottom: "1px solid var(--border-subtle)",
-                  transition: "background 0.15s ease",
-                }}
-                className="hover:bg-white/[0.02]"
-              >
+          <div className="overflow-x-auto">
+            <div style={{ minWidth: 500, display: "flex", flexDirection: "column" }}>
+              {data.bestPosts.map((post, index) => (
                 <div
+                  key={post.id}
                   style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: "var(--r-sm)",
-                    background: "var(--accent-soft)",
-                    border: "1px solid var(--border-accent)",
-                    display: "flex",
+                    display: "grid",
+                    gridTemplateColumns: "36px 1fr 130px 140px",
                     alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: "#a89dff",
+                    gap: 16,
+                    padding: "16px 24px",
+                    borderBottom: "1px solid var(--border-subtle)",
+                    transition: "background 0.15s ease",
                   }}
+                  className="hover:bg-white/[0.02]"
                 >
-                  {index + 1}
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "var(--r-sm)",
+                      background: "var(--accent-soft)",
+                      border: "1px solid var(--border-accent)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "#a89dff",
+                    }}
+                  >
+                    {index + 1}
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--accent)" }}>
+                        {platformShort[post.platform]}
+                      </span>
+                      <span style={{ fontSize: 11, color: "var(--text-muted)" }}>· {post.categoryName}</span>
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {post.title}
+                    </div>
+                    <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {post.caption || "No caption"}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: "#34d399" }}>
+                      {formatPercent(post.engagementRate)}
+                    </div>
+                    <div style={{ fontSize: 10, textTransform: "uppercase", fontWeight: 600, color: "var(--text-muted)", marginTop: 1 }}>
+                      engagement
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                    {formatNumber(post.likes)} likes<br />
+                    {formatNumber(post.reach)} reach
+                  </div>
                 </div>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--accent)" }}>
-                      {platformShort[post.platform]}
-                    </span>
-                    <span style={{ fontSize: 11, color: "var(--text-muted)" }}>· {post.categoryName}</span>
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {post.title}
-                  </div>
-                  <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {post.caption || "No caption"}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "#34d399" }}>
-                    {formatPercent(post.engagementRate)}
-                  </div>
-                  <div style={{ fontSize: 10, textTransform: "uppercase", fontWeight: 600, color: "var(--text-muted)", marginTop: 1 }}>
-                    engagement
-                  </div>
-                </div>
-                <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                  {formatNumber(post.likes)} likes<br />
-                  {formatNumber(post.reach)} reach
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </section>

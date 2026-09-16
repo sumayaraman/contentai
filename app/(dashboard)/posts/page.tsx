@@ -218,36 +218,36 @@ export default async function PostsPage({
                         </div>
                       </div>
 
-                      {/* Platform */}
-                      <div className="lg:col-span-2">
-                        <PlatformBadge platform={post.platform} />
-                      </div>
+                      {/* Badges: inline row on mobile, separate columns on desktop */}
+                      <div className="flex flex-wrap items-center gap-2 lg:contents">
+                        <div className="lg:col-span-2">
+                          <PlatformBadge platform={post.platform} />
+                        </div>
 
-                      {/* Category */}
-                      <div className="lg:col-span-2">
-                        {cat ? (
-                          <span
-                            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium"
-                            style={{
-                              backgroundColor: `${cat.color}15`,
-                              border: `1px solid ${cat.color}35`,
-                              color: "#fff",
-                            }}
-                          >
+                        <div className="lg:col-span-2">
+                          {cat ? (
                             <span
-                              className="h-1.5 w-1.5 rounded-full"
-                              style={{ backgroundColor: cat.color }}
-                            />
-                            <span className="truncate max-w-[120px]">{cat.name}</span>
-                          </span>
-                        ) : (
-                          <span className="text-xs text-white/35">Uncategorized</span>
-                        )}
-                      </div>
+                              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                              style={{
+                                backgroundColor: `${cat.color}15`,
+                                border: `1px solid ${cat.color}35`,
+                                color: "#fff",
+                              }}
+                            >
+                              <span
+                                className="h-1.5 w-1.5 rounded-full"
+                                style={{ backgroundColor: cat.color }}
+                              />
+                              <span className="truncate max-w-[120px]">{cat.name}</span>
+                            </span>
+                          ) : (
+                            <span className="text-xs text-white/35">Uncategorized</span>
+                          )}
+                        </div>
 
-                      {/* Status */}
-                      <div className="lg:col-span-1">
-                        <PostStatusBadge status={post.status} />
+                        <div className="lg:col-span-1">
+                          <PostStatusBadge status={post.status} />
+                        </div>
                       </div>
 
                       {/* Actions */}

@@ -29,7 +29,7 @@ export function PostsToolbar({
         {/* Filter Dropdowns */}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:items-center">
           {/* Platform */}
-          <div className="flex h-10 min-w-36 items-center gap-2 rounded-xl border border-white/10 bg-[#121222] px-3 focus-within:border-violet-500">
+          <div className="flex h-10 w-full min-w-0 lg:w-auto lg:min-w-36 items-center gap-2 rounded-xl border border-white/10 bg-[#121222] px-3 focus-within:border-violet-500">
             <Filter size={13} className="shrink-0 text-white/40" />
             <select
               name="platform"
@@ -50,7 +50,7 @@ export function PostsToolbar({
             name="status"
             aria-label="Filter by status"
             defaultValue={values.status || ""}
-            className="h-10 min-w-32 rounded-xl border border-white/10 bg-[#121222] px-3 text-xs text-white outline-none focus:border-violet-500 cursor-pointer"
+            className="h-10 w-full min-w-0 lg:w-auto lg:min-w-32 rounded-xl border border-white/10 bg-[#121222] px-3 text-xs text-white outline-none focus:border-violet-500 cursor-pointer"
           >
             <option value="" className="bg-[#141426] text-white">All statuses</option>
             <option value="DRAFT" className="bg-[#141426] text-white">Draft</option>
@@ -60,7 +60,7 @@ export function PostsToolbar({
           </select>
 
           {/* Category */}
-          <div className="flex h-10 min-w-36 items-center gap-2 rounded-xl border border-white/10 bg-[#121222] px-3 focus-within:border-violet-500">
+          <div className="flex h-10 w-full min-w-0 lg:w-auto lg:min-w-36 items-center gap-2 rounded-xl border border-white/10 bg-[#121222] px-3 focus-within:border-violet-500">
             <Tag size={13} className="shrink-0 text-white/40" />
             <select
               name="category"
@@ -82,7 +82,7 @@ export function PostsToolbar({
             name="sort"
             aria-label="Sort posts"
             defaultValue={values.sort || "newest"}
-            className="h-10 min-w-32 rounded-xl border border-white/10 bg-[#121222] px-3 text-xs text-white outline-none focus:border-violet-500 cursor-pointer"
+            className="h-10 w-full min-w-0 lg:w-auto lg:min-w-32 rounded-xl border border-white/10 bg-[#121222] px-3 text-xs text-white outline-none focus:border-violet-500 cursor-pointer"
           >
             <option value="newest" className="bg-[#141426] text-white">Newest first</option>
             <option value="oldest" className="bg-[#141426] text-white">Oldest first</option>

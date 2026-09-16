@@ -47,7 +47,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <Sidebar profile={profile} />
       <div className="app-main">
         <Topbar profile={profile} workspaceId={workspaceId} workspaces={workspaces} />
-        <main className="flex-1 min-w-0 p-5 pb-24 sm:p-8 sm:pb-24 lg:p-10 lg:pb-16">
+        <main className="flex-1 min-w-0 p-3.5 pb-28 sm:p-6 sm:pb-28 lg:p-8 lg:pb-16 max-w-full overflow-x-hidden">
           {children}
         </main>
       </div>

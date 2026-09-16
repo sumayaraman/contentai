@@ -39,6 +39,7 @@ export function SettingsContainer({
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Studio Tab Navigation */}
       <div
+        className="no-scrollbar"
         style={{
           display: "flex",
           alignItems: "center",

@@ -212,12 +212,12 @@ export default function DashboardPage() {
 
   return (
     <div className="page animate-fade-in">
-      <div className="page-header">
+      <div className="page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
         <div>
           <h1 className="page-title">{greeting} ✦</h1>
           <p className="page-subtitle">Here&apos;s what&apos;s happening with your content today.</p>
         </div>
-        <Link href="/ai-studio" className="btn btn-ai">
+        <Link href="/ai-studio" className="btn btn-ai self-start sm:self-auto shrink-0">
           <Sparkles size={13} /> Create with AI
         </Link>
       </div>
@@ -231,16 +231,18 @@ export default function DashboardPage() {
           <Zap size={13} style={{ color: "var(--accent)" }} />
           <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)" }}>Content Pipeline</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          {pipeline.map((step, i) => (
-            <div key={step.label} style={{ display: "flex", alignItems: "center", flex: 1 }}>
-              <div style={{ flex: 1, textAlign: "center" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: step.color, letterSpacing: "-0.03em" }}>{step.count}</div>
-                <div style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 2 }}>{step.label}</div>
+        <div className="overflow-x-auto no-scrollbar pb-1">
+          <div style={{ display: "flex", alignItems: "center", minWidth: 440 }}>
+            {pipeline.map((step, i) => (
+              <div key={step.label} style={{ display: "flex", alignItems: "center", flex: 1 }}>
+                <div style={{ flex: 1, textAlign: "center" }}>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: step.color, letterSpacing: "-0.03em" }}>{step.count}</div>
+                  <div style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 2 }}>{step.label}</div>
+                </div>
+                {i < pipeline.length - 1 && <ArrowRight size={12} style={{ color: "var(--text-muted)", flexShrink: 0 }} />}
               </div>
-              {i < pipeline.length - 1 && <ArrowRight size={12} style={{ color: "var(--text-muted)", flexShrink: 0 }} />}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 

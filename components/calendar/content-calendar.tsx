@@ -280,27 +280,29 @@ function MonthView({
 }) {
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-lg shadow-black/20">
-      <div className="grid grid-cols-7 border-b border-white/[0.08] bg-white/[0.02]">
-        {weekdays.map((d) => (
-          <div
-            key={d}
-            className="py-2.5 text-center text-[11px] font-semibold uppercase tracking-wider text-white/50"
-          >
-            {d}
-          </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-7">
-        {days.map((day) => (
-          <CalendarDay
-            key={dateKey(day)}
-            day={day}
-            inMonth={day.getMonth() === cursor.getMonth()}
-            posts={postsByDay.get(dateKey(day)) ?? []}
-            onSelect={onSelect}
-          />
-        ))}
+    <div className="overflow-x-auto rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-lg shadow-black/20">
+      <div className="min-w-[620px]">
+        <div className="grid grid-cols-7 border-b border-white/[0.08] bg-white/[0.02]">
+          {weekdays.map((d) => (
+            <div
+              key={d}
+              className="py-2.5 text-center text-[11px] font-semibold uppercase tracking-wider text-white/50"
+            >
+              {d}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7">
+          {days.map((day) => (
+            <CalendarDay
+              key={dateKey(day)}
+              day={day}
+              inMonth={day.getMonth() === cursor.getMonth()}
+              posts={postsByDay.get(dateKey(day)) ?? []}
+              onSelect={onSelect}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -329,44 +331,31 @@ function CalendarDay({
           href={`/posts/new?scheduled=${encodeURIComponent(createAtNine(day).toISOString())}&status=SCHEDULED`}
           className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition ${
             today
-              ? "bg-violet-600 text-white shadow-md shadow-violet-600/40"
-              : inMonth
-              ? "text-white/80 hover:bg-white/10"
-              : "text-white/30"
+              ? "bg-violet-600 text-white shadow-sm shadow-violet-600/50"
+              : "text-white/60 hover:bg-white/10 hover:text-white"
           }`}
+          title="Create post for this day"
         >
           {day.getDate()}
         </Link>
-        <Link
-          href={`/posts/new?scheduled=${encodeURIComponent(createAtNine(day).toISOString())}&status=SCHEDULED`}
-          className="text-white/20 hover:text-white/60 transition"
-          title="Schedule post on this day"
-        >
-          <CalendarPlus size={13} />
-        </Link>
+        {posts.length > 0 && (
+          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-violet-500/20 px-1 text-[10px] font-semibold text-violet-300">
+            {posts.length}
+          </span>
+        )}
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="space-y-1">
         {posts.slice(0, 3).map((post) => (
           <button
             key={post.id}
             onClick={() => onSelect(post)}
-            className="group w-full rounded-lg border border-white/[0.08] bg-[#141424] p-1.5 text-left transition hover:border-violet-500/40 hover:bg-[#19192e]"
+            className="group flex w-full items-center gap-1.5 rounded-lg bg-white/[0.04] p-1.5 text-left text-xs transition hover:bg-violet-600/20 hover:text-white cursor-pointer"
           >
-            <div className="flex items-center gap-1.5">
-              <PlatformDot platform={post.platform} />
-              <span className="truncate text-[11px] font-semibold text-white/90 group-hover:text-violet-200">
-                {post.title}
-              </span>
-            </div>
-            <div className="mt-1 flex items-center justify-between text-[10px] text-white/40">
-              <span>
-                {post.scheduled_at
-                  ? new Date(post.scheduled_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
-                  : ""}
-              </span>
-              <StatusDot status={post.status} />
-            </div>
+            <PlatformDot platform={post.platform} />
+            <span className="truncate text-[11px] font-medium text-white/80 group-hover:text-white">
+              {post.title}
+            </span>
           </button>
         ))}
         {posts.length > 3 && (
@@ -387,8 +376,8 @@ function WeekView({
   onSelect: (p: CalendarPost) => void;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-lg shadow-black/20">
-      <div className="grid grid-cols-7 divide-x divide-white/[0.06]">
+    <div className="overflow-x-auto rounded-2xl border border-white/[0.08] bg-[#0e0e1a]/85 backdrop-blur-xl shadow-lg shadow-black/20">
+      <div className="min-w-[620px] grid grid-cols-7 divide-x divide-white/[0.06]">
         {days.map((day) => {
           const isToday = dateKey(day) === dateKey(new Date());
           const dayPosts = postsByDay.get(dateKey(day)) ?? [];

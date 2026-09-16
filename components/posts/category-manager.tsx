@@ -403,31 +403,34 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
           </div>
         </div>
 
-        {/* Column Headers */}
-        {categories.length > 0 && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "minmax(200px, 2fr) minmax(140px, 1.5fr) minmax(130px, 1fr) 100px",
-              padding: "12px 24px",
-              borderBottom: "1px solid var(--border-subtle)",
-              background: "rgba(255,255,255,0.015)",
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-              color: "var(--text-muted)",
-            }}
-          >
-            <div>Category Tag</div>
-            <div>Accent Color</div>
-            <div>Scope</div>
-            <div style={{ textAlign: "right" }}>Actions</div>
-          </div>
-        )}
+        {/* Table Content with Mobile Scroll */}
+        <div className="overflow-x-auto">
+          <div style={{ minWidth: 560 }}>
+            {/* Column Headers */}
+            {categories.length > 0 && (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "minmax(200px, 2fr) minmax(140px, 1.5fr) minmax(130px, 1fr) 100px",
+                  padding: "12px 24px",
+                  borderBottom: "1px solid var(--border-subtle)",
+                  background: "rgba(255,255,255,0.015)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  color: "var(--text-muted)",
+                }}
+              >
+                <div>Category Tag</div>
+                <div>Accent Color</div>
+                <div>Scope</div>
+                <div style={{ textAlign: "right" }}>Actions</div>
+              </div>
+            )}
 
-        {/* Categories List */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Categories List */}
+            <div style={{ display: "flex", flexDirection: "column" }}>
           {filteredCategories.map((category) =>
             editing === category.id ? (
               /* Inline Edit Mode */
@@ -707,5 +710,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
         </div>
       </div>
     </div>
+  </div>
+</div>
   );
 }

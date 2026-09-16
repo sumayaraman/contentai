@@ -740,7 +740,7 @@ export function CampaignGenerator({
                   </span>
                 </div>
 
-                <div style={{ display: "flex", gap: 10 }}>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                   <button
                     type="button"
                     onClick={() => addCalendar(false)}
@@ -962,7 +962,7 @@ function DayCard({
     <article className="campaign-day-card">
       {/* Day Header & Actions Toolbar */}
       <div className="campaign-day-header">
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
           <span
             style={{
               padding: "4px 12px",

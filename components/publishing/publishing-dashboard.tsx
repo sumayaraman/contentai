@@ -215,9 +215,10 @@ export function PublishingDashboard({
             </div>
           </div>
         ) : (
-          /* Posts List */
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {posts.map((post) => {
+          /* Posts List with Mobile Touch Scroll */
+          <div className="overflow-x-auto">
+            <div style={{ minWidth: 640, display: "flex", flexDirection: "column" }}>
+              {posts.map((post) => {
               const event = latestByPost.get(post.id);
               return (
                 <div
@@ -442,6 +443,7 @@ export function PublishingDashboard({
               );
             })}
           </div>
+        </div>
         )}
       </section>
     </div>
