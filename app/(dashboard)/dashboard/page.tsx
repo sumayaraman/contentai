@@ -797,7 +797,7 @@ export default function DashboardPage() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
               <div className="card" style={{ padding: "16px 18px" }}>
-                <div style={{ display: "flex", alignItems: "center", justify-content: "space-between", marginBottom: 12 }}>
+                <div className="flex items-center justify-between mb-3">
                   <span className="card-title">Weekly Engagement Trends</span>
                   <span style={{ fontSize: 11, color: "var(--text-muted)" }}>May 19 - 25</span>
                 </div>
