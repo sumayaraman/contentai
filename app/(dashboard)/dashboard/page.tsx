@@ -315,9 +315,46 @@ function QuickStudio() {
   );
 }
 
+function SectionHeader({
+  badge,
+  badgeIcon: Icon,
+  badgeColor = "text-violet-400",
+  title,
+  subtitle,
+  action,
+}: {
+  badge?: string;
+  badgeIcon?: React.ComponentType<{ size?: number; className?: string }>;
+  badgeColor?: string;
+  title: string;
+  subtitle: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="mt-16 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/[0.08]">
+        <div>
+          {badge && (
+            <div className={`inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider ${badgeColor} mb-2`}>
+              {Icon && <Icon size={14} />} {badge}
+            </div>
+          )}
+          <h2 className="text-[22px] md:text-[28px] font-bold text-white tracking-tight">
+            {title}
+          </h2>
+          <p className="text-[14px] text-white/50 mt-1 max-w-2xl leading-relaxed">
+            {subtitle}
+          </p>
+        </div>
+        {action && <div className="shrink-0">{action}</div>}
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState(() => getGreeting());
-  const [activeTab, setActiveTab] = useState<"tools" | "overview" | "pipeline" | "quick">("tools");
+  const [activeTab, setActiveTab] = useState<"all" | "tools" | "image" | "quick" | "overview">("all");
 
   useEffect(() => {
     setGreeting(getGreeting(new Date()));
@@ -350,40 +387,36 @@ export default function DashboardPage() {
     { title: "5 Content Tips That Actually Work", platform: "LinkedIn", time: "May 23, 03:00 PM" },
   ];
 
-
-
   return (
-    <div className="page animate-fade-in space-y-10 max-w-[1440px] mx-auto pb-16">
+    <div className="page animate-fade-in space-y-6 max-w-[1440px] mx-auto pb-24">
       {/* ═══════════════════════════════════════════════════
-          FULL-PAGE HERO SECTION
-          Inspired by user reference showcase:
-          "Videos, and Tools in One Place"
+          CLEAN SPACIOUS HEADER (LIKE AI ASSISTANT PAGE)
       ═══════════════════════════════════════════════════ */}
-      <section className="text-center pt-4 sm:pt-10 pb-4 max-w-4xl mx-auto px-4 space-y-6">
+      <section className="px-8 pt-12 pb-8 max-w-4xl mx-auto text-center flex flex-col items-center">
         {/* Pill Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-xs font-semibold text-violet-300 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-xs font-semibold text-violet-300 shadow-sm mb-6">
           <Sparkles size={13} className="text-violet-400" />
           <span>ContentAI Creative Suite</span>
           <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
         </div>
 
-        {/* Big Display Headline */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]">
+        {/* Title */}
+        <h1 className="text-[36px] md:text-[44px] font-semibold tracking-tight leading-[1.1] text-gray-900 max-w-3xl mx-auto">
           AI Content, Images,{" "}
-          <span className="italic font-serif bg-gradient-to-r from-violet-300 via-pink-300 to-amber-200 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
             Videos, and Tools
           </span>{" "}
           in One Place
         </h1>
 
         {/* Subtitle */}
-        <p className="text-sm sm:text-base lg:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-[16px] text-gray-500 font-normal mt-3 max-w-2xl mx-auto leading-relaxed">
           Turn ideas into visuals and workflows instantly. Generate AI images, create videos,
           write viral copy, and explore powerful tools—without complexity.
         </p>
 
-        {/* Action Buttons: Vibrant Glowing Pill CTA matching reference */}
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+        {/* Clean Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
           <Link href="/ai-studio" className="btn-hero-glow">
             <span>Get started for free</span>
             <Sparkles size={15} />
@@ -412,7 +445,18 @@ export default function DashboardPage() {
           WORKSPACE TABS BAR
       ═══════════════════════════════════════════════════ */}
       <div className="w-full border-y border-white/[0.06] bg-[#0A0A0F]/50 backdrop-blur my-8 rounded-2xl">
-        <div className="flex items-center gap-1.5 px-2 py-2 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setActiveTab("all")}
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-medium transition ${
+              activeTab === "all"
+                ? "bg-[#8B5CF6]/15 text-white border border-[#8B5CF6]/20"
+                : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
+            }`}
+          >
+            🌟 All Sections
+          </button>
           <button
             type="button"
             onClick={() => setActiveTab("tools")}
@@ -422,29 +466,18 @@ export default function DashboardPage() {
                 : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
             }`}
           >
-            ✨ Creative Tools &amp; Studios
+            ✨ Creative Tools Studio
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab("overview")}
+            onClick={() => setActiveTab("image")}
             className={`whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-medium transition ${
-              activeTab === "overview"
+              activeTab === "image"
                 ? "bg-[#8B5CF6]/15 text-white border border-[#8B5CF6]/20"
                 : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
             }`}
           >
-            📊 Performance &amp; Metrics
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("pipeline")}
-            className={`whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-medium transition ${
-              activeTab === "pipeline"
-                ? "bg-[#8B5CF6]/15 text-white border border-[#8B5CF6]/20"
-                : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
-            }`}
-          >
-            ⚡ Content Pipeline &amp; Approvals
+            🎨 Image Studio
           </button>
           <button
             type="button"
@@ -455,11 +488,22 @@ export default function DashboardPage() {
                 : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
             }`}
           >
-            ⚙️ Instant Studio
+            ⚡ Instant Playground
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("overview")}
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-medium transition ${
+              activeTab === "overview"
+                ? "bg-[#8B5CF6]/15 text-white border border-[#8B5CF6]/20"
+                : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
+            }`}
+          >
+            📊 Performance Metrics
           </button>
           <Link
             href="/ai-assistant"
-            className="whitespace-nowrap px-4 py-2 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white text-[13px] font-semibold flex items-center gap-1.5 shadow-[0_4px_20px_rgba(139,92,246,0.3)] hover:scale-[1.02] transition no-underline shrink-0"
+            className="whitespace-nowrap px-4 py-2 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white text-[13px] font-semibold flex items-center gap-1.5 shadow-[0_4px_20px_rgba(139,92,246,0.3)] hover:scale-[1.02] transition no-underline shrink-0 ml-auto"
           >
             🤖 AI Assistant
           </Link>
@@ -467,20 +511,128 @@ export default function DashboardPage() {
       </div>
 
       {/* ═══════════════════════════════════════════════════
-          TAB 1: CREATIVE TOOLS & STUDIOS (VISUAL CARD SHOWCASE)
-          Directly matches the user's reference image!
+          SECTION 1: CREATIVE TOOLS STUDIO (8 CARDS)
       ═══════════════════════════════════════════════════ */}
-      {activeTab === "tools" && (
-        <section className="animate-fade-in">
+      {(activeTab === "all" || activeTab === "tools") && (
+        <section id="creative-tools" className="animate-fade-in">
+          <SectionHeader
+            badge="Production Engines"
+            badgeIcon={WandSparkles}
+            badgeColor="text-violet-400"
+            title="Creative Tools Studio"
+            subtitle="Access all 8 specialized engines to generate copy, visuals, schedules, and campaigns."
+            action={
+              <span className="text-xs font-medium text-white/40 bg-white/[0.04] px-3.5 py-1.5 rounded-full border border-white/[0.08] hidden sm:inline-block">
+                8 Production Engines
+              </span>
+            }
+          />
           <StudioToolsGrid />
         </section>
       )}
 
       {/* ═══════════════════════════════════════════════════
-          TAB 2: PERFORMANCE & METRICS
+          SECTION 2: IMAGE STUDIO
       ═══════════════════════════════════════════════════ */}
-      {activeTab === "overview" && (
-        <section className="space-y-6 animate-fade-in">
+      {(activeTab === "all" || activeTab === "image") && (
+        <section id="image-studio" className="animate-fade-in">
+          <SectionHeader
+            badge="Visual Generation"
+            badgeIcon={ImageIcon}
+            badgeColor="text-pink-400"
+            title="Image Studio"
+            subtitle="Generate high-definition visuals, thumbnails, and branding assets powered by Flux and DALL-E."
+            action={
+              <Link
+                href="/image-studio"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-violet-600/20 text-violet-300 border border-violet-500/30 hover:bg-violet-600/30 text-xs font-semibold transition"
+              >
+                <span>Open Full Image Studio</span>
+                <ArrowRight size={13} />
+              </Link>
+            }
+          />
+          <div className="p-6 sm:p-8 rounded-[24px] bg-[#12121A] border border-white/[0.08] flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="max-w-xl space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-semibold text-pink-300">
+                <Sparkles size={12} /> High-Resolution AI Canvas
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                Turn prompts into studio-quality visuals
+              </h3>
+              <p className="text-sm text-white/60 leading-relaxed">
+                Produce marketing graphics, social banners, and editorial illustrations in seconds. Seamlessly save directly to your workspace media library.
+              </p>
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <Link
+                  href="/image-studio"
+                  className="px-5 py-2.5 rounded-full bg-gradient-to-r from-violet-600 to-pink-600 text-white font-semibold text-xs shadow-lg shadow-violet-500/20 hover:opacity-90 transition inline-flex items-center gap-2"
+                >
+                  <ImageIcon size={14} />
+                  <span>Launch Image Studio</span>
+                </Link>
+                <Link
+                  href="/media-library"
+                  className="px-4 py-2.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-white/70 hover:text-white text-xs font-medium border border-white/[0.08] transition inline-flex items-center gap-2"
+                >
+                  <FolderKanban size={14} />
+                  <span>Browse Media Assets</span>
+                </Link>
+              </div>
+            </div>
+            <div className="w-full md:w-80 aspect-video rounded-[18px] overflow-hidden border border-white/[0.1] bg-[#0E0E14] relative group shrink-0">
+              <img
+                src="/studio-cards/image-generator.png"
+                alt="Image Studio Preview"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                <span className="text-[11px] font-medium text-white/80 backdrop-blur-sm bg-black/40 px-2.5 py-1 rounded-full border border-white/10">
+                  16:9 • Ultra HD Visuals
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════
+          SECTION 3: INSTANT PLAYGROUND
+      ═══════════════════════════════════════════════════ */}
+      {(activeTab === "all" || activeTab === "quick") && (
+        <section id="instant-playground" className="animate-fade-in">
+          <SectionHeader
+            badge="Rapid Creation"
+            badgeIcon={Zap}
+            badgeColor="text-amber-400"
+            title="Instant Playground"
+            subtitle="Quickly draft viral copy, test hooks, or preview AI visuals right from your dashboard."
+          />
+          <QuickStudio />
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════
+          SECTION 4: PERFORMANCE METRICS
+      ═══════════════════════════════════════════════════ */}
+      {(activeTab === "all" || activeTab === "overview") && (
+        <section id="performance-metrics" className="animate-fade-in">
+          <SectionHeader
+            badge="Analytics & Insights"
+            badgeIcon={BarChart3}
+            badgeColor="text-emerald-400"
+            title="Performance Metrics"
+            subtitle="Track reach, engagement rates, publication timelines, and approval workflows in real time."
+            action={
+              <Link
+                href="/analytics"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/[0.04] text-white/60 hover:text-white border border-white/[0.08] text-xs font-medium transition"
+              >
+                <span>View Full Analytics</span>
+                <ArrowRight size={13} />
+              </Link>
+            }
+          />
           <div className="metrics-grid">
             {metrics.map((m) => <MetricCard key={m.label} {...m} />)}
           </div>
