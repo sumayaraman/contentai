@@ -29,6 +29,15 @@ Be helpful, concise, give actionable examples. Use bullet points and emojis spar
 
     if (groqKey) {
       console.log("Using Groq");
+      const conversation = [
+        { role: "system", content: systemPrompt },
+        ...messages.slice(-6), // last 6 messages for context
+        { role: "user", content: userPrompt },
+      ].filter(
+        (m: { role: string; content: string }) =>
+          m.role !== "system" || m.content === systemPrompt
+      );
+
       const res = await fetch(
         "https://api.groq.com/openai/v1/chat/completions",
         {
@@ -38,29 +47,68 @@ Be helpful, concise, give actionable examples. Use bullet points and emojis spar
             Authorization: `Bearer ${groqKey}`,
           },
           body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
-            messages: [
-              { role: "system", content: systemPrompt },
-              ...messages.slice(-6), // last 6 messages for context
-              { role: "user", content: userPrompt },
-            ].filter(
-              (m: { role: string; content: string }) =>
-                m.role !== "system" || m.content === systemPrompt
-            ),
+            model: "llama-3.3-70b-versatile",
+            messages: conversation,
             temperature: 0.7,
-            max_tokens: 800,
+            max_tokens: 1024,
           }),
         }
       );
       const data = await res.json();
       console.log("Groq response:", JSON.stringify(data).slice(0, 500));
+
       if (data.error) {
         console.error("Groq error:", data.error);
-        return NextResponse.json({
-          reply: `Groq Error: ${data.error.message}. Check your API key.`,
-        });
+
+        // Retry with backup model if deactivated or missing
+        if (
+          data.error?.code === "model_deactivated" ||
+          data.error?.message?.includes("does not exist") ||
+          data.error?.message?.includes("decommissioned") ||
+          data.error?.message?.includes("deprecated")
+        ) {
+          const fallbackModels = [
+            "llama3-8b-8192",
+            "mixtral-8x7b-32768",
+            "gemma2-9b-it",
+          ];
+
+          for (const backupModel of fallbackModels) {
+            console.log(`Retrying Groq with backup model: ${backupModel}`);
+            const retry = await fetch(
+              "https://api.groq.com/openai/v1/chat/completions",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${groqKey}`,
+                },
+                body: JSON.stringify({
+                  model: backupModel,
+                  messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: userPrompt },
+                  ],
+                  max_tokens: 1024,
+                }),
+              }
+            );
+            const retryData = await retry.json();
+            if (retryData.choices?.[0]?.message?.content) {
+              reply = retryData.choices[0].message.content;
+              break;
+            }
+          }
+        }
+
+        if (!reply) {
+          return NextResponse.json({
+            reply: `Groq Error: ${data.error.message}. Check your API key.`,
+          });
+        }
+      } else {
+        reply = data.choices?.[0]?.message?.content || "";
       }
-      reply = data.choices?.[0]?.message?.content || "";
     } else if (openaiKey) {
       const res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -75,7 +123,7 @@ Be helpful, concise, give actionable examples. Use bullet points and emojis spar
             ...messages.slice(-6),
             { role: "user", content: userPrompt },
           ],
-          max_tokens: 800,
+          max_tokens: 1024,
         }),
       });
       const data = await res.json();
