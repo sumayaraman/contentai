@@ -105,17 +105,7 @@ export function Sidebar({ profile }: SidebarProps = {}) {
         aria-hidden="true"
       />
 
-      {/* Floating collapsible toggle button on canvas */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="floating-nav-toggle"
-        title="Open Workspace Navigation (Esc to close)"
-        aria-label="Open Workspace Navigation"
-      >
-        <Menu size={15} style={{ color: "var(--accent)" }} />
-        <span>Menu</span>
-      </button>
+
 
       {/* Collapsible Drawer Sidebar */}
       <aside className={`app-sidebar${isOpen ? " open" : ""}`} aria-label="Sidebar Navigation">

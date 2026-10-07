@@ -451,21 +451,7 @@ export default function DashboardPage() {
           Directly matches the user's reference image!
       ═══════════════════════════════════════════════════ */}
       {activeTab === "tools" && (
-        <section className="space-y-6 animate-fade-in">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                Explore Studio Tools
-              </h2>
-              <p className="text-xs sm:text-sm text-white/50 mt-0.5">
-                Launch any creator engine to generate copy, visuals, schedules, and campaigns.
-              </p>
-            </div>
-            <span className="text-xs font-semibold text-white/40 hidden sm:inline">
-              8 Available Studios
-            </span>
-          </div>
-
+        <section className="animate-fade-in">
           <StudioToolsGrid />
         </section>
       )}
