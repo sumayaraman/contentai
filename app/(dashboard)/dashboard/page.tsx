@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import {
   Sparkles, TrendingUp, TrendingDown, Plus, ArrowRight, Clock,
-  CheckCircle2, Zap, Bot, Check, X, Send, Loader2, Image as ImageIcon,
-  Film, Megaphone, CalendarDays, RadioTower, BarChart3, FolderKanban,
-  Sliders, Copy, ExternalLink, Play, Eye
+  CheckCircle2, Zap, Bot, Check, X, Send, Loader2, ImageIcon,
+  Megaphone, CalendarDays, RadioTower, BarChart3, FolderKanban,
+  SlidersHorizontal, WandSparkles
 } from "lucide-react";
 import Link from "next/link";
 
@@ -391,7 +391,7 @@ export default function DashboardPage() {
       tags: ["Viral Hooks", "Scene Prompts", "Reels & TikTok"],
       href: "/image-studio?tab=video",
       actionText: "Create Video",
-      icon: Film,
+      icon: WandSparkles,
     },
     {
       id: "campaigns",
@@ -554,7 +554,7 @@ export default function DashboardPage() {
           onClick={() => setActiveTab("quick")}
           className={`workspace-tab-btn${activeTab === "quick" ? " active" : ""}`}
         >
-          <Sliders size={14} />
+          <SlidersHorizontal size={14} />
           <span>Instant Studio</span>
         </button>
       </div>
@@ -615,7 +615,7 @@ export default function DashboardPage() {
                           />
                           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                             <div className="w-10 h-10 rounded-full bg-violet-600/90 border border-violet-400/40 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition">
-                              <Play size={16} fill="white" className="ml-0.5" />
+                              <svg viewBox="0 0 24 24" width={16} height={16} fill="white" className="ml-0.5"><polygon points="6 3 20 12 6 21 6 3" /></svg>
                             </div>
                           </div>
                           <div className="absolute bottom-2.5 left-2.5 text-[10px] font-semibold bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-white border border-white/10">

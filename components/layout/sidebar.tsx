@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3, CalendarDays, FolderKanban, Image, WandSparkles,
   LayoutDashboard, Megaphone, PenSquare, RadioTower,
-  Settings, Sparkles, ChevronDown, HelpCircle, X, Menu, PanelLeft
+  Settings, Sparkles, ChevronDown, HelpCircle, X, Menu
 } from "lucide-react";
 
 const navMain = [
@@ -113,7 +113,7 @@ export function Sidebar({ profile }: SidebarProps = {}) {
         title="Open Workspace Navigation (Esc to close)"
         aria-label="Open Workspace Navigation"
       >
-        <PanelLeft size={15} style={{ color: "var(--accent)" }} />
+        <Menu size={15} style={{ color: "var(--accent)" }} />
         <span>Menu</span>
       </button>
 
