@@ -886,7 +886,6 @@ img { display: block; max-width: 100%; }
    Fixes all old white/light components globally
 ══════════════════════════════════════════════════════ */
 
-.bg-white        { background: var(--bg-surface) !important; }
 .bg-slate-50     { background: var(--bg-elevated) !important; }
 .bg-slate-100    { background: var(--bg-overlay) !important; }
 .bg-slate-950    { background: var(--accent) !important; }
@@ -906,12 +905,6 @@ img { display: block; max-width: 100%; }
 .text-slate-600  { color: var(--text-secondary) !important; }
 .text-slate-500  { color: var(--text-secondary) !important; }
 .text-slate-400  { color: var(--text-muted) !important; }
-.text-gray-900   { color: var(--text-primary) !important; }
-.text-gray-800   { color: var(--text-primary) !important; }
-.text-gray-700   { color: var(--text-secondary) !important; }
-.text-gray-600   { color: var(--text-secondary) !important; }
-.text-gray-500   { color: var(--text-secondary) !important; }
-.text-gray-400   { color: var(--text-muted) !important; }
 .text-blue-600   { color: #a89dff !important; }
 .text-blue-700   { color: var(--accent-hover) !important; }
 .text-emerald-700 { color: var(--green) !important; }
