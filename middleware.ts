@@ -1,22 +1,25 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/lib/supabase/proxy";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  try {
-    // Hard 2-second timeout: guarantees the middleware NEVER triggers Vercel's 504 MIDDLEWARE_INVOCATION_TIMEOUT
-    const timeout = new Promise<NextResponse>((resolve) => {
-      setTimeout(() => resolve(NextResponse.next()), 2000);
-    });
+export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
 
-    return await Promise.race([updateSession(request), timeout]);
-  } catch (err) {
-    console.error("Middleware non-fatal error:", err);
-    return NextResponse.next();
+  // Pure in-memory cookie check: 0 network calls, 0ms latency, zero timeout risk
+  const hasAuth = request.cookies
+    .getAll()
+    .some((c) => c.name.includes("-auth-token") || c.name.startsWith("sb-"));
+
+  if (hasAuth && (pathname === "/login" || pathname === "/signup")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/ai-assistant|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
