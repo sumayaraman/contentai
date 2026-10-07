@@ -1,49 +1,102 @@
-export async function POST(req: Request) {
-  try {
-    const { prompt, messages } = await req.json();
-    const apiKey =
-      process.env.GROQ_API_KEY ||
-      process.env.GROQ_ASSISTANT_KEY ||
-      process.env.OPENAI_API_KEY;
+import { NextRequest, NextResponse } from "next/server";
 
-    if (!apiKey) {
-      const userText = prompt || messages?.[messages.length - 1]?.content || "";
-      return Response.json({
-        reply: `Got it! Here's help for: "${userText}"\n\n🔥 3 Viral Hooks:\n1. "I spent 100 hours testing AI tools - here are 3 that actually save you 10hrs/week"\n2. "Most people use AI wrong. Here's the framework that 10x'd my content"\n3. "Stop writing captions manually - this AI trick got me 50K views"\n\nWant me to write the full caption, reel script, or 7-day calendar for this?`,
-      });
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const userPrompt =
+      body.prompt || body.messages?.[body.messages.length - 1]?.content || "";
+    const messages = body.messages || [];
+
+    if (!userPrompt) {
+      return NextResponse.json({ reply: "Please type a message!" });
     }
 
-    const formattedMessages = messages || [{ role: "user", content: prompt }];
+    const groqKey =
+      process.env.GROQ_API_KEY || process.env.GROQ_ASSISTANT_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
 
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are ContentAI Assistant, an expert social media and content marketing strategist. Provide concise, punchy, high-converting social copy, hooks, calendar schedules, and campaign ideas.",
+    // System prompt - makes assistant know about ContentAI
+    const systemPrompt = `You are ContentAI Assistant - expert in viral hooks, social media strategy, content calendars, reel scripts, copywriting, LinkedIn, Instagram, YouTube.
+
+About ContentAI platform:
+- It has 8 Studios: AI Writer, Image Studio, Video Generator, Content Planner, Hashtag Generator, Hook Generator, Reel Maker, Analytics
+- Users can generate AI content, images, videos in one place
+- You help with: viral hooks, 7-day campaigns, reel storyboards, content scoring, caption writing
+
+Be helpful, concise, give actionable examples. Use bullet points and emojis sparingly.`;
+
+    let reply = "";
+
+    if (groqKey) {
+      console.log("Using Groq");
+      const res = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${groqKey}`,
           },
-          ...formattedMessages,
-        ],
-        max_tokens: 1000,
-      }),
-    });
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [
+              { role: "system", content: systemPrompt },
+              ...messages.slice(-6), // last 6 messages for context
+              { role: "user", content: userPrompt },
+            ].filter(
+              (m: { role: string; content: string }) =>
+                m.role !== "system" || m.content === systemPrompt
+            ),
+            temperature: 0.7,
+            max_tokens: 800,
+          }),
+        }
+      );
+      const data = await res.json();
+      console.log("Groq response:", JSON.stringify(data).slice(0, 500));
+      if (data.error) {
+        console.error("Groq error:", data.error);
+        return NextResponse.json({
+          reply: `Groq Error: ${data.error.message}. Check your API key.`,
+        });
+      }
+      reply = data.choices?.[0]?.message?.content || "";
+    } else if (openaiKey) {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${openaiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...messages.slice(-6),
+            { role: "user", content: userPrompt },
+          ],
+          max_tokens: 800,
+        }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        return NextResponse.json({
+          reply: `OpenAI Error: ${data.error.message}. Check your API key.`,
+        });
+      }
+      reply = data.choices?.[0]?.message?.content || "";
+    }
 
-    const data = await res.json();
-    const reply =
-      data.choices?.[0]?.message?.content ||
-      "I'm ready to help! What content do you need?";
-    return Response.json({ reply });
-  } catch (err: unknown) {
-    return Response.json({
-      reply:
-        "I'm here! Tell me what content you need - hooks, captions, reel script, or campaign plan - I'll create it for you right now.",
+    if (!reply) {
+      reply = `I'm your ContentAI Assistant! I can help with:\n\n• **Viral Hooks** - "Give me 5 hooks for X"\n• **Campaigns** - "Create a 7-day launch plan"\n• **Reel Scripts** - "Write a 30s reel about AI tools"\n• **Content Scores** - "Improve my post to 95+"\n• **How ContentAI works** - We have 8 studios to generate text, images, videos\n\n💡 Tip: To enable real-time unlimited AI replies, add GROQ_API_KEY in Vercel Project Settings → Environment Variables (free from console.groq.com)!`;
+    }
+
+    return NextResponse.json({ reply });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("Chat API Error:", msg);
+    return NextResponse.json({
+      reply: `Error: ${msg}. I'm still here! Ask me about hooks, campaigns, or how ContentAI works - I have 8 studios for content creation.`,
     });
   }
 }
