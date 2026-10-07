@@ -411,39 +411,59 @@ export default function DashboardPage() {
       {/* ═══════════════════════════════════════════════════
           WORKSPACE TABS BAR
       ═══════════════════════════════════════════════════ */}
-      <div className="flex items-center justify-center sm:justify-start gap-2 border-b border-white/[0.08] pb-3 overflow-x-auto no-scrollbar px-1">
-        <button
-          type="button"
-          onClick={() => setActiveTab("tools")}
-          className={`workspace-tab-btn${activeTab === "tools" ? " active" : ""}`}
-        >
-          <Sparkles size={14} />
-          <span>Creative Tools &amp; Studios</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("overview")}
-          className={`workspace-tab-btn${activeTab === "overview" ? " active" : ""}`}
-        >
-          <BarChart3 size={14} />
-          <span>Performance &amp; Metrics</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("pipeline")}
-          className={`workspace-tab-btn${activeTab === "pipeline" ? " active" : ""}`}
-        >
-          <Zap size={14} />
-          <span>Content Pipeline &amp; Approvals</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("quick")}
-          className={`workspace-tab-btn${activeTab === "quick" ? " active" : ""}`}
-        >
-          <SlidersHorizontal size={14} />
-          <span>Instant Studio</span>
-        </button>
+      <div className="w-full border-y border-white/[0.06] bg-[#0A0A0F]/50 backdrop-blur my-8 rounded-2xl">
+        <div className="flex items-center gap-1.5 px-2 py-2 overflow-x-auto no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setActiveTab("tools")}
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-medium transition ${
+              activeTab === "tools"
+                ? "bg-[#8B5CF6]/15 text-white border border-[#8B5CF6]/20"
+                : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
+            }`}
+          >
+            ✨ Creative Tools &amp; Studios
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("overview")}
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-medium transition ${
+              activeTab === "overview"
+                ? "bg-[#8B5CF6]/15 text-white border border-[#8B5CF6]/20"
+                : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
+            }`}
+          >
+            📊 Performance &amp; Metrics
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("pipeline")}
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-medium transition ${
+              activeTab === "pipeline"
+                ? "bg-[#8B5CF6]/15 text-white border border-[#8B5CF6]/20"
+                : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
+            }`}
+          >
+            ⚡ Content Pipeline &amp; Approvals
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("quick")}
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-[13px] font-medium transition ${
+              activeTab === "quick"
+                ? "bg-[#8B5CF6]/15 text-white border border-[#8B5CF6]/20"
+                : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
+            }`}
+          >
+            ⚙️ Instant Studio
+          </button>
+          <Link
+            href="/ai-assistant"
+            className="whitespace-nowrap px-4 py-2 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white text-[13px] font-semibold flex items-center gap-1.5 shadow-[0_4px_20px_rgba(139,92,246,0.3)] hover:scale-[1.02] transition no-underline shrink-0"
+          >
+            🤖 AI Assistant
+          </Link>
+        </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════

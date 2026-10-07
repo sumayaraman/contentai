@@ -6,6 +6,7 @@ import Link from "next/link";
 
 const pageTitles: Record<string, string> = {
   "/dashboard":        "Overview",
+  "/ai-assistant":    "AI Assistant",
   "/ai-studio":        "AI Studio",
   "/image-studio":     "Image & Video Studio",
   "/posts/new":        "Create Post",

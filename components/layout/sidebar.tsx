@@ -6,11 +6,12 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3, CalendarDays, FolderKanban, Image, WandSparkles,
   LayoutDashboard, Megaphone, PenSquare, RadioTower,
-  Settings, Sparkles, ChevronDown, HelpCircle, X, Menu
+  Settings, Sparkles, ChevronDown, HelpCircle, X, Menu, Bot
 } from "lucide-react";
 
 const navMain = [
   { href: "/dashboard",     label: "Overview",             icon: LayoutDashboard },
+  { href: "/ai-assistant",  label: "AI Assistant",         icon: Bot },
   { href: "/ai-studio",     label: "AI Studio",            icon: Sparkles },
   { href: "/image-studio",  label: "Image & Video Studio", icon: Image },
   { href: "/posts",         label: "Posts",                icon: PenSquare },
