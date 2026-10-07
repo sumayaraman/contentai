@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { message } = await req.json();
-  const apiKey = process.env.GROQ_ASSISTANT_KEY;
+  const apiKey = process.env.GROQ_API_KEY || process.env.GROQ_ASSISTANT_KEY;
 
   if (!apiKey) {
     const lower = (message || "").toLowerCase();
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openai/gpt-oss-120b",
+        model: "llama-3.3-70b-versatile",
         messages: [
           {
             role: "system",

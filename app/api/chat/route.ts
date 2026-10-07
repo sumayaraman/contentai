@@ -47,7 +47,7 @@ Be helpful, concise, give actionable examples. Use bullet points and emojis spar
             Authorization: `Bearer ${groqKey}`,
           },
           body: JSON.stringify({
-            model: "llama3-8b-8192",
+            model: "llama-3.3-70b-versatile",
             messages: conversation,
             temperature: 0.7,
             max_tokens: 1024,
@@ -60,17 +60,18 @@ Be helpful, concise, give actionable examples. Use bullet points and emojis spar
       if (data.error) {
         console.error("Groq error:", data.error);
 
-        // Retry with backup model if deactivated or missing
+        // Retry with backup model if deactivated, decommissioned, or missing
         if (
           data.error?.code === "model_deactivated" ||
-          data.error?.message?.includes("does not exist") ||
-          data.error?.message?.includes("decommissioned") ||
-          data.error?.message?.includes("deprecated")
+          data.error?.code === "model_decommissioned" ||
+          data.error?.message?.toLowerCase().includes("decommissioned") ||
+          data.error?.message?.toLowerCase().includes("does not exist") ||
+          data.error?.message?.toLowerCase().includes("deprecated")
         ) {
           const fallbackModels = [
-            "llama-3.3-70b-versatile",
-            "mixtral-8x7b-32768",
-            "gemma2-9b-it",
+            "llama-3.1-8b-instant",
+            "openai/gpt-oss-120b",
+            "qwen/qwen3.8-27b",
           ];
 
           for (const backupModel of fallbackModels) {
