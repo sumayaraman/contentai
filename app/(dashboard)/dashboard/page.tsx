@@ -56,27 +56,27 @@ const tools = [
 
 export default function DashboardPage() {
   return (
-    <div className="bg-[#fbfbfb] text-gray-900 min-h-screen -m-3.5 sm:-m-6 lg:-m-8 p-3.5 sm:p-6 lg:p-8 font-sans antialiased">
-      {/* 1. CLEAN SPACIOUS HEADER */}
+    <div className="bg-[#07070F] text-white min-h-screen -m-3.5 sm:-m-6 lg:-m-8 p-3.5 sm:p-6 lg:p-8 font-sans antialiased">
+      {/* 1. CLEAN SPACIOUS HERO HEADER */}
       <section className="px-8 pt-12 pb-8 max-w-4xl mx-auto text-center flex flex-col items-center">
         {/* Pill Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-100 bg-violet-50 text-xs font-semibold text-violet-600 shadow-sm mb-6">
-          <Sparkles size={13} className="text-violet-500" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-xs font-semibold text-violet-300 shadow-sm mb-6">
+          <Sparkles size={13} className="text-violet-400" />
           <span>ContentAI Creative Suite</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
         </div>
 
         {/* Title */}
-        <h1 className="text-[36px] md:text-[44px] font-semibold tracking-tight leading-[1.1] text-gray-900 max-w-3xl mx-auto">
+        <h1 className="text-[36px] md:text-[44px] font-semibold tracking-tight leading-[1.1] text-white max-w-3xl mx-auto">
           AI Content, Images,{" "}
-          <span className="bg-gradient-to-r from-violet-600 via-pink-600 to-amber-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
             Videos, and Tools
           </span>{" "}
           in One Place
         </h1>
 
         {/* Subtitle */}
-        <p className="text-[16px] text-gray-500 font-normal mt-3 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-[16px] text-white/60 font-normal mt-3 max-w-2xl mx-auto leading-relaxed">
           Turn ideas into visuals and workflows instantly. Generate AI images, create videos,
           write viral copy, and explore powerful tools—without complexity.
         </p>
@@ -85,14 +85,15 @@ export default function DashboardPage() {
         <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
           <Link
             href="/ai-studio"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gray-900 text-white font-medium text-[13px] hover:bg-black transition shadow-sm no-underline"
+            className="btn-hero-glow"
           >
             <span>Get started for free</span>
             <Sparkles size={14} />
           </Link>
           <Link
             href="/image-studio"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white border border-gray-200 text-gray-700 font-medium text-[13px] hover:bg-gray-50 transition shadow-sm no-underline"
+            className="btn btn-primary"
+            style={{ borderRadius: 9999, padding: "10px 22px", fontSize: 13.5 }}
           >
             <ImageIcon size={14} />
             <span>Image Studio</span>
@@ -100,39 +101,39 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* 2. AIRY FILTER PILLS ROW */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 mt-10">
-        <div className="flex flex-wrap gap-2.5 py-6 border-y border-gray-200">
-          <span className="text-[12px] px-3.5 py-1.5 rounded-full bg-gray-900 text-white cursor-pointer select-none">
+      {/* 2. SECTIONS FILTER ROW */}
+      <div className="max-w-[1400px] mx-auto px-8 mt-6">
+        <div className="flex flex-wrap gap-3 py-5 border-t border-white/10">
+          <span className="px-4 py-1.5 rounded-full bg-white text-black text-[12px] font-medium cursor-pointer select-none">
             All Sections
           </span>
           <Link
             href="/ai-studio"
-            className="text-[12px] px-3.5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-gray-300 transition no-underline"
+            className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-[12px] hover:bg-white/15 transition no-underline"
           >
             Creative Tools Studio
           </Link>
           <Link
             href="/image-studio"
-            className="text-[12px] px-3.5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-gray-300 transition no-underline"
+            className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-[12px] hover:bg-white/15 transition no-underline"
           >
             Image Studio
           </Link>
           <Link
             href="/ai-studio"
-            className="text-[12px] px-3.5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-gray-300 transition no-underline"
+            className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-[12px] hover:bg-white/15 transition no-underline"
           >
             Instant Playground
           </Link>
           <Link
             href="/analytics"
-            className="text-[12px] px-3.5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-gray-300 transition no-underline"
+            className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-[12px] hover:bg-white/15 transition no-underline"
           >
             Performance Metrics
           </Link>
           <Link
             href="/ai-assistant"
-            className="text-[12px] px-3.5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-gray-300 transition no-underline"
+            className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-[12px] hover:bg-white/15 transition no-underline"
           >
             AI Assistant
           </Link>
@@ -140,24 +141,21 @@ export default function DashboardPage() {
       </div>
 
       {/* 3. PRODUCTION ENGINES + CREATIVE TOOLS STUDIO TITLES */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 mt-16">
-        <p className="text-[11px] tracking-[0.14em] font-semibold text-gray-400 uppercase">
-          PRODUCTION ENGINES
-        </p>
-        <div className="mt-10">
-          <h2 className="text-[22px] font-semibold text-gray-900">Creative Tools Studio</h2>
-          <p className="text-[13px] text-gray-500 mt-1.5">
-            Access all 8 specialized engines to generate copy, visuals, schedules, and campaigns.
-          </p>
-        </div>
-        <div className="mt-8 flex justify-between items-center">
-          <h3 className="text-[20px] font-semibold text-gray-900">Explore Studio Tools</h3>
-          <span className="text-[12px] text-gray-400">8 Available Studios</span>
+      <div className="max-w-[1400px] mx-auto px-8 mt-12">
+        <p className="text-[11px] tracking-[0.2em] text-white/40 uppercase">PRODUCTION ENGINES</p>
+        <div className="mt-8 flex justify-between items-end">
+          <div>
+            <h2 className="text-[22px] font-semibold text-white">Creative Tools Studio</h2>
+            <p className="text-[13px] text-white/50 mt-1">
+              Access all 8 specialized engines to generate copy, visuals, schedules, and campaigns.
+            </p>
+          </div>
+          <span className="text-[11px] text-white/30 hidden sm:inline-block">8 Production Engines</span>
         </div>
       </div>
 
       {/* 4. CARDS GRID - 8 CARDS WITH 100PX (PB-24) PADDING AT END */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-24">
+      <div className="max-w-[1400px] mx-auto px-8 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-24">
         {tools.map((tool) => (
           <Link
             key={tool.title}
