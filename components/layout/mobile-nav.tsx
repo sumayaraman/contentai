@@ -16,7 +16,7 @@ export function MobileNav() {
 
   function toggleMenu() {
     if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("toggle-mobile-drawer"));
+      window.dispatchEvent(new CustomEvent("toggle-sidebar"));
     }
   }
 
