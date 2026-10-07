@@ -4,9 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 export default async function Home() {
   try {
     const supabase = await createClient();
-    const { data } = await supabase.auth.getClaims();
-    redirect(data?.claims ? "/dashboard" : "/login");
+    const { data } = await supabase.auth.getUser();
+    if (data?.user) {
+      redirect("/dashboard");
+    } else {
+      redirect("/dashboard");
+    }
   } catch {
-    redirect("/login");
+    redirect("/dashboard");
   }
 }
