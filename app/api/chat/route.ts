@@ -47,7 +47,7 @@ Be helpful, concise, give actionable examples. Use bullet points and emojis spar
             Authorization: `Bearer ${groqKey}`,
           },
           body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
+            model: "llama3-8b-8192",
             messages: conversation,
             temperature: 0.7,
             max_tokens: 1024,
@@ -68,7 +68,7 @@ Be helpful, concise, give actionable examples. Use bullet points and emojis spar
           data.error?.message?.includes("deprecated")
         ) {
           const fallbackModels = [
-            "llama3-8b-8192",
+            "llama-3.3-70b-versatile",
             "mixtral-8x7b-32768",
             "gemma2-9b-it",
           ];
