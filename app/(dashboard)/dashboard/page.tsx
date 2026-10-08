@@ -83,8 +83,8 @@ export default function DashboardPage() {
               write viral copy, and explore powerful tools—without complexity.
             </p>
 
-            {/* Action Buttons - Matching heights & padding for professional alignment */}
-            <div className="w-full flex flex-wrap items-center justify-center gap-3.5 mt-8">
+            {/* Action Buttons - Generous space above and below */}
+            <div className="w-full flex flex-wrap items-center justify-center gap-4 mt-10">
               <Link
                 href="/ai-studio"
                 className="h-11 px-6 rounded-full inline-flex items-center justify-center gap-2 text-[13.5px] font-medium bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.35)] hover:shadow-[0_0_26px_rgba(139,92,246,0.5)] transition duration-200"
@@ -103,56 +103,56 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* 2. SECTIONS FILTER ROW WITH CLEAR VERTICAL SEPARATION */}
-        <div className="w-full my-10 py-4 border-y border-white/[0.08]">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <span className="px-4 py-1.5 rounded-full bg-white text-black text-[12px] font-medium cursor-pointer select-none shadow-sm">
+        {/* 2. SECTIONS FILTER ROW WITH GENEROUS BREATHING SPACE */}
+        <div className="w-full mt-16 sm:mt-24 mb-14 sm:mb-18 py-6 border-y border-white/[0.08]">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="px-4.5 py-2 rounded-full bg-white text-black text-[12px] font-medium cursor-pointer select-none shadow-sm">
               All Sections
             </span>
             <Link
               href="/ai-studio"
-              className="px-4 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
             >
               Creative Tools Studio
             </Link>
             <Link
               href="/image-studio"
-              className="px-4 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
             >
               Image Studio
             </Link>
             <Link
               href="/ai-studio"
-              className="px-4 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
             >
               Instant Playground
             </Link>
             <Link
               href="/analytics"
-              className="px-4 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
             >
               Performance Metrics
             </Link>
             <Link
               href="/ai-assistant"
-              className="px-4 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
             >
               AI Assistant
             </Link>
           </div>
         </div>
 
-        {/* 3. PRODUCTION ENGINES TITLE WITH ATTACHED EYEBROW (NO FLOATING GAP) */}
-        <div className="w-full mb-8">
+        {/* 3. PRODUCTION ENGINES TITLE WITH ROOMY SPACING */}
+        <div className="w-full mb-10">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.18em] text-violet-400 uppercase mb-1.5">
+              <p className="text-[11px] font-semibold tracking-[0.18em] text-violet-400 uppercase mb-2">
                 PRODUCTION ENGINES
               </p>
               <h2 className="text-[22px] sm:text-[26px] font-semibold text-white tracking-tight">
                 Creative Tools Studio
               </h2>
-              <p className="text-[13.5px] text-white/55 mt-1 max-w-2xl">
+              <p className="text-[13.5px] text-white/55 mt-1.5 max-w-2xl">
                 Access all 8 specialized engines to generate copy, visuals, schedules, and campaigns.
               </p>
             </div>
