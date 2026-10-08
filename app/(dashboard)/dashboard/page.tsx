@@ -104,38 +104,38 @@ export default function DashboardPage() {
         </section>
 
         {/* 2. SECTIONS FILTER ROW WITH GENEROUS BREATHING SPACE */}
-        <div className="w-full mt-16 sm:mt-24 mb-14 sm:mb-18 py-6 border-y border-white/[0.08]">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="px-4.5 py-2 rounded-full bg-white text-black text-[12px] font-medium cursor-pointer select-none shadow-sm">
+        <div className="w-full mt-14 sm:mt-20 mb-16 sm:mb-20 py-6 border-y border-white/[0.08]">
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <span className="px-5 py-2 rounded-full bg-white text-black text-[12.5px] font-medium cursor-pointer select-none shadow-sm">
               All Sections
             </span>
             <Link
               href="/ai-studio"
-              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12.5px] font-medium transition no-underline"
             >
               Creative Tools Studio
             </Link>
             <Link
               href="/image-studio"
-              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12.5px] font-medium transition no-underline"
             >
               Image Studio
             </Link>
             <Link
               href="/ai-studio"
-              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12.5px] font-medium transition no-underline"
             >
               Instant Playground
             </Link>
             <Link
               href="/analytics"
-              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12.5px] font-medium transition no-underline"
             >
               Performance Metrics
             </Link>
             <Link
               href="/ai-assistant"
-              className="px-4.5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12px] font-medium transition no-underline"
+              className="px-5 py-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-white/80 hover:text-white text-[12.5px] font-medium transition no-underline"
             >
               AI Assistant
             </Link>
@@ -143,20 +143,21 @@ export default function DashboardPage() {
         </div>
 
         {/* 3. PRODUCTION ENGINES TITLE WITH ROOMY SPACING */}
-        <div className="w-full mb-10">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div className="w-full mb-10 pt-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.18em] text-violet-400 uppercase mb-2">
-                PRODUCTION ENGINES
-              </p>
-              <h2 className="text-[22px] sm:text-[26px] font-semibold text-white tracking-tight">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-[11px] font-semibold tracking-wider text-violet-300 uppercase mb-3">
+                <Sparkles size={11} className="text-violet-400" />
+                <span>Production Engines</span>
+              </div>
+              <h2 className="text-[24px] sm:text-[28px] font-semibold text-white tracking-tight leading-tight">
                 Creative Tools Studio
               </h2>
-              <p className="text-[13.5px] text-white/55 mt-1.5 max-w-2xl">
+              <p className="text-[14px] text-white/55 mt-2 max-w-2xl leading-relaxed">
                 Access all 8 specialized engines to generate copy, visuals, schedules, and campaigns.
               </p>
             </div>
-            <span className="text-[12px] text-white/40 font-medium shrink-0">
+            <span className="text-[12.5px] text-white/40 font-medium shrink-0 pb-1">
               8 Production Engines
             </span>
           </div>
