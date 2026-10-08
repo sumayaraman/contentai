@@ -59,45 +59,47 @@ export default function DashboardPage() {
     <div className="w-full text-white font-sans antialiased">
       {/* UNIFIED CONTAINER FOR ROCK-SOLID ALIGNMENT */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 1. CLEAN SPACIOUS HERO HEADER */}
-        <section className="pt-10 pb-8 sm:pt-14 sm:pb-12 max-w-3xl mx-auto text-center flex flex-col items-center">
-          {/* Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 text-xs font-semibold text-violet-300 shadow-sm mb-6">
-            <Sparkles size={13} className="text-violet-400" />
-            <span>ContentAI Creative Suite</span>
-          </div>
+        {/* 1. CLEAN SPACIOUS HERO HEADER - CENTERED IN THE MIDDLE */}
+        <section className="w-full pt-12 pb-10 sm:pt-16 sm:pb-14 flex flex-col items-center justify-center text-center">
+          <div className="w-full max-w-3xl mx-auto flex flex-col items-center justify-center text-center">
+            {/* Pill Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 text-xs font-semibold text-violet-300 shadow-sm mb-6">
+              <Sparkles size={13} className="text-violet-400" />
+              <span>ContentAI Creative Suite</span>
+            </div>
 
-          {/* Title */}
-          <h1 className="text-[36px] sm:text-[44px] md:text-[48px] font-semibold tracking-tight leading-[1.12] text-white">
-            AI Content, Images,{" "}
-            <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
-              Videos, and Tools
-            </span>{" "}
-            in One Place
-          </h1>
+            {/* Title */}
+            <h1 className="w-full text-center text-[36px] sm:text-[44px] md:text-[48px] font-semibold tracking-tight leading-[1.15] text-white">
+              AI Content, Images,{" "}
+              <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
+                Videos, and Tools
+              </span>{" "}
+              in One Place
+            </h1>
 
-          {/* Subtitle */}
-          <p className="text-[15px] sm:text-[16px] text-white/60 font-normal mt-4 max-w-2xl mx-auto leading-relaxed">
-            Turn ideas into visuals and workflows instantly. Generate AI images, create videos,
-            write viral copy, and explore powerful tools—without complexity.
-          </p>
+            {/* Subtitle */}
+            <p className="w-full max-w-2xl text-center text-[15px] sm:text-[16px] text-white/60 font-normal mt-4 leading-relaxed mx-auto">
+              Turn ideas into visuals and workflows instantly. Generate AI images, create videos,
+              write viral copy, and explore powerful tools—without complexity.
+            </p>
 
-          {/* Action Buttons - Matching heights & padding for professional alignment */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5 mt-8">
-            <Link
-              href="/ai-studio"
-              className="h-11 px-6 rounded-full inline-flex items-center justify-center gap-2 text-[13.5px] font-medium bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.35)] hover:shadow-[0_0_26px_rgba(139,92,246,0.5)] transition duration-200"
-            >
-              <span>Get started for free</span>
-              <Sparkles size={14} />
-            </Link>
-            <Link
-              href="/image-studio"
-              className="h-11 px-6 rounded-full inline-flex items-center justify-center gap-2 text-[13.5px] font-medium bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.12] hover:border-white/[0.22] text-white/90 hover:text-white transition duration-200"
-            >
-              <ImageIcon size={14} />
-              <span>Image Studio</span>
-            </Link>
+            {/* Action Buttons - Matching heights & padding for professional alignment */}
+            <div className="w-full flex flex-wrap items-center justify-center gap-3.5 mt-8">
+              <Link
+                href="/ai-studio"
+                className="h-11 px-6 rounded-full inline-flex items-center justify-center gap-2 text-[13.5px] font-medium bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.35)] hover:shadow-[0_0_26px_rgba(139,92,246,0.5)] transition duration-200"
+              >
+                <span>Get started for free</span>
+                <Sparkles size={14} />
+              </Link>
+              <Link
+                href="/image-studio"
+                className="h-11 px-6 rounded-full inline-flex items-center justify-center gap-2 text-[13.5px] font-medium bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.12] hover:border-white/[0.22] text-white/90 hover:text-white transition duration-200"
+              >
+                <ImageIcon size={14} />
+                <span>Image Studio</span>
+              </Link>
+            </div>
           </div>
         </section>
 
